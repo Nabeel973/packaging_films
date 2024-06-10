@@ -21,10 +21,10 @@ Route::get('/', function () {
 });
 
 
-Route::get('/admin', [AdminController::class, 'index']);
+// Route::get('/admin', [AdminController::class, 'index']);
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('admin.app');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
