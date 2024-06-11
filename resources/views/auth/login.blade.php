@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>International Packaging Films Ltd | Log in</title>
+  <title>International Packaging Films Ltd | Log In</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -33,7 +33,11 @@
               <span class="fas fa-envelope"></span>
             </div>
           </div>
+          @if ($errors->has('email'))
+            <span class="text-danger">{{ $errors->first('email') }}</span>
+          @endif
         </div>
+       
         <div class="input-group mb-3">
           <input type="password" class="form-control" name="password" placeholder="Password" required>
           <div class="input-group-append">
@@ -41,6 +45,9 @@
               <span class="fas fa-lock"></span>
             </div>
           </div>
+          @if ($errors->has('password'))
+          <span class="text-danger">{{ $errors->first('password') }}</span>
+        @endif
         </div>
         <div class="row">
           <div class="col-8">
