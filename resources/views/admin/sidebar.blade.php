@@ -1,4 +1,4 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
+<aside class="main-sidebar elevation-4 sidebar-light-warning">
     <!-- Brand Logo -->
     <a href="index3.html" class="brand-link">
       <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
@@ -13,7 +13,7 @@
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          {{-- <a href="#" class="d-block">{{ Auth::user()->name}}</a> --}}
+          <a href="#" class="d-block">{{ Auth::user()->name}}</a>
         </div>
       </div>
 
@@ -34,7 +34,7 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item menu-open">
+          {{-- <li class="nav-item menu-open">
             <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
@@ -56,13 +56,13 @@
                 </a>
               </li>
             </ul>
-          </li>
+          </li> --}}
           <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="#" class="nav-link active">
               <i class="nav-icon fas fa-th"></i>
               <p>
-                Simple Link
-                <span class="right badge badge-danger">New</span>
+                Dashbaord
+                {{-- <span class="right badge badge-danger">New</span> --}}
               </p>
             </a>
           </li>
