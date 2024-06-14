@@ -24,9 +24,9 @@
     <div class="card-body login-card-body">
       <h3 class="login-box-msg">SIGN IN</h3>
       <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
-      <form method="POST" action="{{ route('login') }}">
+      <form method="POST" action="{{ route('login') }}" id="quickForm">
         @csrf        
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="email" class="form-control" name="email" placeholder="Email" required>
           <div class="input-group-append">
             <div class="input-group-text">
@@ -38,7 +38,7 @@
           @endif --}}
         </div>
        
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 form-group">
           <input type="password" class="form-control" name="password" placeholder="Password" required>
           <div class="input-group-append">
             <div class="input-group-text">
@@ -77,5 +77,51 @@
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="../../dist/js/adminlte.min.js"></script>
+<!-- jquery-validation -->
+<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+<script>
+  $(function () {
+    $.validator.setDefaults({
+      submitHandler: function(form) {
+        form.submit(); // Submit the form
+      }
+    });
+    $('#quickForm').validate({
+      rules: {
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8
+        }
+      },
+      messages: {
+        email: {
+          required: "Please enter a email address",
+          email: "Please enter a valid email address"
+        },
+        password: {
+          required: "Please provide a password",
+          minlength: "Your password must be at least 8 characters long"
+        },
+        //terms: "Please accept our terms"
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+  });
+  </script>
 </body>
 </html>
