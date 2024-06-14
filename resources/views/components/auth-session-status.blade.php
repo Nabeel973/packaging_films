@@ -1,7 +1,17 @@
-@props(['status'])
+@props(['status','errors'])
 
 @if ($status)
-    <div {{ $attributes->merge(['class' => 'font-medium text-sm text-green-600 dark:text-green-400']) }}>
+    <div {{ $attributes->merge(['class' => 'font-medium text-sm text-white bg-success p-2 border rounded-md']) }}>
         {{ $status }}
     </div>
+@endif
+
+@if ($errors->any())
+<div class="alert alert-danger text-left">
+    <ul>
+        @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
 @endif

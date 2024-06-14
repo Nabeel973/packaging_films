@@ -23,11 +23,8 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Send a password reset link.</p>
-        @if(session()->has('success'))
-            {{ session('success') }}
-        @else
-            {{ session('error') }}
-        @endif
+      
+      <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
       <form method="POST" action="{{ route('password.email') }}">
         @csrf
         <div class="row justify-content-center">
@@ -39,9 +36,9 @@
                 </div>
             </div>
             </div>
-            @if ($errors->has('email'))
+            {{-- @if ($errors->has('email'))
                 <span class="text-danger mb-2">{{ $errors->first('email') }}</span>
-            @endif
+            @endif --}}
         </div>    
         <div class="row">
           <div class="col-12">

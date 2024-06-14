@@ -23,7 +23,7 @@
   <div class="card">
     <div class="card-body login-card-body">
       <h3 class="login-box-msg">SIGN IN</h3>
-
+      <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
       <form method="POST" action="{{ route('login') }}">
         @csrf        
         <div class="input-group mb-3">
@@ -33,9 +33,9 @@
               <span class="fas fa-envelope"></span>
             </div>
           </div>
-          @if ($errors->has('email'))
+          {{-- @if ($errors->has('email'))
             <span class="text-danger">{{ $errors->first('email') }}</span>
-          @endif
+          @endif --}}
         </div>
        
         <div class="input-group mb-3">
@@ -45,9 +45,9 @@
               <span class="fas fa-lock"></span>
             </div>
           </div>
-          @if ($errors->has('password'))
+          {{-- @if ($errors->has('password'))
           <span class="text-danger">{{ $errors->first('password') }}</span>
-        @endif
+        @endif --}}
         </div>
         <div class="row">
           <div class="col-8">
