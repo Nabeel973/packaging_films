@@ -1,10 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>User Management</h1>
- {{-- @foreach (session('permissions') as $permisison)
-     <h4>{{$permisison}}</h4>
- @endforeach --}}
+  <h1>Supply Management</h1>
 @endsection
 
 @section('content')
@@ -18,10 +15,8 @@
           <table id="example1" class="table table-bordered table-striped">
             <thead>
             <tr>
-              <th>User ID</th>
+              <th>ID</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
               <th>Created At</th>
               <th>Action</th>
             </tr>
@@ -45,15 +40,13 @@ $(document).ready(function() {
 
     "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
     "ajax": {
-      "url": "{{ route('user.list') }}",
+      "url": "{{ route('supplier.list') }}",
       "type": "GET",
       "dataSrc": ""
     },
     columns: [
         { data: "id" },
         { data: "name",searchable: true },
-        { data: "email",searchable: true },
-        { data: "role",searchable: true },
         { data: "created_at",searchable: true },
         { 
           data: null,
@@ -88,12 +81,12 @@ $(document).ready(function() {
 
   $('#example1').on('click', '.edit-btn', function(e) {
     e.preventDefault();
-    var userId = $(this).data('id');
-    console.log(userId);
+    var supplierId = $(this).data('id');
+    console.log(supplierId);
     // Perform edit operation based on userId
     // For example, redirect to user page
-      var editUrl = "{{ route('user.edit', ':id') }}"; // Laravel route with a placeholder
-      editUrl = editUrl.replace(':id', userId); // Replace placeholder with actual user ID
+    var editUrl = "{{ route('supplier.edit', ':id') }}"; // Laravel route with a placeholder
+      editUrl = editUrl.replace(':id', supplierId); // Replace placeholder with actual user ID
       window.location.href = editUrl; // Redirect to the edit page
   });
 

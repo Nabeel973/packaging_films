@@ -16,7 +16,9 @@ class UserManagementController extends Controller
 
     public function list(){
         $users = User::join('roles','roles.id','users.role_id')
-                ->select('users.*','roles.name as role')->get();
+                ->select('users.*','roles.name as role')
+                ->where('users.role_id','>',1)
+                ->get();
         return response()->json($users);
      }
 

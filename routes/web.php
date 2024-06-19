@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserManagementController;
 
 /*
@@ -42,6 +43,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/user-submit',[UserManagementController::class,'submit'])->name('user.submit');
         Route::get('/user/edit/{id}',[UserManagementController::class,'edit'])->name('user.edit');
         Route::put('/user/update/{id}',[UserManagementController::class,'update'])->name('user.update');
+
+
+        Route::prefix('supplier')->name('supplier.')->group(function () {
+            Route::get('/management',[SupplierController::class,'index'])->name('index');
+            Route::get('/user-list',[SupplierController::class,'list'])->name('list');
+            Route::get('/add',[SupplierController::class,'add'])->name('add');
+            Route::post('/submit',[SupplierController::class,'submit'])->name('submit');
+            Route::get('/edit/{id}',[SupplierController::class,'edit'])->name('edit');
+            Route::put('/update/{id}',[SupplierController::class,'update'])->name('update');
+        });
+
+
+        
     });
     
     // for admin
