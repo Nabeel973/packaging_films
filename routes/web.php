@@ -35,17 +35,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
 
     Route::group(['middleware' => ['role:SystemAdmin']], function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard');
-
-
+      
         Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
+        Route::get('/user-list',[UserManagementController::class,'list'])->name('user.list');
+        Route::get('/user-add',[UserManagementController::class,'add'])->name('user.add');
+        Route::post('/user-submit',[UserManagementController::class,'submit'])->name('user.submit');
+        Route::get('/user/edit/{id}',[UserManagementController::class,'edit'])->name('user.edit');
+        Route::put('/user/update/{id}',[UserManagementController::class,'update'])->name('user.update');
     });
     
     // for admin
     Route::group(['middleware' => ['role:FinanceHead']], function () {
-        //
+        //Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
     });
     
     // Or with multiple roles
