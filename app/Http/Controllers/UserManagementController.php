@@ -57,7 +57,7 @@ class UserManagementController extends Controller
         $user->assignRole($role->name);
 
         // Redirect to a specific route with success message
-        return redirect()->route('user.index')->with('success', 'User created successfully.');
+        return redirect()->route('user.index')->with('status', 'User created successfully.');
     }
 
     public function edit($id){
@@ -103,7 +103,7 @@ class UserManagementController extends Controller
         $user->syncRoles([$role->name]);
     
         // Redirect to a specific route with success message
-        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+        return redirect()->route('user.index')->with('status', 'User updated successfully.');
     }
     
 }

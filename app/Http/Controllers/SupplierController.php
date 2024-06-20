@@ -40,7 +40,7 @@ class SupplierController extends Controller
         ]);
 
         // Redirect to a specific route with success message
-        return redirect()->route('supplier.index')->with('success', 'Supplier created successfully.');
+        return redirect()->route('supplier.index')->with('status', 'Supplier created successfully.');
     }
 
     public function edit($id){
@@ -70,6 +70,6 @@ class SupplierController extends Controller
         $supplier->save();
     
         // Redirect to a specific route with success message
-        return redirect()->route('supplier.index')->with('success', 'Supplier updated successfully.');
+        return redirect()->route('supplier.index')->with('status', 'Supplier updated successfully.');
     }
 }
