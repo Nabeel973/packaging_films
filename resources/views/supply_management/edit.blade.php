@@ -30,41 +30,44 @@
   </div>
 @endsection
 
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Page specific script -->
+@section('scripts')
+<!-- jquery-validation -->
+<script src="{{asset("plugins/jquery-validation/jquery.validate.min.js")}}"></script>
+<script src="{{asset("plugins/jquery-validation/additional-methods.min.js")}}"></script>
+
 <script>
 
-$(document).ready(function() {
-
-
-  $.validator.setDefaults({
-      submitHandler: function(form) {
-        form.submit(); // Submit the form
-      }
-    });
-    $('#quickForm').validate({
-      rules: {
-        name: {
-          required: true,
+  $(document).ready(function() {
+  
+  
+    $.validator.setDefaults({
+        submitHandler: function(form) {
+          form.submit(); // Submit the form
+        }
+      });
+      $('#quickForm').validate({
+        rules: {
+          name: {
+            required: true,
+          },
         },
-      },
-      messages: {
-        name: {
-          required: "Please enter a name",
+        messages: {
+          name: {
+            required: "Please enter a name",
+          },
         },
-      },
-      errorElement: 'span',
-      errorPlacement: function (error, element) {
-        error.addClass('invalid-feedback');
-        element.closest('.form-group').append(error);
-      },
-      highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
-      },
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');
-      }
-    });
-});
-</script>
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+  });
+  </script>
+@endsection

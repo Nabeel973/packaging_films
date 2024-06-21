@@ -62,81 +62,86 @@
   </div>
 @endsection
 
-<!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
-<!-- Page specific script -->
+@section('scripts')
+<!-- jquery-validation -->
+<script src="{{asset("plugins/jquery-validation/jquery.validate.min.js")}}"></script>
+<script src="{{asset("plugins/jquery-validation/additional-methods.min.js")}}"></script>
+<!-- Select2 -->
+<script src="{{asset("plugins/select2/js/select2.full.min.js")}}"></script>
+
 <script>
 
-$(document).ready(function() {
-
-  var roles = {!! json_encode($roles) !!};
-
-    $(".role").select2({
-      placeholder: "Select Role",
-      data: roles.map(function(role) {
-                return { id: role.id, text: role.name };
-            })
-    });
-
-  $.validator.setDefaults({
-      submitHandler: function(form) {
-        form.submit(); // Submit the form
-      }
-    });
-    $('#quickForm').validate({
-      rules: {
-        name: {
-          required: true,
-        },
-        email: {
-          required: true,
-          email: true,
-        },
-        password: {
-          required: true,
-          minlength: 8
-        },
-        password_confirmation: {
-          required: true,
-          minlength: 8,
-          equalTo: "#password"
-        },
-        role :{
-          required: true,
+  $(document).ready(function() {
+  
+    var roles = {!! json_encode($roles) !!};
+  
+      $(".role").select2({
+        placeholder: "Select Role",
+        data: roles.map(function(role) {
+                  return { id: role.id, text: role.name };
+              })
+      });
+  
+    $.validator.setDefaults({
+        submitHandler: function(form) {
+          form.submit(); // Submit the form
         }
-      },
-      messages: {
-        name: {
-          required: "Please enter a name",
+      });
+      $('#quickForm').validate({
+        rules: {
+          name: {
+            required: true,
+          },
+          email: {
+            required: true,
+            email: true,
+          },
+          password: {
+            required: true,
+            minlength: 8
+          },
+          password_confirmation: {
+            required: true,
+            minlength: 8,
+            equalTo: "#password"
+          },
+          role :{
+            required: true,
+          }
         },
-        email: {
-          required: "Please enter a email address",
-          email: "Please enter a valid email address"
+        messages: {
+          name: {
+            required: "Please enter a name",
+          },
+          email: {
+            required: "Please enter a email address",
+            email: "Please enter a valid email address"
+          },
+          password: {
+            required: "Please provide a password",
+            minlength: "Your password must be at least 8 characters long"
+          },
+          password_confirmation: {
+            required: "Please confirm your password",
+            minlength: "Your password must be at least 8 characters long",
+            equalTo: "Passwords do not match"
+          },
+          role: {
+            required: "Select a Role",
+          },
         },
-        password: {
-          required: "Please provide a password",
-          minlength: "Your password must be at least 8 characters long"
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
         },
-        password_confirmation: {
-          required: "Please confirm your password",
-          minlength: "Your password must be at least 8 characters long",
-          equalTo: "Passwords do not match"
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
         },
-        role: {
-          required: "Select a Role",
-        },
-      },
-      errorElement: 'span',
-      errorPlacement: function (error, element) {
-        error.addClass('invalid-feedback');
-        element.closest('.form-group').append(error);
-      },
-      highlight: function (element, errorClass, validClass) {
-        $(element).addClass('is-invalid');
-      },
-      unhighlight: function (element, errorClass, validClass) {
-        $(element).removeClass('is-invalid');
-      }
-    });
-});
-</script>
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+  });
+  </script>
+@endsection
