@@ -53,9 +53,40 @@
 <script>
 
   $(document).ready(function() {
+    var customTitle = 'User Management';
     var table = $("#example1").DataTable({
   
-      "buttons": ["copy", "csv", "excel", "pdf","colvis"],
+      "buttons": [
+        {
+          extend: 'copy',
+          title: customTitle,
+          exportOptions: {
+            columns: ':not(:last-child)' // Exclude the last column (Action button)
+          }
+        },
+        {
+          extend: 'csv',
+          title: customTitle,
+          exportOptions: {
+            columns: ':not(:last-child)' // Exclude the last column (Action button)
+          }
+        },
+        {
+          extend: 'excel',
+          title: customTitle,
+          exportOptions: {
+            columns: ':not(:last-child)' // Exclude the last column (Action button)
+          }
+        },
+        {
+          extend: 'pdf',
+          title: customTitle,
+          exportOptions: {
+            columns: ':not(:last-child)' // Exclude the last column (Action button)
+          }
+        },
+        'colvis'
+      ],
       "ajax": {
         "url": "{{ route('user.list') }}",
         "type": "GET",

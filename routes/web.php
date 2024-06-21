@@ -33,13 +33,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    Route::post('/user_password.reset',[ResetPaswordController::class,'reset'])->name('user_password.reset');
+      
     Route::get('/admin', [AdminController::class, 'index']);
 
     Route::group(['middleware' => ['role:SystemAdmin']], function () {
 
-        Route::post('/user_password.reset',[ResetPaswordController::class,'reset'])->name('user_password.reset');
-      
+    
         Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
         Route::get('/user-list',[UserManagementController::class,'list'])->name('user.list');
         Route::get('/user-add',[UserManagementController::class,'add'])->name('user.add');
