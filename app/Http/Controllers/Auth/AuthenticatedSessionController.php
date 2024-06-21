@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
        
         $permissions = ($user->role->id != 1) ? $user->role->getAllPermissions()->pluck('id') : array();        
 
-        Session::put(['permissions' => $permissions,'role_id' => $user->role->id]);
+        Session::put(['permissions' => $permissions,'role_id' => $user->role->id,'change_password' => $user->change_password]);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }

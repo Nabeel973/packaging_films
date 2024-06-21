@@ -41,7 +41,7 @@
 <script src="{{asset("plugins/pdfmake/pdfmake.min.js")}}"></script>
 <script src="{{asset("plugins/pdfmake/vfs_fonts.js")}}"></script>
 <script src="{{asset("plugins/datatables-buttons/js/buttons.html5.min.js")}}"></script>
-<script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script>
+{{-- <script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script> --}}
 <script src="{{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}"></script>    
 
 <script>
@@ -49,7 +49,7 @@
   $(document).ready(function() {
     var table = $("#example1").DataTable({
   
-      "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+      "buttons": ["copy", "csv", "excel", "pdf", "colvis"],
       "ajax": {
         "url": "{{ route('supplier.list') }}",
         "type": "GET",

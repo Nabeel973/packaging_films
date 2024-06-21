@@ -24,20 +24,10 @@
     <div class="card-body login-card-body">
       <p class="login-box-msg">You are only one step a way from your new password, reset your password now.</p>
       <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
-      <form method="POST" action="{{ route('password.store') }}" id=quickForm>
+      <form method="POST" action="{{ route('password.store') }}" id="quickForm">
         @csrf
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
-        <div class="input-group mb-3 form-group">
-            <input type="email" class="form-control" placeholder="Email" name="email">
-            <div class="input-group-append">
-                <div class="input-group-text">
-                    <span class="fas fa-envelope"></span>
-                </div>
-            </div>
-        </div>
-        {{-- @if ($errors->has('email'))
-            <span class="text-danger mt-0">{{ $errors->first('email') }}</span>
-        @endif --}}
+    
         <div class="input-group mb-3 form-group">
           <input type="password" class="form-control" placeholder="Password" name="password" id="password">
           <div class="input-group-append">
@@ -46,9 +36,7 @@
             </div>
           </div>
         </div>
-        {{-- @if ($errors->has('password'))
-            <span class="text-danger">{{ $errors->first('password') }}</span>
-        @endif --}}
+
         <div class="input-group mb-3 form-group">
           <input type="password" class="form-control" placeholder="Confirm Password" name="password_confirmation">
           <div class="input-group-append">
@@ -57,9 +45,7 @@
             </div>
           </div>
         </div>
-        {{-- @if ($errors->has('password'))
-            <span class="text-danger">{{ $errors->first('password_confirmation') }}</span>
-        @endif --}}
+
         <div class="row">
           <div class="col-12">
             <button type="submit" class="btn btn-primary btn-block">Change password</button>
@@ -97,10 +83,6 @@
     });
     $('#quickForm').validate({
       rules: {
-        email: {
-          required: true,
-          email: true,
-        },
         password: {
           required: true,
           minlength: 8
@@ -112,10 +94,7 @@
         }
       },
       messages: {
-        email: {
-          required: "Please enter a email address",
-          email: "Please enter a valid email address"
-        },
+
         password: {
           required: "Please provide a password",
           minlength: "Your password must be at least 8 characters long"

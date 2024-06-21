@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\ResetPaswordController;
 use App\Http\Controllers\UserManagementController;
 
 /*
@@ -36,6 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);
 
     Route::group(['middleware' => ['role:SystemAdmin']], function () {
+
+        Route::post('/user_password.reset',[ResetPaswordController::class,'reset'])->name('user_password.reset');
       
         Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
         Route::get('/user-list',[UserManagementController::class,'list'])->name('user.list');
