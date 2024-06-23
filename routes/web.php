@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\LCRequestController;
 use App\Http\Controllers\ResetPaswordController;
 use App\Http\Controllers\UserManagementController;
 
@@ -55,6 +56,13 @@ Route::middleware('auth')->group(function () {
             Route::post('/submit',[SupplierController::class,'submit'])->name('submit');
             Route::get('/edit/{id}',[SupplierController::class,'edit'])->name('edit');
             Route::put('/update/{id}',[SupplierController::class,'update'])->name('update');
+        });
+
+        Route::prefix('lc_request')->name('lc_request.')->group(function () {
+            Route::get('/',[LCRequestController::class,'index'])->name('index');
+            Route::get('/list',[LCRequestController::class,'list'])->name('list');
+            Route::get('/add',[LCRequestController::class,'add'])->name('add');
+            Route::post('/submit',[LCRequestController::class,'submit'])->name('submit');
         });
 
 
