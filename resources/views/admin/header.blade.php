@@ -132,7 +132,7 @@
         <i class="far fa-user"></i>
       </a>
       <div class="dropdown-menu dropdown-menu-right">
-        <a href="#" class="dropdown-item">
+        <a href="{{route('profile.edit')}}" class="dropdown-item">
           <!-- Profile -->
           <i class="fas fa-user mr-2"></i> Profile
         </a>
