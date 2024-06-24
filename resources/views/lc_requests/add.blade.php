@@ -71,7 +71,10 @@
             </div>
           </div>
           <div class="row justify-content-center mt-2">
-            <button type="submit" class="btn btn-primary btn-lg">Generate New Request</button>
+            {{-- <button type="submit" class="btn btn-primary btn-lg">Generate New Request</button> --}}
+            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
+              <i class="fas fa-save"></i> Generate New Request
+            </button>
           </div>
         </form>
     </div>
@@ -93,8 +96,12 @@
         data: supplier_names.map(function(supplier) {
             return { id: supplier.id, text: supplier.name };
         }),
+        width: '100%',
+        dropdownAutoWidth: true,
         //allowClear: true // Add this line to allow clearing the selection
       });
+
+      $(".supplier").val('').trigger('change');
 
       $.validator.setDefaults({
         submitHandler: function(form) {

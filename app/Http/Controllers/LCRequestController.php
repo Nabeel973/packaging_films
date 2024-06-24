@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Supplier;
 use App\Models\LCRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\LCRequestJourneyController;
 
 class LCRequestController extends Controller
 {
@@ -89,7 +91,76 @@ class LCRequestController extends Controller
 
         $lc_request->save();
 
+        LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now());
+
          // Redirect to a specific route with success message
          return redirect()->route('lc_request.index')->with('status', 'Request generated successfully.');
     }
+
+    public function edit($id){
+        $lcRequest = LCRequest::find($id);
+        $supplier_names = Supplier::all();
+        $disable = false;
+        if(session('role_id') == 2 && $lcRequest->status_id == 1){
+            $disable = true;
+        }
+        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $lcRequest = LcRequest::find($id);
+
+        if ($request->input('action') == 'approve') {
+            // Handle approval logic
+            $lcRequest->status_id = 3;
+            $lcRequest->save();
+            LCRequestJourneyController::add($lc_request->id,Auth::id(),3,Carbon::now());
+            return redirect()->route('lc_request.index')->with('status', 'LC Request approved successfully!');
+        }
+
+        // Handle update logic
+        else{
+            $lcRequest->shipment_name = $request->input('shipment_name');
+            $lcRequest->supplier_id = $request->input('supplier');
+            $lcRequest->item_name = $request->input('item_name');
+            $lcRequest->item_quantity = $request->input('item_quantity');
+            $lcRequest->payment_terms = $request->input('payment_terms');
+            $lcRequest->draft_required = $request->input('draft_required', false);
+    
+            if ($request->hasFile('performa_invoice')) {
+                // Handle file upload
+                $lcRequest->performa_invoice = $request->file('performa_invoice')->store('invoices');
+            }
+    
+            if ($request->hasFile('other_document')) {
+                // Handle file upload
+                $lcRequest->other_document = $request->file('other_document')->store('documents');
+            }
+    
+            $lcRequest->save();
+    
+            return redirect()->route('lc_request.index')->with('status', 'LC Request updated successfully!');
+        }
+      
+    }
+
+    public function rejectReason(Request $request){
+
+        $lc_request = LCRequest::find($request->lc_request_id);
+        $status_id = 0;
+
+        if($lc_request->status_id == 1){
+            $status_id = 3;
+        }
+        
+        $lc_request->status_id = $status_id;
+        $lc_request->reason_code = $request->reason;
+        $lc_request->save();
+
+         LCRequestJourneyController::add($lc_request->id,Auth::id(),3,Carbon::now(),$request->reason);
+
+         return redirect()->route('lc_request.index')->with('status', 'LC Request rejected successfully!');
+    }
+
 }

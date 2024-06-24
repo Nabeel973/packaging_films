@@ -54,7 +54,10 @@
             </div> 
           </div>
           <div class="row justify-content-center mt-2">
-            <button type="submit" class="btn btn-primary btn-lg">Create New User</button>
+            {{-- <button type="submit" class="btn btn-primary btn-lg">Create New User</button> --}}
+            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
+              <i class="fas fa-save"></i> Create New User
+            </button>
           </div>
       
         </form>
@@ -79,8 +82,12 @@
         placeholder: "Select Role",
         data: roles.map(function(role) {
                   return { id: role.id, text: role.name };
-              })
+              }),
+        width: '100%',
+        dropdownAutoWidth: true,
       });
+
+      $(".role").val('').trigger('change');
   
     $.validator.setDefaults({
         submitHandler: function(form) {

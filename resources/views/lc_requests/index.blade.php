@@ -139,7 +139,7 @@
       console.log(supplierId);
       // Perform edit operation based on userId
       // For example, redirect to user page
-      var editUrl = "{{ route('supplier.edit', ':id') }}"; // Laravel route with a placeholder
+      var editUrl = "{{ route('lc_request.edit', ':id') }}"; // Laravel route with a placeholder
         editUrl = editUrl.replace(':id', supplierId); // Replace placeholder with actual user ID
         window.location.href = editUrl; // Redirect to the edit page
     });

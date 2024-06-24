@@ -21,7 +21,10 @@
             </div>
           </div>
           <div class="row justify-content-center mt-2">
-            <button type="submit" class="btn btn-primary btn-lg">Create New Supplier</button>
+            {{-- <button type="submit" class="btn btn-primary btn-lg">Create New Supplier</button> --}}
+            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
+              <i class="fas fa-save"></i> Create New Supplier
+            </button>
           </div>
       
         </form>

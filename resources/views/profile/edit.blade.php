@@ -14,8 +14,8 @@
                        <!-- Image Section -->
             <div class="col-md-4">
                 <div class="text-center">
-                    {{-- <img src="{{ url('storage/' . $user->image) }}" class="rounded-circle img-fluid" alt="Profile Image"> --}}
-                    <img src="<?php echo asset("storage/$user->image")?>" class="rounded-circle img-fluid" alt="Profile Image">
+                    <img src="{{ url('storage/' . $user->image) }}" class="rounded-circle img-fluid" alt="Profile Image" height="500px" width="500px">
+                    {{-- <img src="{{ url($user->image) }}" class="rounded-circle img-fluid" alt="Profile Image"> --}}
                 </div>
             </div>
             <!-- Form Details Section -->
@@ -40,7 +40,10 @@
                         <label for="image">Profile Image</label>
                         <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png">
                       </div>
-                    <button type="submit" class="btn btn-primary mt-3">Save</button>
+                    {{-- <button type="submit" class="btn btn-primary mt-3">Save</button> --}}
+                    <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
+                        <i class="fas fa-save"></i> Save
+                      </button>
                 </form>
             </div>
         </div>

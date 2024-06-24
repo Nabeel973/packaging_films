@@ -57,22 +57,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}',[SupplierController::class,'edit'])->name('edit');
             Route::put('/update/{id}',[SupplierController::class,'update'])->name('update');
         });
-
-        Route::prefix('lc_request')->name('lc_request.')->group(function () {
-            Route::get('/',[LCRequestController::class,'index'])->name('index');
-            Route::get('/list',[LCRequestController::class,'list'])->name('list');
-            Route::get('/add',[LCRequestController::class,'add'])->name('add');
-            Route::post('/submit',[LCRequestController::class,'submit'])->name('submit');
-        });
-
-
         
     });
+
+    
+    Route::prefix('lc_request')->name('lc_request.')->group(function () {
+        Route::get('/',[LCRequestController::class,'index'])->name('index');
+        Route::get('/list',[LCRequestController::class,'list'])->name('list');
+        Route::get('/add',[LCRequestController::class,'add'])->name('add');
+        Route::post('/submit',[LCRequestController::class,'submit'])->name('submit');
+        Route::get('/edit/{id}',[LCRequestController::class,'edit'])->name('edit');
+        Route::put('/update/{id}',[LCRequestController::class,'update'])->name('update');
+        Route::post('/reject/reason',[LCRequestController::class,'rejectReason'])->name('reject-reason');
+    });
+    
     
     // for admin
-    Route::group(['middleware' => ['role:FinanceHead']], function () {
-        //Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
-    });
+    // Route::group(['middleware' => ['role:FinanceHead']], function () {
+    //     //Route::get('/user-management',[UserManagementController::class,'index'])->name('user.index');
+    // });
     
     // Or with multiple roles
     Route::group(['middleware' => ['role:SystemAdmin|FinanceHead']], function () 
