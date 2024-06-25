@@ -132,12 +132,14 @@
                   <p>LC List</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="{{route('lc_request.add')}}" class="nav-link">
-                  <i class="fas fa-plus nav-icon"></i>
-                  <p>Add Request</p>
-                </a>
-              </li>
+              @if(in_array(session('role_id'),[1,5]))
+                <li class="nav-item">
+                  <a href="{{route('lc_request.add')}}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>Add Request</p>
+                  </a>
+                </li>
+              @endif  
             </ul>
           </li>
         </ul>

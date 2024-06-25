@@ -20,4 +20,17 @@ class LCRequest extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    public function journey()
+    {
+        return $this->hasMany(LCReqeusteJourney::class,'lc_request_id','id');
+    }
+
+    public function created_by(){
+        return $this->belongsTo(User::class,'created_by','id');
+    }
+
+    public function status(){
+        return $this->belongsTo(LCRequestStatus::class,'status_id','id');
+    }
 }

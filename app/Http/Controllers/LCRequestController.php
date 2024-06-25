@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Supplier;
 use App\Models\LCRequest;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\LCRequestStatusUpdateEmail;
 use App\Http\Controllers\LCRequestJourneyController;
 
 class LCRequestController extends Controller
@@ -100,9 +105,11 @@ class LCRequestController extends Controller
     public function edit($id){
         $lcRequest = LCRequest::find($id);
         $supplier_names = Supplier::all();
-        $disable = false;
-        if(session('role_id') == 2 && $lcRequest->status_id == 1){
-            $disable = true;
+        $disable = true;
+
+        if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && $lcRequest->status_id == 3))
+        {  
+            $disable = false;
         }
         return view('lc_requests.edit',compact('supplier_names','lcRequest','disable'));
     }
@@ -113,9 +120,9 @@ class LCRequestController extends Controller
 
         if ($request->input('action') == 'approve') {
             // Handle approval logic
-            $lcRequest->status_id = 3;
+            $lcRequest->status_id = 2;
             $lcRequest->save();
-            LCRequestJourneyController::add($lc_request->id,Auth::id(),3,Carbon::now());
+            LCRequestJourneyController::add($lc_request->id,Auth::id(),2,Carbon::now());
             return redirect()->route('lc_request.index')->with('status', 'LC Request approved successfully!');
         }
 
@@ -146,7 +153,8 @@ class LCRequestController extends Controller
     }
 
     public function rejectReason(Request $request){
-
+        
+    
         $lc_request = LCRequest::find($request->lc_request_id);
         $status_id = 0;
 
@@ -158,7 +166,13 @@ class LCRequestController extends Controller
         $lc_request->reason_code = $request->reason;
         $lc_request->save();
 
-         LCRequestJourneyController::add($lc_request->id,Auth::id(),3,Carbon::now(),$request->reason);
+        LCRequestJourneyController::add($lc_request->id,Auth::id(),3,Carbon::now(),$request->reason);
+
+
+        // if($status_id == 3){
+        $users = User::where('role_id',5)->get();
+    
+        Notification::send($users, new LCRequestStatusUpdateEmail($lc_request));
 
          return redirect()->route('lc_request.index')->with('status', 'LC Request rejected successfully!');
     }
