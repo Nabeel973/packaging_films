@@ -13,7 +13,7 @@ class LCRequestStatusSeeder extends Seeder
      */
     public function run(): void
     {
-       $names = array('Request Submitted','Request Approved','Request Reverted Back','Discrepancy Identified','Discrepancy Removed','Applied to Bank','Draft Under Review','Transmission Pending','Transmitted');
+       $names = array('Request Submitted','Request Approved','Request Reverted Back','Request Adjusted','Discrepancy Identified','Discrepancy Removed','Applied to Bank','Draft Under Review','Transmission Pending','Transmitted');
        
        foreach($names as $name){
             LCRequestStatus::create(['name' => $name]);

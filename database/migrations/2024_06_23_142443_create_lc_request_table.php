@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('quantity')->nullable();
             $table->string('payment_terms');
             $table->smallInteger('draft_required')->default(0)->index();
-            $table->smallInteger('prirority')->default(0)->index();
+            $table->smallInteger('priority')->default(0)->index();
             $table->integer('created_by')->index();
             $table->integer('updated_by')->nullable()->index();
             $table->string('performa_invoice')->nullable();

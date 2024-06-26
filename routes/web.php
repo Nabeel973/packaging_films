@@ -76,6 +76,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}',[LCRequestController::class,'edit'])->name('edit');
             Route::put('/update/{id}',[LCRequestController::class,'update'])->name('update');
             Route::post('/reject/reason',[LCRequestController::class,'rejectReason'])->name('reject-reason');
+            Route::post('/set-priority',[LCRequestController::class,'setPriority'])->name('set-priority');
         });
     
     });

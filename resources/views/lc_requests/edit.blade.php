@@ -1,9 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Edit LC Request {{session('role_id')}}</h1>
-  <h1>STtaus {{ $lcRequest->status->name }}</h1>
-  <h1>Disable {{ $disable }}</h1>
+  <h1>Edit LC Request
 @endsection
 
 @section('content')
@@ -12,6 +10,9 @@
   <div class="card">
     <div class="card-body">
       <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
+        <div class="font-medium text-sm text-black bg-warning p-2 border rounded-md text-center mb-2">
+            LC Request Status : <b>{{$lcRequest->status->name}}</b>
+        </div>
         <form id="quickForm" method="post" action="{{ route('lc_request.update', $lcRequest->id) }}" enctype="multipart/form-data">
           @csrf
           @method('PUT')
@@ -25,7 +26,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Select Supplier*</label>
-                    <select class="supplier form-control" id="supplier" name="supplier" disabled="{{$disable}}">
+                    <select class="supplier form-control" id="supplier" name="supplier" {{ $disable ? 'disabled' : '' }}>
                     </select>
                 </div>
           </div>
@@ -34,13 +35,13 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="itemName">Item Name</label>
-                <input type="text" name="item_name" class="form-control " id="item_name" placeholder="Enter Item Name" value="{{ $lcRequest->item_name }}" disabled="{{$disable}}">
+                <input type="text" name="item_name" class="form-control " id="item_name" placeholder="Enter Item Name" value="{{ $lcRequest->item_name }}" {{ $disable ? 'disabled' : '' }}>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label for="itemQuantity">Item Quantity</label>
-                <input type="number" name="item_quantity" class="form-control" id="item_quantity" placeholder="Enter Quantity" value="{{ $lcRequest->quantity }}" disabled="{{$disable}}">
+                <input type="number" name="item_quantity" class="form-control" id="item_quantity" placeholder="Enter Quantity" value="{{ $lcRequest->quantity }}" {{ $disable ? 'disabled' : '' }}>
               </div>
             </div>
           </div>
@@ -48,14 +49,19 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Payment Terms*</label>
-                <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms" value="{{ $lcRequest->payment_terms }}" disabled="{{$disable}}">
+                <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms" value="{{ $lcRequest->payment_terms }}" {{ $disable ? 'disabled' : '' }}>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <label>Attach Performa Invoice*</label>
-                <input type="file" class="form-control" id="performa_invoice" name="performa_invoice" disabled="{{$disable}}">
-                <p>{{ $lcRequest->performa_invoice }}</p>
+                <input type="file" class="form-control" id="performa_invoice" name="performa_invoice" {{ $disable ? 'disabled' : '' }}>
+                {{-- <p>{{ $lcRequest->performa_invoice }}</p> --}}
+                @if ($lcRequest->performa_invoice)
+                  <a href="{{ asset('storage/'.$lcRequest->performa_invoice) }}" class="btn btn-success mt-2" download>
+                    <i class="fas fa-download"></i> Download
+                  </a>
+                @endif
               </div>
             </div>
           </div>
@@ -63,20 +69,20 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="otherDocuments">Other Document</label>
-                <input type="file" class="form-control" id="other_document" name="other_document" disabled="{{$disable}}">
+                <input type="file" class="form-control" id="other_document" name="other_document" {{ $disable ? 'disabled' : '' }}>
                 <p>{{ $lcRequest->other_document }}</p>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-check mt-2">
-                <input class="form-check-input" type="checkbox" name="draft_required" {{ $lcRequest->draft_required ? 'checked' : '' }} disabled="{{$disable}}">
+                <input class="form-check-input" type="checkbox" name="draft_required" {{ $lcRequest->draft_required ? 'checked' : '' }} {{ $disable ? 'disabled' : '' }}>
                 <label class="form-check-label">LC Draft Required</label>
               </div>
             </div>
           </div>
           {{-- when rejected by commercial head  --}}
          
-            @if(in_array($lcRequest->status_id,[3,4]))
+            @if(in_array($lcRequest->status_id,[3,5]))
              
               <div class="row">
                   <div class="col-md-6">
@@ -95,7 +101,7 @@
             <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">Approve</button>
           </div> --}}
           <div class="row justify-content-center mt-2">
-            @if(session('role_id') == 1 || (session('role_id') == 3 && $lcRequest->status_id  == 1))
+            @if(session('role_id') == 1 || (session('role_id') == 3 && in_array($lcRequest->status_id,[1,4])))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
                 <i class="fas fa-times"></i> Reject
                 </button>
@@ -106,7 +112,7 @@
                 </button>
             @endif    
             
-            @if(session('role_id') == 1 || (session('role_id') == 3 && $lcRequest->status_id  == 1))
+            @if(session('role_id') == 1 || (session('role_id') == 3 && in_array($lcRequest->status_id,[1,4]) ))
                 <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">
                 <i class="fas fa-check"></i> Approve
                 </button>
