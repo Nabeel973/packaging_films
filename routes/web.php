@@ -57,10 +57,17 @@ Route::middleware('auth')->group(function () {
         
     });
 
-    // for admin
+    // for commercial officer
     Route::group(['middleware' => ['role:CommercialOfficer|SystemAdmin']], function () {
         Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
         Route::post('/submit',[LCRequestController::class,'submit'])->name('lc_request.submit');
+    });
+
+     // for TreasuryOfficer
+     Route::group(['middleware' => ['role:TreasuryOfficer|SystemAdmin']], function () {
+        // Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
+        Route::post('/apply-for-bank',[LCRequestController::class,'applyForBank'])->name('lc_request.apply_for_bank');
+        Route::post('/apply-for-transit',[LCRequestController::class,'applyForTransit'])->name('lc_request.apply_for_transit');
     });
     
     // Or with multiple roles

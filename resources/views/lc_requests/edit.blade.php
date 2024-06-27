@@ -94,19 +94,13 @@
               </div>
             @endif
           
-        
-          {{-- <div class="row justify-content-center mt-2">
-            <button type="submit" name="action" value="reject" class="btn btn-danger btn-lg mx-2">Reject</button>
-            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">Update</button>
-            <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">Approve</button>
-          </div> --}}
           <div class="row justify-content-center mt-2">
-            @if(session('role_id') == 1 || (session('role_id') == 3 && in_array($lcRequest->status_id,[1,4])))
+            @if(session('role_id') == 1 || (session('role_id') == 3 && in_array($lcRequest->status_id,[1,4])) || (session('role_id') == 4 && $lcRequest->status_id == 2 ))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
                 <i class="fas fa-times"></i> Reject
                 </button>
             @endif    
-            @if(session('role_id') == 1 || (session('role_id') == 5 && $lcRequest->status_id  == 3))
+            @if(session('role_id') == 1 || (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5])))
                 <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
                 <i class="fas fa-save"></i> Update
                 </button>
@@ -116,6 +110,25 @@
                 <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">
                 <i class="fas fa-check"></i> Approve
                 </button>
+            @endif 
+
+            @if((session('role_id') == 4 && $lcRequest->status_id == 2))
+                <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
+                <i class="fas fa-check"></i> Apply For Bank
+                </button>
+            @endif   
+
+            @if((session('role_id') == 4 && $lcRequest->status_id == 7))
+              @if($lcRequest->draft_required == 1) 
+                <button type="submit"  name="action" value="next" class="btn btn-success btn-lg mx-2" id="apply_for_bank"> 
+                  <i class="fas fa-check"></i> Move To Draft Review
+
+                </button>
+              @else
+                <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_transit">
+                  <i class="fas fa-check"></i>  Apply For Transit
+                </button>
+              @endif    
             @endif    
           </div>
         </form>
@@ -140,6 +153,72 @@
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter Reason*</label>
               <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="documentModalLabel">Upload Document</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="uploadDocumentForm" method="post" action="{{ route('lc_request.apply_for_bank') }}" enctype="multipart/form-data">
+          @csrf
+          @method('post')
+          <div class="modal-body">
+         
+            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $lcRequest->id }}">
+            <div class="form-group">
+              <label for="cancelReasonTextarea">Enter Bank Name*</label>
+              <input type="text" name="bank_name" id="bank_name" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Upload Document*</label>
+              <input type="file" class="form-control" id="upload_document" name="upload_document">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="transitModal" tabindex="-1" role="dialog" aria-labelledby="transitModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="transit">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="transitModalLabel">Upload Document</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form id="transitForm" method="post" action="{{ route('lc_request.apply_for_bank') }}" enctype="multipart/form-data">
+          @csrf
+          @method('post')
+          <div class="modal-body">
+         
+            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $lcRequest->id }}">
+            <div class="form-group">
+              <label for="cancelReasonTextarea">Enter LC Number*</label>
+              <input type="text" name="lc_number" id="lc_number" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Upload Transit LC Copy*</label>
+              <input type="file" class="form-control" id="upload_transit_document" name="upload_transit_document">
             </div>
           </div>
           <div class="modal-footer">
@@ -256,8 +335,78 @@
         }
       });
 
+      $('#uploadDocumentForm').validate({
+        rules: {
+          bank_name: {
+            required: true,
+          },
+          upload_document: {
+            required: true,
+          }
+        },
+        messages: {
+          bank_name: {
+            required: "Bank name is required",
+          },
+          upload_document: {
+            required: "Document is required",
+          }
+         
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+
+      $('#transitForm').validate({
+        rules: {
+          lc_number: {
+            required: true,
+          },
+          upload_transit_document: {
+            required: true,
+          }
+        },
+        messages: {
+          lc_number: {
+            required: "LC Number is required",
+          },
+          upload_transit_document: {
+            required: "Document is required",
+          }
+         
+        },
+        errorElement: 'span',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          element.closest('.form-group').append(error);
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).removeClass('is-invalid');
+        }
+      });
+
       $('#reject').click(function() {
         $('#cancelModal').modal('show');
+      });
+
+      $('#apply_for_bank').click(function() {
+        $('#documentModal').modal('show');
+      });
+      
+      $('#apply_for_transit').click(function() {
+        $('#transitModal').modal('show');
       });
     });
   </script>

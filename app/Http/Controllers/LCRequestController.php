@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Document;
 use App\Models\Supplier;
 use App\Models\LCRequest;
 use Illuminate\Http\Request;
@@ -84,7 +85,7 @@ class LCRequestController extends Controller
         if ($request->hasFile('other_document')) {
             $document = $request->file('other_document');
             $documentName = time() . '.' . $document->getClientOriginalExtension();
-            $documentDirectory = 'document/' .  $lc_request->id;
+            $documentDirectory = 'documents/' .  $lc_request->id;
 
             // Delete the previous document if it exists
             if ($lc_request->document) {
@@ -118,6 +119,7 @@ class LCRequestController extends Controller
 
     public function update(Request $request, $id)
     {
+        dd($request->all());
         $lcRequest = LcRequest::find($id);
 
         if ($request->input('action') == 'approve') {
@@ -135,8 +137,30 @@ class LCRequestController extends Controller
             return redirect()->route('lc_request.index')->with('status', 'LC Request approved successfully!');
         }
 
+        if ($request->input('action') == 'next') {
+            // Handle approval logic
+
+            if($lcRequest->draft_required == 1){
+                $lcRequest->status_id = 8;
+            }
+            else{
+                $lcRequest->status_id = 10;
+            }
+            
+            $lcRequest->updated_by = Auth::id();
+            $lcRequest->updated_at = Carbon::now();
+            $lcRequest->save();
+
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            
+            LCRequestStatusEmailJob::dispatch($lcRequest);
+            
+            return redirect()->route('lc_request.index')->with('status', 'LC Request status updated successfully!');
+        }
+
         // Handle update logic
         else{
+
             $lcRequest->shipment_name = $request->input('shipment_name');
             $lcRequest->supplier_id = $request->input('supplier');
             $lcRequest->item_name = $request->input('item_name');
@@ -144,7 +168,13 @@ class LCRequestController extends Controller
             $lcRequest->payment_terms = $request->input('payment_terms');
             $lcRequest->draft_required = $request->input('draft_required', false);
             $lcRequest->reason_code = null;
-            $lcRequest->status_id = 4;
+            if($lcRequest->status_id == 5){    //disperency identified
+                $lcRequest->status_id = 6;  //disperency removed 
+            }
+            else{
+                $lcRequest->status_id = 4;  //adjusted
+            }
+            
             $lcRequest->updated_by = Auth::id();
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->draft_required = ($request->draft_required == 'on') ? 1 : 0;
@@ -231,6 +261,107 @@ class LCRequestController extends Controller
         }
 
         return response()->json(['success' => false]);
+    }
+
+    public function applyForBank(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'lc_request_id' => 'required|integer',
+            'bank_name' => 'required|string|max:255',
+            'upload_document' => 'required|max:1024',
+        ]);
+
+          // Check if validation fails
+          if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
+        }
+
+        $lc_request_id = $request->input('lc_request_id');
+
+        // Find the LC request by ID and update the value
+        $lcRequest = LCRequest::find($lc_request_id);
+
+        if ($lcRequest) {
+            // Perform the update operation
+            
+            $document = new Document();
+            $document->lc_request_id = $request->lc_request_id;
+            $document->bank_name = $request->bank_name;
+            $document->name = "Bank";
+            $document->document_type_id = 2;
+            $document->save();
+
+            if ($request->hasFile('upload_document')) {
+                $uploadedDocument  = $request->file('upload_document');
+                $documentName = time() . '.' . $uploadedDocument ->getClientOriginalExtension();
+                $documentDirectory = 'documents/' .  $lcRequest->id;
+                $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
+                $document->path = $documentPath;
+                $document->save();
+            }
+
+            $lcRequest->reason_code = null;
+            $lcRequest->status_id = 7;
+            $lcRequest->updated_by = Auth::id();
+            $lcRequest->updated_at = Carbon::now();
+            $lcRequest->save();
+
+            return redirect()->back()->with('status', 'Applied for bank successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Error applying for bank!');
+    }
+
+    public function applyForTransit(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'lc_request_id' => 'required|integer',
+            'lc_number' => 'required|string|max:255',
+            'upload_transit_document' => 'required|max:1024',
+        ]);
+
+          // Check if validation fails
+          if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
+        }
+
+        $lc_request_id = $request->input('lc_request_id');
+
+        // Find the LC request by ID and update the value
+        $lcRequest = LCRequest::find($lc_request_id);
+
+        if ($lcRequest) {
+            // Perform the update operation
+            
+            $document = new Document();
+            $document->lc_request_id = $request->lc_request_id;
+            $document->name = "Bank";
+            $document->document_type_id = 2;
+            $document->save();
+
+            if ($request->hasFile('upload_transit_document')) {
+                $uploadedDocument  = $request->file('upload_transit_document');
+                $documentName = time() . '.' . $uploadedDocument ->getClientOriginalExtension();
+                $documentDirectory = 'documents/' .  $lcRequest->id;
+                $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
+                $document->path = $documentPath;
+                $document->save();
+            }
+
+            $lcRequest->reason_code = null;
+            $lcRequest->status_id = 10;
+            $lcRequest->updated_by = Auth::id();
+            $lcRequest->updated_at = Carbon::now();
+            $lcRequest->save();
+
+            return redirect()->back()->with('status', 'Transited Successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Error applying for bank!');
     }
 
 }

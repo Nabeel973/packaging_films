@@ -58,16 +58,32 @@
           </div>
           <div class="row mb-2">
             <div class="col-md-6">
-              <div class="form-group">
-                <label for="otherDocuments">Other Document</label>
-                <input type="file" class="form-control" id="other_document" name="other_document">
-              </div>
-            </div>
-            <div class="col-md-6">
               <div class="form-check mt-4">
                 <input class="form-check-input" type="checkbox" name="draft_required">
                 <label class="form-check-label">LC Draft Required</label>
               </div>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div id="dynamic-form">
+                <div class="row" id="document-row-1">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="otherDocuments">Other Document</label>
+                            <input type="file" class="form-control" id="document1" name="document1">
+                        </div>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-center mt-2">
+                      <button type="button" class="btn btn-success" id="add-field"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-center">
+                        <i class="delete-icon" style="display:none;">&#10006;</i>
+                    </div>
+                   
+                </div>
+            </div>
+              {{-- <button type="button" class="btn btn-primary mt-3" id="add-field">Add Document</button> --}}
             </div>
           </div>
           <div class="row justify-content-center mt-2">
@@ -158,6 +174,60 @@
           $(element).removeClass('is-invalid');
         }
       });
+
+    let fieldCount = 1;
+    const maxFields = 5;
+
+    // Function to check if the last input is filled
+    function checkLastInput() {
+        return $('#dynamic-form input[type="file"]').last().val() !== "";
+    }
+
+    // Enable the Add button only if the last input is filled and max fields not reached
+    function toggleAddButton() {
+        if (checkLastInput() && fieldCount < maxFields) {
+            $('#add-field').prop('disabled', false);
+        } else {
+            $('#add-field').prop('disabled', true);
+        }
+    }
+
+    // Initial check
+    toggleAddButton();
+
+    // Event to add new field
+    $('#add-field').on('click', function() {
+        if (fieldCount < maxFields) {
+            fieldCount++;
+            const newRow = `
+                <div class="row" id="document-row-${fieldCount}">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="otherDocuments">Other Document</label>
+                            <input type="file" class="form-control" id="document${fieldCount}" name="document${fieldCount}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-danger delete-row mt-2"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+            `;
+            $('#dynamic-form').append(newRow);
+            toggleAddButton();
+        }
+    });
+
+    // Event to handle file input change
+    $(document).on('change', 'input[type="file"]', function() {
+        toggleAddButton();
+    });
+
+    // Event to delete a row
+    $(document).on('click', '.delete-row', function() {
+        $(this).closest('.row').remove();
+        fieldCount--;
+        toggleAddButton();
+    });
     });
   </script>
 @endsection
