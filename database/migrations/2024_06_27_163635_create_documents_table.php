@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->integer('lc_request_id')->index();
-            $table->string('name');
-            $table->string('path')->nullable();
+            $table->string('performa_invoice')->nullable();
+            $table->string('document_1')->nullable();
+            $table->string('document_2')->nullable();
+            $table->string('document_3')->nullable();
+            $table->string('document_4')->nullable();
+            $table->string('document_5')->nullable();
             $table->string('bank_name')->nullable();
-            $table->smallInteger('document_type_id')->index();
+            $table->string('bank_document')->nullable();
+            $table->string('transited_lc_document')->nullable();
+            $table->string('transited_lc_number')->nullable();
             $table->timestamps();
-
         });
     }
 

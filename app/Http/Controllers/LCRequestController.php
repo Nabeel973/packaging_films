@@ -47,6 +47,11 @@ class LCRequestController extends Controller
             'supplier' => 'required|integer',
             'payment_terms' => 'required|string',
             'performa_invoice' => 'required|max:1024',
+            'document_1' =>'max:1024',
+            'document_2' =>'max:1024',
+            'document_3' =>'max:1024',
+            'document_4' =>'max:1024',
+            'document_5' =>'max:1024',
         ]);
 
           // Check if validation fails
@@ -67,42 +72,21 @@ class LCRequestController extends Controller
         $lc_request->status_id = 1;
         $lc_request->save();
 
-        if ($request->hasFile('performa_invoice')) {
-            $invoice = $request->file('performa_invoice');
-            $invoiceName = time() . '.' . $invoice->getClientOriginalExtension();
-            $invoiceDirectory = 'performa_invoices/' .  $lc_request->id;
+        $document = new Document();
+        $document->lc_request_id = $lc_request->id;
+        $document->save();
 
-            // Delete the previous invoice if it exists
-            if ($lc_request->performa_invoice) {
-                Storage::delete($lc_request->performa_invoice); // Assuming the 'local' disk
-            }
-
-            // Store the new invoice in the user's directory
-            $invoicePath = $invoice->storeAs($invoiceDirectory, $invoiceName);
-            $lc_request->performa_invoice = $invoicePath;
-        }
-
-        if ($request->hasFile('other_document')) {
-            $document = $request->file('other_document');
-            $documentName = time() . '.' . $document->getClientOriginalExtension();
-            $documentDirectory = 'documents/' .  $lc_request->id;
-
-            // Delete the previous document if it exists
-            if ($lc_request->document) {
-                Storage::delete($lc_request->document); // Assuming the 'local' disk
-            }
-
-            // Store the new document in the user's directory
-            $documentPath = $document->storeAs($documentDirectory, $documentName);
-            $lc_request->document = $documentPath;
-        }
-
-        $lc_request->save();
+        LCRequestController::uploadDocuments($request,$document,"performa_invoice","performa_invoices",$lc_request->id); //adds performa invoice
+        LCRequestController::uploadDocuments($request,$document,"document_1","documents",$lc_request->id); //adds performa document1
+        LCRequestController::uploadDocuments($request,$document,"document_2","documents",$lc_request->id); //adds performa document2
+        LCRequestController::uploadDocuments($request,$document,"document_3","documents",$lc_request->id); //adds performa document3
+        LCRequestController::uploadDocuments($request,$document,"document_4","documents",$lc_request->id); //adds performa document4
+        LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lc_request->id); //adds performa document5
 
         LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now());
         LCRequestStatusEmailJob::dispatch($lc_request);
          // Redirect to a specific route with success message
-         return redirect()->route('lc_request.index')->with('status', 'Request generated successfully.');
+        return redirect()->route('lc_request.index')->with('status', 'Request generated successfully.');
     }
 
     public function edit($id){
@@ -119,7 +103,7 @@ class LCRequestController extends Controller
 
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        //dd($request->all());
         $lcRequest = LcRequest::find($id);
 
         if ($request->input('action') == 'approve') {
@@ -142,9 +126,6 @@ class LCRequestController extends Controller
 
             if($lcRequest->draft_required == 1){
                 $lcRequest->status_id = 8;
-            }
-            else{
-                $lcRequest->status_id = 10;
             }
             
             $lcRequest->updated_by = Auth::id();
@@ -180,38 +161,21 @@ class LCRequestController extends Controller
             $lcRequest->draft_required = ($request->draft_required == 'on') ? 1 : 0;
             $lcRequest->save();
 
-            if ($request->hasFile('performa_invoice')) {
-                $invoice = $request->file('performa_invoice');
-                $invoiceName = time() . '.' . $invoice->getClientOriginalExtension();
-                $invoiceDirectory = 'performa_invoices/' .  $lcRequest->id;
-    
-                // Delete the previous invoice if it exists
-                if ($lcRequest->performa_invoice) {
-                    Storage::delete($lcRequest->performa_invoice); // Assuming the 'local' disk
-                }
-    
-                // Store the new invoice in the user's directory
-                $invoicePath = $invoice->storeAs($invoiceDirectory, $invoiceName);
-                $lcRequest->performa_invoice = $invoicePath;
+            if($lcRequest->documents){
+                $document = $lcRequest->documents;
             }
-    
-            if ($request->hasFile('other_document')) {
-                $document = $request->file('other_document');
-                $documentName = time() . '.' . $document->getClientOriginalExtension();
-                $documentDirectory = 'document/' .  $lcRequest->id;
-
-                // Delete the previous document if it exists
-                if ($lcRequest->document) {
-                    Storage::delete($lcRequest->document); // Assuming the 'local' disk
-                }
-
-                // Store the new document in the user's directory
-                $documentPath = $document->storeAs($documentDirectory, $documentName);
-                $lcRequest->document = $documentPath;
+            else{
+                $document = new Document();
+                $document->lc_request_id = $request->id;
             }
-    
-            $lcRequest->save();
 
+            LCRequestController::uploadDocuments($request,$document,"performa_invoice","performa_invoices",$lcRequest->id); //adds performa invoice
+            LCRequestController::uploadDocuments($request,$document,"document_1","documents",$lcRequest->id); //adds performa document1
+            LCRequestController::uploadDocuments($request,$document,"document_2","documents",$lcRequest->id); //adds performa document2
+            LCRequestController::uploadDocuments($request,$document,"document_3","documents",$lcRequest->id); //adds performa document3
+            LCRequestController::uploadDocuments($request,$document,"document_4","documents",$lcRequest->id); //adds performa document4
+            LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lcRequest->id); //adds performa document5
+    
             LCRequestStatusEmailJob::dispatch($lcRequest);
             return redirect()->route('lc_request.index')->with('status', 'LC Request updated successfully!');
         }
@@ -268,7 +232,7 @@ class LCRequestController extends Controller
         $validator = Validator::make($request->all(), [
             'lc_request_id' => 'required|integer',
             'bank_name' => 'required|string|max:255',
-            'upload_document' => 'required|max:1024',
+            'bank_document' => 'required|max:1024',
         ]);
 
           // Check if validation fails
@@ -278,29 +242,22 @@ class LCRequestController extends Controller
                              ->withInput();
         }
 
-        $lc_request_id = $request->input('lc_request_id');
-
-        // Find the LC request by ID and update the value
-        $lcRequest = LCRequest::find($lc_request_id);
-
+        $lcRequest = LCRequest::find($request->input('lc_request_id'));
+       
         if ($lcRequest) {
-            // Perform the update operation
+
+            if($lcRequest->documents){
+                $document = $lcRequest->documents;
+            }
+            else{
+                $document = new Document();
+                $document->lc_request_id =$request->lc_request_id;
+            }
             
-            $document = new Document();
-            $document->lc_request_id = $request->lc_request_id;
             $document->bank_name = $request->bank_name;
-            $document->name = "Bank";
-            $document->document_type_id = 2;
             $document->save();
 
-            if ($request->hasFile('upload_document')) {
-                $uploadedDocument  = $request->file('upload_document');
-                $documentName = time() . '.' . $uploadedDocument ->getClientOriginalExtension();
-                $documentDirectory = 'documents/' .  $lcRequest->id;
-                $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
-                $document->path = $documentPath;
-                $document->save();
-            }
+            LCRequestController::uploadDocuments($request,$document,"bank_document","documents",$lcRequest->id); //adds performa document1
 
             $lcRequest->reason_code = null;
             $lcRequest->status_id = 7;
@@ -319,7 +276,7 @@ class LCRequestController extends Controller
         $validator = Validator::make($request->all(), [
             'lc_request_id' => 'required|integer',
             'lc_number' => 'required|string|max:255',
-            'upload_transit_document' => 'required|max:1024',
+            'transited_lc_document' => 'required|max:1024',
         ]);
 
           // Check if validation fails
@@ -337,20 +294,18 @@ class LCRequestController extends Controller
         if ($lcRequest) {
             // Perform the update operation
             
-            $document = new Document();
-            $document->lc_request_id = $request->lc_request_id;
-            $document->name = "Bank";
-            $document->document_type_id = 2;
+            if($lcRequest->documents){
+                $document = $lcRequest->documents;
+            }
+            else{
+                $document = new Document();
+                $document->lc_request_id =$request->lc_request_id;
+            }
+
+            $document->transited_lc_number = $request->lc_number;
             $document->save();
 
-            if ($request->hasFile('upload_transit_document')) {
-                $uploadedDocument  = $request->file('upload_transit_document');
-                $documentName = time() . '.' . $uploadedDocument ->getClientOriginalExtension();
-                $documentDirectory = 'documents/' .  $lcRequest->id;
-                $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
-                $document->path = $documentPath;
-                $document->save();
-            }
+            LCRequestController::uploadDocuments($request,$document,"transited_lc_document","documents",$lcRequest->id); //adds performa document1
 
             $lcRequest->reason_code = null;
             $lcRequest->status_id = 10;
@@ -364,4 +319,24 @@ class LCRequestController extends Controller
         return redirect()->back()->with('error', 'Error applying for bank!');
     }
 
+    public static function uploadDocuments(Request $request, $document, $field_name, $directory_name,$lc_request_id)
+    {
+        if ($request->hasFile($field_name)) {
+            $uploadedDocument = $request->file($field_name);
+            $documentName = time() . '.' . $field_name . '.' . $uploadedDocument->getClientOriginalExtension();
+            $documentDirectory = $directory_name . '/' . $lc_request_id;  // Assuming $document has an id field
+            $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
+
+            // Delete the old file if it exists
+            if ($document->$field_name) {
+                Storage::delete($document->$field_name);
+            }
+
+            // Update the document field with the new path
+            $document->$field_name = $documentPath;
+            $document->save();
+        }
+    }
 }
+
+

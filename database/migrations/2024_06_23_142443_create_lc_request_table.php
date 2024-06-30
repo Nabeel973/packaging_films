@@ -22,8 +22,6 @@ return new class extends Migration
             $table->smallInteger('priority')->default(0)->index();
             $table->integer('created_by')->index();
             $table->integer('updated_by')->nullable()->index();
-            $table->string('performa_invoice')->nullable();
-            $table->string('document')->nullable();
             $table->integer('status_id')->index();
             $table->timestamps();
         });

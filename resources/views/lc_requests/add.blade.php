@@ -56,7 +56,7 @@
               </div>
             </div>
           </div>
-          <div class="row mb-2">
+          <div class="row mb-4">
             <div class="col-md-6">
               <div class="form-check mt-4">
                 <input class="form-check-input" type="checkbox" name="draft_required">
@@ -64,33 +64,73 @@
               </div>
             </div>
           </div>
-          <div class="row mt-4">
-            <div class="col-md-6">
-              <div id="dynamic-form">
-                <div class="row" id="document-row-1">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="otherDocuments">Other Document</label>
-                            <input type="file" class="form-control" id="document1" name="document1">
-                        </div>
-                    </div>
-                    <div class="col-md-1 d-flex align-items-center mt-2">
-                      <button type="button" class="btn btn-success" id="add-field"><i class="fas fa-plus"></i></button>
-                    </div>
-                    <div class="col-md-1 d-flex align-items-center">
-                        <i class="delete-icon" style="display:none;">&#10006;</i>
-                    </div>
-                   
+          <div class="row mt-2">
+            <div class="col-12">
+              <div class="card card-warning collapsed-card">
+                <div class="card-header">
+                  <h3 class="card-title">Add Documents</h3>
+  
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- /.card-tools -->
                 </div>
-            </div>
-              {{-- <button type="button" class="btn btn-primary mt-3" id="add-field">Add Document</button> --}}
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-4">
+                     <div class="form-group">
+                        <label for="otherDocuments">Document1</label>
+                        <input type="file" class="form-control" id="document_1" name="document_1">
+                     </div>
+            
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                         <label for="otherDocuments">Document2</label>
+                         <input type="file" class="form-control" id="document_2" name="document_2">
+                      </div>
+             
+                     </div>
+                     <div class="col-md-4">
+                      <div class="form-group">
+                         <label for="otherDocuments">Document3</label>
+                         <input type="file" class="form-control" id="document_3" name="document_3">
+                      </div>
+             
+                     </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                     <div class="form-group">
+                        <label for="otherDocuments">Document4</label>
+                        <input type="file" class="form-control" id="document_4" name="document_4">
+                     </div>
+            
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-group">
+                         <label for="otherDocuments">Document5</label>
+                         <input type="file" class="form-control" id="document_5" name="document_5">
+                      </div>
+             
+                     </div>
+                  </div>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
             </div>
           </div>
           <div class="row justify-content-center mt-2">
             {{-- <button type="submit" class="btn btn-primary btn-lg">Generate New Request</button> --}}
-            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
-              <i class="fas fa-save"></i> Generate New Request
+            <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
+              <i class="fas fa-save pr-2"> </i> Generate New Request
             </button>
+            {{-- <div id="loader" style="display:none;">
+              <img src="{{ asset('images/loader.gif') }}" alt="Loading...">
+            </div> --}}
           </div>
         </form>
     </div>
@@ -121,6 +161,8 @@
 
       $.validator.setDefaults({
         submitHandler: function(form) {
+          $('#submit-button').prop('disabled', true);
+          // $('#loader').show();
           form.submit(); // Submit the form
         }
       });
@@ -140,7 +182,19 @@
             required: true,
             extension: "pdf|doc|docx|png|jpg|jpeg",
           },
-          other_document: {
+          document_1: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_2: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_3: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_4: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_5: {
             extension: "pdf|doc|docx|png|jpg|jpeg",
           },
         },
@@ -158,7 +212,19 @@
             required: "Please attach a performa invoice",
             extension: "Please upload a valid PDF, DOC, or DOCX file",
           },
-          other_document: {
+          document_1: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_2: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_3: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_4: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_5: {
             extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
           },
         },
@@ -169,65 +235,72 @@
         },
         highlight: function (element, errorClass, validClass) {
           $(element).addClass('is-invalid');
+          $('#submit-button').prop('disabled', false);
+          // $('#loader').hide();
         },
         unhighlight: function (element, errorClass, validClass) {
           $(element).removeClass('is-invalid');
         }
       });
 
-    let fieldCount = 1;
-    const maxFields = 5;
+      $('#quickForm').on('invalid-form.validate', function() {
+        $('#submit-button').prop('disabled', false);
+        // $('#loader').hide();
+      });
 
-    // Function to check if the last input is filled
-    function checkLastInput() {
-        return $('#dynamic-form input[type="file"]').last().val() !== "";
-    }
+    // let fieldCount = 1;
+    // const maxFields = 5;
 
-    // Enable the Add button only if the last input is filled and max fields not reached
-    function toggleAddButton() {
-        if (checkLastInput() && fieldCount < maxFields) {
-            $('#add-field').prop('disabled', false);
-        } else {
-            $('#add-field').prop('disabled', true);
-        }
-    }
+    // // Function to check if the last input is filled
+    // function checkLastInput() {
+    //     return $('#dynamic-form input[type="file"]').last().val() !== "";
+    // }
 
-    // Initial check
-    toggleAddButton();
+    // // Enable the Add button only if the last input is filled and max fields not reached
+    // function toggleAddButton() {
+    //     if (checkLastInput() && fieldCount < maxFields) {
+    //         $('#add-field').prop('disabled', false);
+    //     } else {
+    //         $('#add-field').prop('disabled', true);
+    //     }
+    // }
 
-    // Event to add new field
-    $('#add-field').on('click', function() {
-        if (fieldCount < maxFields) {
-            fieldCount++;
-            const newRow = `
-                <div class="row" id="document-row-${fieldCount}">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="otherDocuments">Other Document</label>
-                            <input type="file" class="form-control" id="document${fieldCount}" name="document${fieldCount}">
-                        </div>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-center">
-                        <button type="button" class="btn btn-danger delete-row mt-2"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                    </div>
-                </div>
-            `;
-            $('#dynamic-form').append(newRow);
-            toggleAddButton();
-        }
-    });
+    // // Initial check
+    // toggleAddButton();
+
+    // // Event to add new field
+    // $('#add-field').on('click', function() {
+    //     if (fieldCount < maxFields) {
+    //         fieldCount++;
+    //         const newRow = `
+    //             <div class="row" id="document-row-${fieldCount}">
+    //                 <div class="col-md-6">
+    //                     <div class="form-group">
+    //                         <label for="otherDocuments">Other Document</label>
+    //                         <input type="file" class="form-control" id="document${fieldCount}" name="document${fieldCount}">
+    //                     </div>
+    //                 </div>
+    //                 <div class="col-md-2 d-flex align-items-center">
+    //                     <button type="button" class="btn btn-danger delete-row mt-2"><i class="fa fa-trash" aria-hidden="true"></i></button>
+    //                 </div>
+    //             </div>
+    //         `;
+    //         $('#dynamic-form').append(newRow);
+    //         toggleAddButton();
+    //     }
+    // });
 
     // Event to handle file input change
-    $(document).on('change', 'input[type="file"]', function() {
-        toggleAddButton();
-    });
+    // $(document).on('change', 'input[type="file"]', function() {
+    //     toggleAddButton();
+    // });
 
-    // Event to delete a row
-    $(document).on('click', '.delete-row', function() {
-        $(this).closest('.row').remove();
-        fieldCount--;
-        toggleAddButton();
-    });
+    // // Event to delete a row
+    // $(document).on('click', '.delete-row', function() {
+    //     $(this).closest('.row').remove();
+    //     fieldCount--;
+    //     toggleAddButton();
+    // });
     });
   </script>
 @endsection

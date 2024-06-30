@@ -23,7 +23,7 @@ class LCRequest extends Model
 
     public function journey()
     {
-        return $this->hasMany(LCReqeusteJourney::class,'lc_request_id','id');
+        return $this->hasMany(LCRequestJourney::class,'lc_request_id','id');
     }
 
     public function created_by(){
@@ -32,5 +32,10 @@ class LCRequest extends Model
 
     public function status(){
         return $this->belongsTo(LCRequestStatus::class,'status_id','id');
+    }
+
+    public function documents()
+    {
+        return $this->hasOne(Document::class, 'lc_request_id', 'id');
     }
 }

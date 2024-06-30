@@ -53,9 +53,8 @@
             </div> 
           </div>
           <div class="row justify-content-center mt-2">
-            {{-- <button type="submit" class="btn btn-primary btn-lg">Update User</button> --}}
-            <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
-              <i class="fas fa-save"></i> Update User
+            <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
+              <i class="fas fa-save pr-2"></i> Update User
             </button>
           </div>
         </form>
@@ -90,6 +89,7 @@
   
     $.validator.setDefaults({
       submitHandler: function(form) {
+        $('#submit-button').prop('disabled', true);
         form.submit(); // Submit the form
       }
     });
@@ -140,10 +140,15 @@
       },
       highlight: function (element, errorClass, validClass) {
         $(element).addClass('is-invalid');
+        $('#submit-button').prop('disabled', false);
       },
       unhighlight: function (element, errorClass, validClass) {
         $(element).removeClass('is-invalid');
       }
+    });
+
+    $('#quickForm').on('invalid-form.validate', function() {
+        $('#submit-button').prop('disabled', false);
     });
   });
   </script>
