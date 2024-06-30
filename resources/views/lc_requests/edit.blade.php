@@ -187,24 +187,31 @@
                 </button>
             @endif 
 
-            @if((session('role_id') == 4 && $lcRequest->status_id == 2))
+            @if((session('role_id') == 4 && in_array($lcRequest->status_id,[2,6])))
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
                 <i class="fas fa-check"></i> Apply For Bank
                 </button>
             @endif   
 
-            @if((session('role_id') == 4 && $lcRequest->status_id == 7))
-              @if($lcRequest->draft_required == 1) 
+            @if((session('role_id') == 4 &&  in_array($lcRequest->status_id,[7,9])))
+              @if($lcRequest->draft_required == 1 && $lcRequest->status_id == 7) 
                 <button type="submit"  name="action" value="next" class="btn btn-success btn-lg mx-2" id="apply_for_bank"> 
                   <i class="fas fa-check"></i> Move To Draft Review
 
                 </button>
               @else
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_transit">
-                  <i class="fas fa-check"></i>  Apply For Transit
+                  <i class="fas fa-check"></i>  Apply For Transmit
                 </button>
               @endif    
             @endif    
+
+            @if((session('role_id') == 5 && $lcRequest->status_id == 8))
+                <button type="submit" class="btn btn-success btn-lg mx-2"  name="action" value="transmit">
+                <i class="fas fa-check"></i> Ready for Transmit
+                </button>
+            @endif  
+
           </div>
         </form>
     </div>
@@ -293,7 +300,7 @@
             </div>
             <div class="form-group">
               <label>Upload Transit LC Copy*</label>
-              <input type="file" class="form-control" id="transited_lc_document" name="transited_lc_document">
+              <input type="file" class="form-control" id="transmited_lc_document" name="transmited_lc_document">
             </div>
           </div>
           <div class="modal-footer">
@@ -450,7 +457,7 @@
           lc_number: {
             required: true,
           },
-          transited_lc_document: {
+          transmited_lc_document: {
             required: true,
           }
         },
@@ -458,7 +465,7 @@
           lc_number: {
             required: "LC Number is required",
           },
-          transited_lc_document: {
+          transmited_lc_document: {
             required: "Document is required",
           }
          
@@ -489,10 +496,10 @@
         $('#transitModal').modal('show');
       });
 
-      $('#quickForm').on('invalid-form.validate', function() {
-        $('.btn').prop('disabled', false);
-        // $('#loader').hide();
+      $('#quickFom rm, #transitForm, #uploadDocumentForm, #cancelReasonForm').on('invalid-form.validate', function() {
+          $('.btn').prop('disabled', false);
       });
+
     });
   </script>
 @endsection

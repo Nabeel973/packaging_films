@@ -22,8 +22,8 @@ return new class extends Migration
             $table->string('document_5')->nullable();
             $table->string('bank_name')->nullable();
             $table->string('bank_document')->nullable();
-            $table->string('transited_lc_document')->nullable();
-            $table->string('transited_lc_number')->nullable();
+            $table->string('transmited_lc_document')->nullable();
+            $table->string('transmited_lc_number')->nullable();
             $table->timestamps();
         });
     }

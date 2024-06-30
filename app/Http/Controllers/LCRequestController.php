@@ -94,7 +94,7 @@ class LCRequestController extends Controller
         $supplier_names = Supplier::all();
         $disable = true;
 
-        if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && $lcRequest->status_id == 3))
+        if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5])))
         {  
             $disable = false;
         }
@@ -138,6 +138,22 @@ class LCRequestController extends Controller
             
             return redirect()->route('lc_request.index')->with('status', 'LC Request status updated successfully!');
         }
+
+        if ($request->input('action') == 'transmit') {
+            // Handle approval logic
+
+            $lcRequest->status_id = 9;
+            $lcRequest->updated_by = Auth::id();
+            $lcRequest->updated_at = Carbon::now();
+            $lcRequest->save();
+
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            
+            LCRequestStatusEmailJob::dispatch($lcRequest);
+            
+            return redirect()->route('lc_request.index')->with('status', 'LC Request status updated successfully!');
+        }
+        
 
         // Handle update logic
         else{
@@ -276,7 +292,7 @@ class LCRequestController extends Controller
         $validator = Validator::make($request->all(), [
             'lc_request_id' => 'required|integer',
             'lc_number' => 'required|string|max:255',
-            'transited_lc_document' => 'required|max:1024',
+            'transmited_lc_document' => 'required|max:1024',
         ]);
 
           // Check if validation fails
@@ -302,10 +318,10 @@ class LCRequestController extends Controller
                 $document->lc_request_id =$request->lc_request_id;
             }
 
-            $document->transited_lc_number = $request->lc_number;
+            $document->transmited_lc_number = $request->lc_number;
             $document->save();
 
-            LCRequestController::uploadDocuments($request,$document,"transited_lc_document","documents",$lcRequest->id); //adds performa document1
+            LCRequestController::uploadDocuments($request,$document,"transmited_lc_document","documents",$lcRequest->id); //adds performa document1
 
             $lcRequest->reason_code = null;
             $lcRequest->status_id = 10;

@@ -41,8 +41,8 @@
                         <input type="file" class="form-control" id="image" name="image" accept="image/jpeg,image/png">
                       </div>
                     {{-- <button type="submit" class="btn btn-primary mt-3">Save</button> --}}
-                    <button type="submit" name="action" value="update" class="btn btn-primary btn-lg mx-2">
-                        <i class="fas fa-save"></i> Save
+                    <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2">
+                        <i class="fas fa-save mr-2"></i> Save
                       </button>
                 </form>
             </div>
