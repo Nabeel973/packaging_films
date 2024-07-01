@@ -83,7 +83,7 @@
               @endif
           </div>
          
-
+          {{-- View Documents Start --}}
           <div class="row mt-2">
             <div class="col-12">
               <div class="card card-warning collapsed-card">
@@ -168,7 +168,108 @@
               <!-- /.card -->
             </div>
           </div>
-          
+           {{-- View Documents End --}}
+
+          {{-- Bank Documents Start --}}
+          @if($lcRequest->documents && $lcRequest->documents->bank_document)
+          <div class="row mt-2">
+            <div class="col-12">
+              <div class="card card-warning collapsed-card">
+                <div class="card-header">
+                  <h3 class="card-title">View Bank Documents</h3>
+  
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                     <div class="form-group">
+                        <label for="otherDocuments">Bank Name</label>
+                        <input type="text" class="form-control" value="{{$lcRequest->documents->bank_name}}" disabled="true">
+                       
+                     </div>
+            
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                         <label for="otherDocuments">Bank Document</label>
+                         <input type="file" class="form-control" disabled="true">
+                          @if ($lcRequest->documents && $lcRequest->documents->bank_document)
+                            <a href="{{ asset('storage/'.$lcRequest->documents->bank_document) }}" class="btn btn-success mt-2" download>
+                              <i class="fas fa-download"></i> Download
+                            </a>
+                          @endif
+                      </div>
+             
+                     </div>
+              
+                  </div>
+                 
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+          </div>
+          @endif
+
+          {{-- Bank Document End --}}
+
+           {{-- Bank Documents Start --}}
+           @if($lcRequest->documents && $lcRequest->documents->transmited_lc_document)
+           <div class="row mt-2">
+             <div class="col-12">
+               <div class="card card-warning collapsed-card">
+                 <div class="card-header">
+                   <h3 class="card-title">View Transmited LC Documents</h3>
+   
+                   <div class="card-tools">
+                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                     </button>
+                   </div>
+                   <!-- /.card-tools -->
+                 </div>
+                 <!-- /.card-header -->
+                 <div class="card-body">
+                   <div class="row">
+                     <div class="col-md-6">
+                      <div class="form-group">
+                         <label for="otherDocuments">Bank Name</label>
+                         <input type="text" class="form-control" value="{{$lcRequest->documents->transmited_lc_number}}" disabled="true">
+                        
+                      </div>
+             
+                     </div>
+                     <div class="col-md-6">
+                       <div class="form-group">
+                          <label for="otherDocuments">Transmited LC Document</label>
+                          <input type="file" class="form-control" disabled="true">
+                           @if ($lcRequest->documents && $lcRequest->documents->transmited_lc_document)
+                             <a href="{{ asset('storage/'.$lcRequest->documents->transmited_lc_document) }}" class="btn btn-success mt-2" download>
+                               <i class="fas fa-download"></i> Download
+                             </a>
+                           @endif
+                       </div>
+              
+                      </div>
+               
+                   </div>
+                  
+                 </div>
+                 <!-- /.card-body -->
+               </div>
+               <!-- /.card -->
+             </div>
+           </div>
+           @endif
+ 
+           {{-- Bank Document End --}}
+
           <div class="row justify-content-center mt-2">
             @if(session('role_id') == 1 || (session('role_id') == 3 && in_array($lcRequest->status_id,[1,4])) || (session('role_id') == 4 && $lcRequest->status_id == 2 ))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
