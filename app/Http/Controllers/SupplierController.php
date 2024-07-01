@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
@@ -13,8 +14,25 @@ class SupplierController extends Controller
      }
  
      public function list(){
-         $supplier = Supplier::all();
-         return response()->json($supplier);
+        
+         $supplier = Supplier::get();
+        //  return response()->json($supplier);
+        return DataTables::of($supplier)
+        ->addColumn('action', function ($row){
+            $actionBtn = '
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>
+                </div>
+            </div>';
+            
+            return $actionBtn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
       }
  
       public function add(){

@@ -8,6 +8,7 @@ use App\Models\Document;
 use App\Models\Supplier;
 use App\Models\LCRequest;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\LCRequestStatusEmailJob;
@@ -25,14 +26,46 @@ class LCRequestController extends Controller
     }
 
     public function list(){
-        $users = LCRequest::join('users','users.id','lc_request.created_by')
-                
+
+        if(\request()->ajax()){
+            $users = LCRequest::join('users','users.id','lc_request.created_by')
                 ->join('lc_request_status','lc_request_status.id','lc_request.status_id')
                 ->join('suppliers','suppliers.id','lc_request.supplier_id')
                 ->leftjoin('users as u','u.id','lc_request.updated_by')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by')
-                ->get();
-        return response()->json($users);
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by');
+
+                $users = $users->get();
+                
+            return DataTables::of($users)
+                // ->addIndexColumn()
+                ->editColumn('priority', function ($row) {
+                    return $row->priority == 1 ? 'High' : 'Low';
+                })
+                ->editColumn('draft_required', function ($row) {
+                    return $row->draft_required == 1 ? 'Yes' : 'No';
+                })
+                ->addColumn('action', function ($row){
+                    $actionBtn = '
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>';
+                    
+                    if (in_array(session('role_id'),[1,3]) && $row->priority == 0) {
+                        $actionBtn .= '<a class="dropdown-item set-priority-high" href="javascript:void(0)" data-id="'.$row->id.'">Set Priority High</a>';
+                    }
+    
+                    $actionBtn .= '
+                        </div>
+                    </div>';
+                    
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
      }
 
     public function add(){

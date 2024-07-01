@@ -55,7 +55,8 @@
   $(document).ready(function() {
     var customTitle = 'User Management';
     var table = $("#example1").DataTable({
-  
+      processing: true,
+      serverSide: true,
       "buttons": [
         {
           extend: 'copy',
@@ -78,19 +79,25 @@
             columns: ':not(:last-child)' // Exclude the last column (Action button)
           }
         },
-        {
-          extend: 'pdf',
-          title: customTitle,
-          exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
-          }
-        },
-        'colvis'
+        // {
+        //   extend: 'pdf',
+        //   title: customTitle,
+        //   exportOptions: {
+        //     columns: ':not(:last-child)' // Exclude the last column (Action button)
+        //   }
+        // },
+        // 'colvis'
       ],
       "ajax": {
         "url": "{{ route('user.list') }}",
         "type": "GET",
-        "dataSrc": ""
+        dataSrc: function(json) {
+            if (Array.isArray(json.data)) {
+              return json.data;
+            } else {
+              return [];
+            }
+        }
       },
       columns: [
           { data: "id" },
@@ -98,20 +105,7 @@
           { data: "email",searchable: true },
           { data: "role",searchable: true },
           { data: "created_at",searchable: true },
-          { 
-            data: null,
-            render: function(data, type, row) {
-              return '<div class="btn-group">' +
-                        '<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                          'Actions' +
-                        '</button>' +
-                        '<div class="dropdown-menu">' +
-                          '<a class="dropdown-item edit-btn" href="#" data-id="' + data.id + '">Edit</a>' +
-                        
-                        '</div>' +
-                      '</div>';
-            }
-          }
+          { data: "action", orderable: false, searchable: false }
         ],
         paging: true,
         lengthChange: true,
@@ -141,13 +135,13 @@
     });
   
     // Handle delete button click event
-    $('#example1').on('click', '.delete-btn', function(e) {
-      e.preventDefault();
-      var userId = $(this).data('id');
-      // Perform delete operation based on userId
-      // For example, show confirmation modal
-      // $('#deleteUserModal').modal('show');
-    });
+    // $('#example1').on('click', '.delete-btn', function(e) {
+    //   e.preventDefault();
+    //   var userId = $(this).data('id');
+    //   // Perform delete operation based on userId
+    //   // For example, show confirmation modal
+    //   // $('#deleteUserModal').modal('show');
+    // });
   });
   </script>
 @endsection

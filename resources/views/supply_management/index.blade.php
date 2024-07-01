@@ -48,8 +48,10 @@
 
   $(document).ready(function() {
     var customTitle = 'Supplier Management';
+
     var table = $("#example1").DataTable({
-  
+      processing: true,
+      serverSide: true,
      "buttons": [
         {
           extend: 'copy',
@@ -84,26 +86,19 @@
       "ajax": {
         "url": "{{ route('supplier.list') }}",
         "type": "GET",
-        "dataSrc": ""
+         dataSrc: function(json) {
+            if (Array.isArray(json.data)) {
+              return json.data;
+            } else {
+              return [];
+            }
+        }
       },
       columns: [
           { data: "id" },
           { data: "name",searchable: true },
           { data: "created_at",searchable: true },
-          { 
-            data: null,
-            render: function(data, type, row) {
-              return '<div class="btn-group">' +
-                        '<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                          'Actions' +
-                        '</button>' +
-                        '<div class="dropdown-menu">' +
-                          '<a class="dropdown-item edit-btn" href="#" data-id="' + data.id + '">Edit</a>' +
-                        
-                        '</div>' +
-                      '</div>';
-            }
-          }
+          { data: "action", orderable: false, searchable: false }
         ],
         paging: true,
         lengthChange: true,

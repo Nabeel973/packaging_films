@@ -239,7 +239,7 @@
                    <div class="row">
                      <div class="col-md-6">
                       <div class="form-group">
-                         <label for="otherDocuments">Bank Name</label>
+                         <label for="otherDocuments">Transmited LC Number</label>
                          <input type="text" class="form-control" value="{{$lcRequest->documents->transmited_lc_number}}" disabled="true">
                         
                       </div>

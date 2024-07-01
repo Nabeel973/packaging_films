@@ -23,7 +23,7 @@
               <th>Payment Terms</th>
               <th>Status</th>
               <th>Reason Code</th>
-              <th>priority</th>
+              <th>Priority</th>
               <th>Draft Required</th>
               <th>Created By</th>
               <th>Created At</th>
@@ -58,9 +58,10 @@
 <script>
 
   $(document).ready(function() {
-    var customTitle = 'Supplier Management';
+    var customTitle = 'LC Enquiry';
     var table = $("#example1").DataTable({
-  
+      processing: true,
+      serverSide: true,
      "buttons": [
         {
           extend: 'copy',
@@ -83,19 +84,25 @@
             columns: ':not(:last-child)' // Exclude the last column (Action button)
           }
         },
-        {
-          extend: 'pdf',
-          title: customTitle,
-          exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
-          }
-        },
-        'colvis'
+        // {
+        //   extend: 'pdf',
+        //   title: customTitle,
+        //   exportOptions: {
+        //     columns: ':not(:last-child)' // Exclude the last column (Action button)
+        //   }
+        // },
+        // 'colvis'
       ],
       "ajax": {
         "url": "{{ route('lc_request.list') }}",
         "type": "GET",
-        "dataSrc": ""
+        dataSrc: function(json) {
+          if (Array.isArray(json.data)) {
+            return json.data;
+          } else {
+            return [];
+          }
+        }
       },
       columns: [
           { data: "id" },
@@ -112,21 +119,8 @@
           { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },
           { data: "updated_at",searchable: true },
-          { 
-            data: null,
-            render: function(data, type, row) {
-              return '<div class="btn-group">' +
-                        '<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-                          'Actions' +
-                        '</button>' +
-                        '<div class="dropdown-menu">' +
-                          '<a class="dropdown-item edit-btn" href="#" data-id="' + data.id + '">Edit</a>' +
-                          '<a class="dropdown-item set-priority-high" href="#" data-id="' + data.id + '">Set priority High</a>' +
-                        
-                        '</div>' +
-                      '</div>';
-            }
-          }
+          { data: "action", orderable: false, searchable: false }
+          
         ],
         paging: true,
         lengthChange: true,
@@ -138,11 +132,14 @@
         info: true,
         responsive: true, 
         autoWidth: false,
+        order: [[8, 'asc']],  // Set default sort order on the "priority" column (index 8)
       "initComplete": function () {
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
       }
     });
+
+  
   
     $('#example1').on('click', '.edit-btn', function(e) {
       e.preventDefault();
@@ -155,7 +152,7 @@
         window.location.href = editUrl; // Redirect to the edit page
     });
   
-    // Handle delete button click event
+    // // Handle priority button click event
     $('#example1').on('click', '.set-priority-high', function(e) {
       e.preventDefault();
       var lc_request_id = $(this).data('id');
@@ -187,6 +184,7 @@
 
       }
     });
+
   });
   </script>
 @endsection
