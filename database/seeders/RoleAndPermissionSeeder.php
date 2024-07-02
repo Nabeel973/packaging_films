@@ -22,114 +22,155 @@ class RoleAndPermissionSeeder extends Seeder
         // foreach($roles as $role){
         //     Role::create(['name' => $role,'guard_name' =>'web']);
         // }
+        DB::table('roles')->insert([
+            [
+                'name' => 'SystemAdmin',
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'FinanceHead',
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'CommercialHead',
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'TreasuryOfficer',
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'CommercialOfficer',
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
 
         // DB::table('permissions')->insert([
-            // [
-            //     'id' => 1,
-            //     'name' => 'View User List',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 1,
-            //     'permission_group_id' => 1
-            // ],
-            // [
-            //     'id' => 2, // Changed to a unique ID
-            //     'name' => 'Add User',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 1
-            // ],
-            // [
-            //     'id' => 3, // Changed to a unique ID
-            //     'name' => 'Edit User',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 1
-            // ],
-            // [
-            //     'id' => 4, // Changed to a unique ID
-            //     'name' => 'Delete User',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 1
-            // ],
-            // [
-            //     'id' => 5,
-            //     'name' => 'View Supplier List',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 1,
-            //     'permission_group_id' => 2
-            // ],
-            // [
-            //     'id' => 6, // Changed to a unique ID
-            //     'name' => 'Add Supplier',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 2
-            // ],
-            // [
-            //     'id' => 7, // Changed to a unique ID
-            //     'name' => 'Edit Supplier',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 2
-            // ],
-            // [
-            //     'id' => 8, // Changed to a unique ID
-            //     'name' => 'Delete Supplier',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 2
-            // ],
-            // [
-            //     'id' => 9,
-            //     'name' => 'View LC List',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 1,
-            //     'permission_group_id' => 3
-            // ],
-            // [
-            //     'id' => 10, // Changed to a unique ID
-            //     'name' => 'Add LC Request',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 3
-            // ],
-            // [
-            //     'id' => 11, // Changed to a unique ID
-            //     'name' => 'Edit LC Request',
-            //     'guard_name' => 'web',
-            //     'created_at' => Carbon::now(),
-            //     'updated_at' => Carbon::now(),
-            //     'type' => 2,
-            //     'permission_group_id' => 3
-            // ]
+        //     [
+        //         'id' => 1,
+        //         'name' => 'View User List',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 1,
+        //         'permission_group_id' => 1
+        //     ],
+        //     [
+        //         'id' => 2, // Changed to a unique ID
+        //         'name' => 'Add User',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 1
+        //     ],
+        //     [
+        //         'id' => 3, // Changed to a unique ID
+        //         'name' => 'Edit User',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 1
+        //     ],
+        //     [
+        //         'id' => 4, // Changed to a unique ID
+        //         'name' => 'Delete User',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 1
+        //     ],
+        //     [
+        //         'id' => 5,
+        //         'name' => 'View Supplier List',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 1,
+        //         'permission_group_id' => 2
+        //     ],
+        //     [
+        //         'id' => 6, // Changed to a unique ID
+        //         'name' => 'Add Supplier',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 2
+        //     ],
+        //     [
+        //         'id' => 7, // Changed to a unique ID
+        //         'name' => 'Edit Supplier',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 2
+        //     ],
+        //     [
+        //         'id' => 8, // Changed to a unique ID
+        //         'name' => 'Delete Supplier',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 2
+        //     ],
+        //     [
+        //         'id' => 9,
+        //         'name' => 'View LC List',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 1,
+        //         'permission_group_id' => 3
+        //     ],
+        //     [
+        //         'id' => 10, // Changed to a unique ID
+        //         'name' => 'Add LC Request',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 3
+        //     ],
+        //     [
+        //         'id' => 11, // Changed to a unique ID
+        //         'name' => 'Edit LC Request',
+        //         'guard_name' => 'web',
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //         'type' => 2,
+        //         'permission_group_id' => 3
+        //     ]
           
 
 
         // ]);
 
-        $user = User::find(2);
-        $user->assignRole('FinanceHead');
+        // $user = User::find(2);
+        // $user->assignRole('FinanceHead');
+        $roles = DB::table('roles')->get();
+        foreach ($roles as $role) {
+            $users = User::where('role_id', $role->id)->get();
+            foreach ($users as $user) {
+                $user->assignRole($role->name);
+            }
+        }
+        
+       
         
     }
 
