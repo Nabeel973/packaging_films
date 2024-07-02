@@ -74,14 +74,14 @@
             columns: ':not(:last-child)' // Exclude the last column (Action button)
           }
         },
-        {
-          extend: 'pdf',
-          title: customTitle,
-          exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
-          }
-        },
-        'colvis'
+        // {
+        //   extend: 'pdf',
+        //   title: customTitle,
+        //   exportOptions: {
+        //     columns: ':not(:last-child)' // Exclude the last column (Action button)
+        //   }
+        // },
+        // 'colvis'
       ],
       "ajax": {
         "url": "{{ route('supplier.list') }}",
