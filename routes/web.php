@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\LCRequestController;
 use App\Http\Controllers\ResetPaswordController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\AmendmentLCRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::group(['middleware' => ['role:CommercialOfficer|SystemAdmin']], function () {
         Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
         Route::post('/submit',[LCRequestController::class,'submit'])->name('lc_request.submit');
+
+        Route::get('amendment-request/{id}/add',[AmendmentLCRequestController::class,'add'])->name('amendment_request.add');
+        Route::post('amendment-request/{id}/submit',[AmendmentLCRequestController::class,'submit'])->name('amendment_request.submit');
     });
 
      // for TreasuryOfficer
@@ -84,10 +88,20 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}',[LCRequestController::class,'update'])->name('update');
             Route::post('/reject/reason',[LCRequestController::class,'rejectReason'])->name('reject-reason');
             Route::post('/set-priority',[LCRequestController::class,'setPriority'])->name('set-priority');
+            Route::get('{id}/logs',[LCRequestController::class,'getLogs'])->name('logs');
         });
+
+        Route::prefix('amendment_request')->name('amendment_request.')->group(function () {
+            Route::get('/',[AmendmentLCRequestController::class,'index'])->name('index');
+            Route::get('/list',[AmendmentLCRequestController::class,'list'])->name('list');
+            Route::get('/edit/{id}',[AmendmentLCRequestController::class,'edit'])->name('edit');
+            // Route::put('/update/{id}',[AmendmentLCRequestController::class,'update'])->name('update');
+        });
+
     
     });
     
 });
 
 require __DIR__.'/auth.php';
+

@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>LC Enquiry</h1>
+  <h1>Amendment Request Enquiry</h1>
 @endsection
 
 @section('content')
@@ -16,17 +16,10 @@
             <thead>
             <tr>
               <th>ID</th>
+              <th>LC Request Number</th>
               <th>Shipment Name</th>
-              <th>Supplier Name</th>
-              <th>Item Name</th>
-              <th>Item Quantity</th>
-              <th>Payment Terms</th>
+              <th>Details</th>
               <th>Status</th>
-              <th>Reason Code</th>
-              <th>Priority</th>
-              <th>Draft Required</th>
-              {{-- <th>Created By</th>
-              <th>Created At</th> --}}
               <th>Updated By</th>
               <th>Updated At</th>
               <th>Action</th>
@@ -94,7 +87,7 @@
         // 'colvis'
       ],
       "ajax": {
-        "url": "{{ route('lc_request.list') }}",
+        "url": "{{ route('amendment_request.list') }}",
         "type": "GET",
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
@@ -106,17 +99,10 @@
       },
       columns: [
           { data: "id" },
+          { data: "lc_number",searchable: true },
           { data: "shipment_name",searchable: true },
-          { data: "supplier_name",searchable: true },
-          { data: "item_name",searchable: true },
-          { data: "quantity",searchable: true },
-          { data: "payment_terms",searchable: true },
+          { data: "details",searchable: true },
           { data: "status",searchable: true },
-          { data: "reason_code",searchable: true },
-          { data: "priority",searchable: true },
-          { data: "draft_required",searchable: true },
-          // { data: "created_by",searchable: true },
-          // { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },
           { data: "updated_at",searchable: true },
           { data: "action", orderable: false, searchable: false }
@@ -132,7 +118,7 @@
         info: true,
         responsive: true, 
         autoWidth: false,
-        order: [[8, 'asc']],  // Set default sort order on the "priority" column (index 8)
+        order: [[5, 'desc']],  // Set default sort order on the "priority" column (index 8)
       "initComplete": function () {
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
@@ -143,57 +129,57 @@
   
     $('#example1').on('click', '.edit-btn', function(e) {
       e.preventDefault();
-      var lc_request_id = $(this).data('id');
-      console.log(lc_request_id);
+      var amendment_request_id = $(this).data('id');
+      console.log(amendment_request_id);
       // Perform edit operation based on userId
       // For example, redirect to user page
-      var editUrl = "{{ route('lc_request.edit', ':id') }}"; // Laravel route with a placeholder
-        editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+      var editUrl = "{{ route('amendment_request.edit', ':id') }}"; // Laravel route with a placeholder
+        editUrl = editUrl.replace(':id', amendment_request_id); // Replace placeholder with actual user ID
         window.location.href = editUrl; // Redirect to the edit page
     });
   
     // // Handle priority button click event
-    $('#example1').on('click', '.set-priority-high', function(e) {
-      e.preventDefault();
-      var lc_request_id = $(this).data('id');
-      if (lc_request_id) {
-            $.ajax({
-                url: '{{ route("lc_request.set-priority") }}', // The API endpoint to hit
-                type: 'POST',
-                data: {
-                    lc_request_id: lc_request_id,
-                    _token: '{{ csrf_token() }}' // Include CSRF token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Reload the table or the specific part of the page
-                        table.ajax.reload(null, false);
-                        toastr.success('Priority Updated');
-                    } else {
-                        // Handle the error
-                        toastr.error('Failed to set the priority.');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle AJAX error
-                    toastr.error('An error occurred: ' + error);
-                }
-            });
-          }
-      else{
+    // $('#example1').on('click', '.set-priority-high', function(e) {
+    //   e.preventDefault();
+    //   var lc_request_id = $(this).data('id');
+    //   if (lc_request_id) {
+    //         $.ajax({
+    //             url: '{{ route("lc_request.set-priority") }}', // The API endpoint to hit
+    //             type: 'POST',
+    //             data: {
+    //                 lc_request_id: lc_request_id,
+    //                 _token: '{{ csrf_token() }}' // Include CSRF token
+    //             },
+    //             success: function(response) {
+    //                 if (response.success) {
+    //                     // Reload the table or the specific part of the page
+    //                     table.ajax.reload(null, false);
+    //                     toastr.success('Priority Updated');
+    //                 } else {
+    //                     // Handle the error
+    //                     toastr.error('Failed to set the priority.');
+    //                 }
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 // Handle AJAX error
+    //                 toastr.error('An error occurred: ' + error);
+    //             }
+    //         });
+    //       }
+    //   else{
 
-      }
-    });
+    //   }
+    // });
 
-    $('#example1').on('click', '.amendment-request', function(e) {
-      e.preventDefault();
-      var lc_request_id = $(this).data('id');
-        if (lc_request_id) {
-          var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
-          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
-          window.location.href = editUrl; // Redirect to the edit page
-        }
-    });
+    // $('#example1').on('click', '.amendment-request', function(e) {
+    //   e.preventDefault();
+    //   var lc_request_id = $(this).data('id');
+    //     if (lc_request_id) {
+    //       var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
+    //       editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+    //       window.location.href = editUrl; // Redirect to the edit page
+    //     }
+    // });
 
 
   });

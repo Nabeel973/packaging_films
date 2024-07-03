@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Edit LC Request
+  <h1>Edit Amendment Request
 @endsection
 
 @section('content')
@@ -11,76 +11,30 @@
     <div class="card-body">
       <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
         <div class="font-medium text-sm text-black bg-warning p-2 border rounded-md text-center mb-2">
-            LC Request Status : <b>{{$lcRequest->status->name}}</b>
+            Amendment Request Status : <b>{{$amendmentLcRequest->status->name}}</b>
         </div>
-        <form id="quickForm" method="post" action="{{ route('lc_request.update', $lcRequest->id) }}" enctype="multipart/form-data">
+        <form id="quickForm" method="post" action="{{ route('lc_request.update', $amendmentLcRequest->id) }}" enctype="multipart/form-data">
           @csrf
           @method('PUT')
           <div class="row mb-2">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="shipmentName">Shipment Name*</label>
-                <input type="text" name="shipment_name" class="form-control" id="shipmentName" placeholder="Enter Shipment Name" value="{{ $lcRequest->shipment_name }}" {{ $disable ? 'disabled' : '' }}>
+                 <label for="shipmentName">Details of Amendment*</label>
+                {{-- <input type="text" name="details" class="form-control" id="details" placeholder="Enter Details"> --}}
+                <textarea name="details" id="details" cols="5" rows="3" class="form-control" {{ $disable ? 'disabled' : '' }} > {{ $amendmentLcRequest->details }} </textarea>
               </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Select Supplier*</label>
-                    <select class="supplier form-control" id="supplier" name="supplier" {{ $disable ? 'disabled' : '' }}>
-                    </select>
+                    <label>Revised Performa Invoice</label>
+                    <input type="file" class="form-control" id="performa_invoice" name="performa_invoice">
+                    @if ($amendmentLcRequest->performa_invoice)
+                        <a href="{{ asset('storage/'.$amendmentLcRequest->performa_invoice) }}" class="btn btn-success mt-2" download>
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    @endif
                 </div>
           </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="itemName">Item Name</label>
-                <input type="text" name="item_name" class="form-control " id="item_name" placeholder="Enter Item Name" value="{{ $lcRequest->item_name }}" {{ $disable ? 'disabled' : '' }}>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="itemQuantity">Item Quantity</label>
-                <input type="number" name="item_quantity" class="form-control" id="item_quantity" placeholder="Enter Quantity" value="{{ $lcRequest->quantity }}" {{ $disable ? 'disabled' : '' }}>
-              </div>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Payment Terms*</label>
-                <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms" value="{{ $lcRequest->payment_terms }}" {{ $disable ? 'disabled' : '' }}>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Attach Performa Invoice*</label>
-                <input type="file" class="form-control" id="performa_invoice" name="performa_invoice" {{ $disable ? 'disabled' : '' }}>
-                {{-- <p>{{ $lcRequest->performa_invoice }}</p> --}}
-                @if ($lcRequest->documents && $lcRequest->documents->performa_invoice)
-                  <a href="{{ asset('storage/'.$lcRequest->documents->performa_invoice) }}" class="btn btn-success mt-2" download>
-                    <i class="fas fa-download"></i> Download
-                  </a>
-                @endif
-              </div>
-            </div>
-          </div>
-    
-          <div class="row mb-4">
-              <div class="col-md-6">
-                <div class="form-check mt-4">
-                  <input class="form-check-input" type="checkbox" name="draft_required" {{ $lcRequest->draft_required ? 'checked' : '' }} {{ $disable ? 'disabled' : '' }}>
-                  <label class="form-check-label">LC Draft Required</label>
-                </div>
-              </div>
-              @if(in_array($lcRequest->status_id,[3,5]))
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Rejected Reason</label>
-                    <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" disabled="true">{{ $lcRequest->reason_code }}</textarea>
-                  </div>
-                </div>
-              @endif
           </div>
          
           {{-- View Documents Start --}}
@@ -103,8 +57,8 @@
                      <div class="form-group">
                         <label for="otherDocuments">Document1</label>
                         <input type="file" class="form-control" id="document_1" name="document_1">
-                        @if ($lcRequest->documents && $lcRequest->documents->document_1)
-                          <a href="{{ asset('storage/'.$lcRequest->documents->document_1) }}" class="btn btn-success mt-2" download>
+                        @if ($amendmentLcRequest->document_1)
+                          <a href="{{ asset('storage/'.$amendmentLcRequest->document_1) }}" class="btn btn-success mt-2" download>
                             <i class="fas fa-download"></i> Download
                           </a>
                         @endif
@@ -115,8 +69,8 @@
                       <div class="form-group">
                          <label for="otherDocuments">Document2</label>
                          <input type="file" class="form-control" id="document_2" name="document_2">
-                          @if ($lcRequest->documents && $lcRequest->documents->document_2)
-                            <a href="{{ asset('storage/'.$lcRequest->documents->document_2) }}" class="btn btn-success mt-2" download>
+                          @if ($amendmentLcRequest->document_2)
+                            <a href="{{ asset('storage/'.$amendmentLcRequest->document_2) }}" class="btn btn-success mt-2" download>
                               <i class="fas fa-download"></i> Download
                             </a>
                           @endif
@@ -127,8 +81,8 @@
                       <div class="form-group">
                          <label for="otherDocuments">Document3</label>
                          <input type="file" class="form-control" id="document_3" name="document_3">
-                         @if ($lcRequest->documents && $lcRequest->documents->document_3)
-                         <a href="{{ asset('storage/'.$lcRequest->documents->document_3) }}" class="btn btn-success mt-2" download>
+                         @if ($amendmentLcRequest->document_3)
+                         <a href="{{ asset('storage/'.$amendmentLcRequest->document_3) }}" class="btn btn-success mt-2" download>
                            <i class="fas fa-download"></i> Download
                          </a>
                        @endif
@@ -141,8 +95,8 @@
                      <div class="form-group">
                         <label for="otherDocuments">Document4</label>
                         <input type="file" class="form-control" id="document_4" name="document_4">
-                        @if ($lcRequest->documents && $lcRequest->documents->document_4)
-                          <a href="{{ asset('storage/'.$lcRequest->documents->document_4) }}" class="btn btn-success mt-2" download>
+                        @if ($amendmentLcRequest->document_4)
+                          <a href="{{ asset('storage/'.$amendmentLcRequest->document_4) }}" class="btn btn-success mt-2" download>
                             <i class="fas fa-download"></i> Download
                           </a>
                         @endif
@@ -153,8 +107,8 @@
                       <div class="form-group">
                          <label for="otherDocuments">Document5</label>
                          <input type="file" class="form-control" id="document_5" name="document_5">
-                         @if ($lcRequest->documents && $lcRequest->documents->document_5)
-                         <a href="{{ asset('storage/'.$lcRequest->documents->document_5) }}" class="btn btn-success mt-2" download>
+                         @if ($amendmentLcRequest->document_5)
+                         <a href="{{ asset('storage/'.$amendmentLcRequest->document_5) }}" class="btn btn-success mt-2" download>
                            <i class="fas fa-download"></i> Download
                          </a>
                         @endif
@@ -171,7 +125,7 @@
            {{-- View Documents End --}}
 
           {{-- Bank Documents Start --}}
-          @if($lcRequest->documents && $lcRequest->documents->bank_document)
+          @if($amendmentLcRequest->bank_document)
           <div class="row mt-2">
             <div class="col-12">
               <div class="card card-warning collapsed-card">
@@ -190,7 +144,7 @@
                     <div class="col-md-6">
                      <div class="form-group">
                         <label for="otherDocuments">Bank Name</label>
-                        <input type="text" class="form-control" value="{{$lcRequest->documents->bank_name}}" disabled="true">
+                        <input type="text" class="form-control" value="{{$amendmentLcRequest->bank_name}}" disabled="true">
                        
                      </div>
             
@@ -199,8 +153,8 @@
                       <div class="form-group">
                          <label for="otherDocuments">Bank Document</label>
                          <input type="file" class="form-control" disabled="true">
-                          @if ($lcRequest->documents && $lcRequest->documents->bank_document)
-                            <a href="{{ asset('storage/'.$lcRequest->documents->bank_document) }}" class="btn btn-success mt-2" download>
+                          @if ($amendmentLcRequest->bank_document)
+                            <a href="{{ asset('storage/'.$amendmentLcRequest->bank_document) }}" class="btn btn-success mt-2" download>
                               <i class="fas fa-download"></i> Download
                             </a>
                           @endif
@@ -221,7 +175,7 @@
           {{-- Bank Document End --}}
 
            {{-- Bank Documents Start --}}
-           @if($lcRequest->documents && $lcRequest->documents->transmited_lc_document)
+           @if($amendmentLcRequest->transmited_lc_document)
            <div class="row mt-2">
              <div class="col-12">
                <div class="card card-warning collapsed-card">
@@ -240,7 +194,7 @@
                      <div class="col-md-6">
                       <div class="form-group">
                          <label for="otherDocuments">Transmited LC Number</label>
-                         <input type="text" class="form-control" value="{{$lcRequest->documents->transmited_lc_number}}" disabled="true">
+                         <input type="text" class="form-control" value="{{$amendmentLcRequest->transmited_lc_number}}" disabled="true">
                         
                       </div>
              
@@ -249,8 +203,8 @@
                        <div class="form-group">
                           <label for="otherDocuments">Transmited LC Document</label>
                           <input type="file" class="form-control" disabled="true">
-                           @if ($lcRequest->documents && $lcRequest->documents->transmited_lc_document)
-                             <a href="{{ asset('storage/'.$lcRequest->documents->transmited_lc_document) }}" class="btn btn-success mt-2" download>
+                           @if ($amendmentLcRequest->transmited_lc_document)
+                             <a href="{{ asset('storage/'.$amendmentLcRequest->transmited_lc_document) }}" class="btn btn-success mt-2" download>
                                <i class="fas fa-download"></i> Download
                              </a>
                            @endif
@@ -271,31 +225,31 @@
            {{-- Bank Document End --}}
 
           <div class="row justify-content-center mt-2">
-            @if((in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && $lcRequest->status_id == 2 ))
+            {{-- @if((in_array(session('role_id'),[1,3]) && in_array($amendmentLcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && $amendmentLcRequest->status_id == 2 ))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
                 <i class="fas fa-times"></i> Reject
                 </button>
-            @endif    
-            @if(in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[3,5])))
+            @endif     --}}
+            @if(in_array(session('role_id'),[1,5]) && in_array($amendmentLcRequest->status_id,[3,5])))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
                 <i class="fas fa-save mr-2"></i> Update
                 </button>
             @endif    
             
-            @if(in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4]) )
+            @if(in_array(session('role_id'),[1,3]) && in_array($amendmentLcRequest->status_id,[1,4]) )
                 <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">
                 <i class="fas fa-check"></i> Approve
                 </button>
             @endif 
 
-            @if((in_array(session('role_id'),[1,4]) && in_array($lcRequest->status_id,[2,6])))
+            @if((in_array(session('role_id'),[1,4]) && in_array($amendmentLcRequest->status_id,[2,6])))
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
                 <i class="fas fa-check"></i> Apply For Bank
                 </button>
             @endif   
 
-            @if((in_array(session('role_id'),[1,4]) &&  in_array($lcRequest->status_id,[7,9])))
-              @if($lcRequest->draft_required == 1 && $lcRequest->status_id == 7) 
+            @if((in_array(session('role_id'),[1,4]) &&  in_array($amendmentLcRequest->status_id,[7,9])))
+              @if($amendmentLcRequest->draft_required == 1 && $amendmentLcRequest->status_id == 7) 
                 <button type="submit"  name="action" value="next" class="btn btn-success btn-lg mx-2" id="apply_for_bank"> 
                   <i class="fas fa-check"></i> Move To Draft Review
 
@@ -307,7 +261,7 @@
               @endif    
             @endif    
 
-            @if((session('role_id') == 5 && $lcRequest->status_id == 8))
+            @if((session('role_id') == 5 && $amendmentLcRequest->status_id == 8))
                 <button type="submit" class="btn btn-success btn-lg mx-2"  name="action" value="transmit">
                 <i class="fas fa-check"></i> Ready for Transmit
                 </button>
@@ -332,7 +286,7 @@
           @method('post')
           <div class="modal-body">
          
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $lcRequest->id }}">
+            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter Reason*</label>
               <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" required></textarea>
@@ -361,7 +315,7 @@
           @method('post')
           <div class="modal-body">
          
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $lcRequest->id }}">
+            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter Bank Name*</label>
               <input type="text" name="bank_name" id="bank_name" class="form-control">
@@ -394,7 +348,7 @@
           @method('post')
           <div class="modal-body">
          
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $lcRequest->id }}">
+            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter LC Number*</label>
               <input type="text" name="lc_number" id="lc_number" class="form-control">
@@ -425,20 +379,6 @@
   <script>
     $(document).ready(function() {
 
-      var supplier_names = {!! json_encode($supplier_names) !!};
-
-      $(".supplier").select2({
-        placeholder: "Select Supplier",
-        data: supplier_names.map(function(supplier) {
-            return { id: supplier.id, text: supplier.name };
-        }),
-        width: '100%',
-        dropdownAutoWidth: true,
-        //allowClear: true // Add this line to allow clearing the selection
-      });
-
-      $(".supplier").val({{ $lcRequest->supplier_id }}).trigger('change');
-
       $.validator.setDefaults({
         submitHandler: function(form) {
           $('.btn').prop('disabled', true);
@@ -448,37 +388,49 @@
       
       $('#quickForm').validate({
         rules: {
-          shipment_name: {
-            required: true,
-          },
-          supplier: {
-            required: true,
-          },
-          payment_terms: {
+          details: {
             required: true,
           },
           performa_invoice: {
             extension: "pdf|doc|docx|png|jpg|jpeg",
           },
-          other_document: {
+          document_1: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_2: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_3: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_4: {
+            extension: "pdf|doc|docx|png|jpg|jpeg",
+          },
+          document_5: {
             extension: "pdf|doc|docx|png|jpg|jpeg",
           },
         },
         messages: {
-          shipment_name: {
-            required: "Please enter a shipment name",
-          },
-          supplier: {
-            required: "Please select a supplier",
-          },
-          payment_terms: {
-            required: "Please enter payment terms",
+          details: {
+            required: "Please enter detail",
           },
           performa_invoice: {
-            extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
+            extension: "Please upload a valid PDF, DOC, or DOCX file",
           },
-          other_document: {
-            extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
+          document_1: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_2: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_3: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_4: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
+          },
+          document_5: {
+            extension: "Please upload a valid PDF,DOC,PNG,JPEG,JPG, or DOCX file",
           },
         },
         errorElement: 'span',
@@ -495,31 +447,31 @@
         }
       });
 
-      $('#cancelReasonForm').validate({
-        rules: {
-          reason: {
-            required: true,
-          },
-        },
-        messages: {
-          reason: {
-            required: "Reason is required",
-          },
+    //   $('#cancelReasonForm').validate({
+    //     rules: {
+    //       reason: {
+    //         required: true,
+    //       },
+    //     },
+    //     messages: {
+    //       reason: {
+    //         required: "Reason is required",
+    //       },
          
-        },
-        errorElement: 'span',
-        errorPlacement: function (error, element) {
-          error.addClass('invalid-feedback');
-          element.closest('.form-group').append(error);
-        },
-        highlight: function (element, errorClass, validClass) {
-          $(element).addClass('is-invalid');
-          $('.btn').prop('disabled', false);
-        },
-        unhighlight: function (element, errorClass, validClass) {
-          $(element).removeClass('is-invalid');
-        }
-      });
+    //     },
+    //     errorElement: 'span',
+    //     errorPlacement: function (error, element) {
+    //       error.addClass('invalid-feedback');
+    //       element.closest('.form-group').append(error);
+    //     },
+    //     highlight: function (element, errorClass, validClass) {
+    //       $(element).addClass('is-invalid');
+    //       $('.btn').prop('disabled', false);
+    //     },
+    //     unhighlight: function (element, errorClass, validClass) {
+    //       $(element).removeClass('is-invalid');
+    //     }
+    //   });
 
       $('#uploadDocumentForm').validate({
         rules: {
@@ -585,9 +537,9 @@
         }
       });
 
-      $('#reject').click(function() {
-        $('#cancelModal').modal('show');
-      });
+    //   $('#reject').click(function() {
+    //     $('#cancelModal').modal('show');
+    //   });
 
       $('#apply_for_bank').click(function() {
         $('#documentModal').modal('show');
