@@ -25,6 +25,7 @@
               <th>Reason Code</th>
               <th>Priority</th>
               <th>Draft Required</th>
+              <th>Amendment Added</th>
               {{-- <th>Created By</th>
               <th>Created At</th> --}}
               <th>Updated By</th>
@@ -115,6 +116,7 @@
           { data: "reason_code",searchable: true },
           { data: "priority",searchable: true },
           { data: "draft_required",searchable: true },
+          { data: "amendment_request_count",searchable: true },
           // { data: "created_by",searchable: true },
           // { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },
@@ -181,7 +183,7 @@
             });
           }
       else{
-
+        //
       }
     });
 
@@ -190,6 +192,16 @@
       var lc_request_id = $(this).data('id');
         if (lc_request_id) {
           var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
+          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+          window.location.href = editUrl; // Redirect to the edit page
+        }
+    });
+
+    $('#example1').on('click', '.view-logs', function(e) {
+      e.preventDefault();
+      var lc_request_id = $(this).data('id');
+        if (lc_request_id) {
+          var editUrl = "{{ route('lc_request.logs_view', ':id') }}"; // Laravel route with a placeholder
           editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
           window.location.href = editUrl; // Redirect to the edit page
         }

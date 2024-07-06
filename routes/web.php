@@ -72,6 +72,9 @@ Route::middleware('auth')->group(function () {
         // Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
         Route::post('/apply-for-bank',[LCRequestController::class,'applyForBank'])->name('lc_request.apply_for_bank');
         Route::post('/apply-for-transit',[LCRequestController::class,'applyForTransit'])->name('lc_request.apply_for_transit');
+
+        Route::post('amendment/apply-for-bank',[AmendmentLCRequestController::class,'applyForBank'])->name('amendment_request.apply_for_bank');
+        Route::post('amendment/apply-for-transit',[AmendmentLCRequestController::class,'applyForTransit'])->name('amendment_request.apply_for_transit');
     });
     
     // Or with multiple roles
@@ -88,7 +91,8 @@ Route::middleware('auth')->group(function () {
             Route::put('/update/{id}',[LCRequestController::class,'update'])->name('update');
             Route::post('/reject/reason',[LCRequestController::class,'rejectReason'])->name('reject-reason');
             Route::post('/set-priority',[LCRequestController::class,'setPriority'])->name('set-priority');
-            Route::get('{id}/logs',[LCRequestController::class,'getLogs'])->name('logs');
+            Route::get('{id}/view-logs',[LCRequestController::class,'viewLogs'])->name('logs_view');
+            Route::get('/logs',[LCRequestController::class,'getLogs'])->name('logs');
         });
 
         Route::prefix('amendment_request')->name('amendment_request.')->group(function () {

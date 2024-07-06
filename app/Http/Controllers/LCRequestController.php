@@ -10,6 +10,7 @@ use App\Models\LCRequest;
 use Illuminate\Http\Request;
 use App\Models\LCRequestJourney;
 use Yajra\DataTables\DataTables;
+use App\Models\AmendmentLCRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Jobs\LCRequestStatusEmailJob;
@@ -57,8 +58,14 @@ class LCRequestController extends Controller
                     if (in_array(session('role_id'),[1,3]) && $row->priority == 0) {
                         $actionBtn .= '<a class="dropdown-item set-priority-high" href="javascript:void(0)" data-id="'.$row->id.'">Set Priority High</a>';
                     }
+
+                   
+                    $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
                     
-                    if (in_array(session('role_id'),[1,5]) && $row->status_id == 10) {
+                   
+                    $amendment_request = AmendmentLCRequest::where('lc_request_id',$row->id)->latest()->first();
+
+                    if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$amendment_request || ($row->amendment_request_count > 0 && $amendment_request->status_id == 10 ))) {
                         $actionBtn .= '<a class="dropdown-item amendment-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Amendment Request</a>';
                     }
     
@@ -393,35 +400,21 @@ class LCRequestController extends Controller
         }
     }
 
-    public function getLogs($id){
+    public function viewLogs($id){
+        return view('lc_requests.logs',compact('id'));
+    }
+
+    public function getLogs(Request $request){
         $lc_request_logs = LCRequestJourney::join('lc_request','lc_request_journey.lc_request_id','lc_request.id')
                     ->join('users','users.id','lc_request_journey.user_id')
                     ->join('lc_request_status','lc_request_status.id','lc_request_journey.status_id','')
                     ->leftJoin('amendment_lc_request','amendment_lc_request.id','lc_request_journey.amendment_request_id')
-                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at')
-                    ->where('lc_request.id',$id)
+                    ->leftJoin('lc_request_status as lcs','lcs.id','lc_request_journey.amendment_request_status_id')
+                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at','lcs.name as amendment_status')
+                    ->where('lc_request.id',$request->id)
                     ->get();
 
             return DataTables::of($lc_request_logs)
-                // ->addIndexColumn()
-                ->editColumn('status', function ($row) {
-                   if(is_null($row->amendment_id)){
-                        return $row->status;
-                   }
-                   else{
-                       $lc_request = LCRequest::find($row->lc_request_id);
-                       return $lc_request->status->name; 
-                   }
-                })
-                ->addColumn('amendment_status', function ($row) {
-                   if(!is_null($row->amendment_id)){
-                        return $row->status;
-                   }
-                   else{
-                        return '';
-                   }
-                })
-                ->rawColumns(['amendment_status'])
                 ->make(true);
     }
 }

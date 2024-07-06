@@ -27,7 +27,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label>Revised Performa Invoice</label>
-                    <input type="file" class="form-control" id="performa_invoice" name="performa_invoice">
+                    <input type="file" class="form-control" id="performa_invoice" name="performa_invoice" {{ $disable ? 'disabled' : '' }}>
                     @if ($amendmentLcRequest->performa_invoice)
                         <a href="{{ asset('storage/'.$amendmentLcRequest->performa_invoice) }}" class="btn btn-success mt-2" download>
                             <i class="fas fa-download"></i> Download
@@ -225,79 +225,27 @@
            {{-- Bank Document End --}}
 
           <div class="row justify-content-center mt-2">
-            {{-- @if((in_array(session('role_id'),[1,3]) && in_array($amendmentLcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && $amendmentLcRequest->status_id == 2 ))
-                <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
-                <i class="fas fa-times"></i> Reject
-                </button>
-            @endif     --}}
+
             @if(in_array(session('role_id'),[1,5]) && in_array($amendmentLcRequest->status_id,[3,5])))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
                 <i class="fas fa-save mr-2"></i> Update
                 </button>
             @endif    
-            
-            @if(in_array(session('role_id'),[1,3]) && in_array($amendmentLcRequest->status_id,[1,4]) )
-                <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">
-                <i class="fas fa-check"></i> Approve
-                </button>
-            @endif 
-
-            @if((in_array(session('role_id'),[1,4]) && in_array($amendmentLcRequest->status_id,[2,6])))
+  
+            @if((in_array(session('role_id'),[1,4]) && $amendmentLcRequest->status_id == 11))
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
                 <i class="fas fa-check"></i> Apply For Bank
                 </button>
             @endif   
 
-            @if((in_array(session('role_id'),[1,4]) &&  in_array($amendmentLcRequest->status_id,[7,9])))
-              @if($amendmentLcRequest->draft_required == 1 && $amendmentLcRequest->status_id == 7) 
-                <button type="submit"  name="action" value="next" class="btn btn-success btn-lg mx-2" id="apply_for_bank"> 
-                  <i class="fas fa-check"></i> Move To Draft Review
-
-                </button>
-              @else
+            @if(in_array(session('role_id'),[1,4]) &&  $amendmentLcRequest->status_id == 7)
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_transit">
                   <i class="fas fa-check"></i>  Apply For Transmit
-                </button>
-              @endif    
-            @endif    
-
-            @if((session('role_id') == 5 && $amendmentLcRequest->status_id == 8))
-                <button type="submit" class="btn btn-success btn-lg mx-2"  name="action" value="transmit">
-                <i class="fas fa-check"></i> Ready for Transmit
-                </button>
-            @endif  
+                </button>  
+            @endif 
 
           </div>
         </form>
-    </div>
-  </div>
-
-  <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cancelModalLabel">Reject Reason</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form id="cancelReasonForm" method="post" action="{{ route('lc_request.reject-reason') }}">
-          @csrf
-          @method('post')
-          <div class="modal-body">
-         
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
-            <div class="form-group">
-              <label for="cancelReasonTextarea">Enter Reason*</label>
-              <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" required></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-      </div>
     </div>
   </div>
 
@@ -310,12 +258,12 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form id="uploadDocumentForm" method="post" action="{{ route('lc_request.apply_for_bank') }}" enctype="multipart/form-data">
+        <form id="uploadDocumentForm" method="post" action="{{ route('amendment_request.apply_for_bank') }}" enctype="multipart/form-data">
           @csrf
           @method('post')
           <div class="modal-body">
          
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
+            <input type="hidden" name="amendment_lc_request_id" id="amendment_lc_request_id" value="{{ $amendmentLcRequest->id }}">
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter Bank Name*</label>
               <input type="text" name="bank_name" id="bank_name" class="form-control">
@@ -343,12 +291,12 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <form id="transitForm" method="post" action="{{ route('lc_request.apply_for_transit') }}" enctype="multipart/form-data">
+        <form id="transitForm" method="post" action="{{ route('amendment_request.apply_for_transit') }}" enctype="multipart/form-data">
           @csrf
           @method('post')
           <div class="modal-body">
          
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $amendmentLcRequest->id }}">
+            <input type="hidden" name="amendment_lc_request_id" id="amendment_lc_request_id" value="{{ $amendmentLcRequest->id }}">
             <div class="form-group">
               <label for="cancelReasonTextarea">Enter LC Number*</label>
               <input type="text" name="lc_number" id="lc_number" class="form-control">

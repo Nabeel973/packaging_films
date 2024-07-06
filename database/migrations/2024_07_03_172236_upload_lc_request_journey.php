@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('lc_request_journey', function (Blueprint $table) {
            $table->integer('amendment_request_id')->nullable()->index();
+           $table->integer('amendment_request_status_id')->nullable()->index();
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('lc_request_journey', function (Blueprint $table) {
            $table->dropColumn('amendment_request_id');
+           $table->dropColumn('amendment_request_status_id');
         });
     }
 };

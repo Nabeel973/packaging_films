@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Amendment Request Enquiry</h1>
+  <h1>LC Logs</h1>
 @endsection
 
 @section('content')
@@ -51,6 +51,7 @@
 <script>
 
   $(document).ready(function() {
+    var id = {{ $id }} 
     var customTitle = 'Logs';
     var table = $("#example1").DataTable({
       processing: true,
@@ -87,8 +88,11 @@
         // 'colvis'
       ],
       "ajax": {
-        "url": "{{ route('lc_request.logs',) }}",
+        url: "{{ route('lc_request.logs') }}",
         "type": "GET",
+        data: function (d) {
+          d.id = id; // Pass the id to the server as a query parameter
+        },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
             return json.data;

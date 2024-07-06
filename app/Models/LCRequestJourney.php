@@ -9,6 +9,11 @@ class LCRequestJourney extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     protected $table = 'lc_request_journey';
 
     public function user(){
