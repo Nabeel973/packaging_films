@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Currency;
 use App\Models\Document;
 use App\Models\Supplier;
 use App\Models\LCRequest;
@@ -33,8 +34,9 @@ class LCRequestController extends Controller
             $users = LCRequest::join('users','users.id','lc_request.created_by')
                 ->join('lc_request_status','lc_request_status.id','lc_request.status_id')
                 ->join('suppliers','suppliers.id','lc_request.supplier_id')
+                ->join('currencies','currencies.id','lc_request.currency_id')
                 ->leftjoin('users as u','u.id','lc_request.updated_by')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by');
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name');
 
                 $users = $users->get();
                 
@@ -83,7 +85,8 @@ class LCRequestController extends Controller
 
     public function add(){
         $supplier_names = Supplier::all();
-        return view('lc_requests.add',compact('supplier_names'));
+        $currencies = Currency::all();
+        return view('lc_requests.add',compact('supplier_names','currencies'));
     }
 
     public function submit(Request $request){
@@ -92,6 +95,8 @@ class LCRequestController extends Controller
             'shipment_name' => 'required|string|max:255',
             'supplier' => 'required|integer',
             'payment_terms' => 'required|string',
+            'currency' => 'required|integer',
+            'amount' => 'required|numeric',
             'performa_invoice' => 'required|max:1024',
             'document_1' =>'max:1024',
             'document_2' =>'max:1024',
@@ -115,7 +120,10 @@ class LCRequestController extends Controller
         $lc_request->payment_terms = $request->payment_terms;
         $lc_request->draft_required = ($request->draft_required == 'on') ? 1 : 0;
         $lc_request->created_by = Auth::user()->id;
+        $lc_request->currency_id = $request->currency;
+        $lc_request->amount = $request->amount;
         $lc_request->status_id = 1;
+        $lc_request->amendment_request_count = 0;
         $lc_request->save();
 
         $document = new Document();
@@ -139,12 +147,13 @@ class LCRequestController extends Controller
         $lcRequest = LCRequest::find($id);
         $supplier_names = Supplier::all();
         $disable = true;
+        $currencies = Currency::all();
 
         if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5])))
         {  
             $disable = false;
         }
-        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable'));
+        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable','currencies'));
     }
 
     public function update(Request $request, $id)
@@ -204,12 +213,36 @@ class LCRequestController extends Controller
         // Handle update logic
         else{
 
+            $validator = Validator::make($request->all(), [
+                'shipment_name' => 'required|string|max:255',
+                'supplier' => 'required|integer',
+                'payment_terms' => 'required|string',
+                'currency' => 'required|integer',
+                'amount' => 'required|numeric',
+                'performa_invoice' => 'max:1024',
+                'document_1' =>'max:1024',
+                'document_2' =>'max:1024',
+                'document_3' =>'max:1024',
+                'document_4' =>'max:1024',
+                'document_5' =>'max:1024',
+            ]);
+    
+              // Check if validation fails
+              if ($validator->fails()) {
+                return redirect()->back()
+                                 ->withErrors($validator)
+                                 ->withInput();
+            }
+
+
             $lcRequest->shipment_name = $request->input('shipment_name');
             $lcRequest->supplier_id = $request->input('supplier');
             $lcRequest->item_name = $request->input('item_name');
             $lcRequest->quantity = $request->input('item_quantity');
             $lcRequest->payment_terms = $request->input('payment_terms');
             $lcRequest->draft_required = $request->input('draft_required', false);
+            $lcRequest->currency_id = $request->input('currency');
+            $lcRequest->amount = $request->input('amount');
             $lcRequest->reason_code = null;
             if($lcRequest->status_id == 5){    //disperency identified
                 $lcRequest->status_id = 6;  //disperency removed 
@@ -408,9 +441,10 @@ class LCRequestController extends Controller
         $lc_request_logs = LCRequestJourney::join('lc_request','lc_request_journey.lc_request_id','lc_request.id')
                     ->join('users','users.id','lc_request_journey.user_id')
                     ->join('lc_request_status','lc_request_status.id','lc_request_journey.status_id','')
+                    ->join('currencies','currencies.id','lc_request.currency_id')
                     ->leftJoin('amendment_lc_request','amendment_lc_request.id','lc_request_journey.amendment_request_id')
                     ->leftJoin('lc_request_status as lcs','lcs.id','lc_request_journey.amendment_request_status_id')
-                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at','lcs.name as amendment_status')
+                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at','lcs.name as amendment_status',)
                     ->where('lc_request.id',$request->id)
                     ->get();
 

@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             LCRequestStatusSeeder::class,
             PermissionGroupSeeder::class,
             RoleAndPermissionSeeder::class,
+            CurrencySeeder::class,
         ]);
     }
 }

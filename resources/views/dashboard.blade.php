@@ -24,7 +24,7 @@
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a href="#" class="small-box-footer">IPAK</a>
+                            <a href="{{route('lc_request.index')}}" class="small-box-footer">IPAK</a>
                             </div>
                         </div>
                       <!-- ./col -->
@@ -39,7 +39,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">CPAK</a>
+                          <a href="" class="small-box-footer">CPAK</a>
                         </div>
                       </div>
                       <!-- ./col -->
@@ -54,7 +54,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">PETPAK</a>
+                          <a href="{{route('lc_request.index')}}" class="small-box-footer">PETPAK</a>
                         </div>
                       </div>
                       <!-- ./col -->
@@ -69,7 +69,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">GPAK</a>
+                          <a href="{{route('lc_request.index')}}" class="small-box-footer">GPAK</a>
                         </div>
                       </div>
                    </div> 
@@ -261,7 +261,7 @@
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a href="#" class="small-box-footer">IPAK</a>
+                            <a href="{{route('amendment_request.index')}}" class="small-box-footer">IPAK</a>
                             </div>
                         </div>
                       <!-- ./col -->
@@ -276,7 +276,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">CPAK</a>
+                          <a href="{{route('amendment_request.index')}}" class="small-box-footer">CPAK</a>
                         </div>
                       </div>
                       <!-- ./col -->
@@ -291,7 +291,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">PETPAK</a>
+                          <a href="{{route('amendment_request.index')}}" class="small-box-footer">PETPAK</a>
                         </div>
                       </div>
                       <!-- ./col -->
@@ -306,7 +306,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="#" class="small-box-footer">GPAK</a>
+                          <a href="{{route('amendment_request.index')}}" class="small-box-footer">GPAK</a>
                         </div>
                       </div>
                    </div> 

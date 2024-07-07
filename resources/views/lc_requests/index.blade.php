@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>LC Enquiry</h1>
+  <h1>LC Opening Requests</h1>
 @endsection
 
 @section('content')
@@ -25,6 +25,8 @@
               <th>Reason Code</th>
               <th>Priority</th>
               <th>Draft Required</th>
+              <th>Amount</th>
+              <th>Currency</th>
               <th>Amendment Added</th>
               {{-- <th>Created By</th>
               <th>Created At</th> --}}
@@ -116,6 +118,8 @@
           { data: "reason_code",searchable: true },
           { data: "priority",searchable: true },
           { data: "draft_required",searchable: true },
+          { data: "amount",searchable: true },
+          { data: "currency_name",searchable: true },
           { data: "amendment_request_count",searchable: true },
           // { data: "created_by",searchable: true },
           // { data: "created_at",searchable: true },

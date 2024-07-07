@@ -26,13 +26,19 @@ class AmendmentLCRequestController extends Controller
         if(\request()->ajax()){
             $amendment_lc_request = AmendmentLCRequest::join('lc_request','lc_request.id','amendment_lc_request.lc_request_id')
                 ->join('lc_request_status','lc_request_status.id','amendment_lc_request.status_id')
+                ->join('currencies','currencies.id','lc_request.currency_id')
                 ->leftjoin('users as u','u.id','amendment_lc_request.updated_by')
-                ->select('lc_request.id as lc_request_number','lc_request.shipment_name as shipment_name','lc_request_status.name as status','amendment_lc_request.*','u.name as updated_by');
+                ->select('lc_request.id as lc_request_number','lc_request.shipment_name as shipment_name','lc_request_status.name as status','amendment_lc_request.*','u.name as updated_by','currencies.name as currency_name','lc_request.amount as amount');
 
                 $amendment_lc_request = $amendment_lc_request->get();
               
             return DataTables::of($amendment_lc_request)
-                ->addColumn('lc_number', function($row) {
+                // ->addColumn('lc_number', function($row) {
+                //     $url = route('lc_request.edit', ['id' => $row->lc_request_number]);
+                //     return '<a href="'.$url.'">'.$row->lc_request_number.'</a>';
+                // })
+                // ->addColumn('link', '<a href="#">Html Column</a>')
+                 ->addColumn('link', function($row) {
                     $url = route('lc_request.edit', ['id' => $row->lc_request_number]);
                     return '<a href="'.$url.'">'.$row->lc_request_number.'</a>';
                 })
@@ -52,7 +58,7 @@ class AmendmentLCRequestController extends Controller
                     
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','link'])
                 ->make(true);
         }
     }

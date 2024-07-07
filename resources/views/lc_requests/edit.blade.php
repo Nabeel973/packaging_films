@@ -65,6 +65,23 @@
               </div>
             </div>
           </div>
+
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="amount">Amount*</label>
+                <input type="text" name="amount" class="form-control" id="amount" placeholder="Enter Amount" value="{{ $lcRequest->amount }}" {{ $disable ? 'disabled' : '' }}>
+              </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Select Currency*</label>
+                    <select class="currency form-control" id="currency" name="currency" {{ $disable ? 'disabled' : '' }}>
+                    </select>
+                    
+                </div>
+            </div>
+          </div>
     
           <div class="row mb-4">
               <div class="col-md-6">
@@ -276,7 +293,7 @@
                 <i class="fas fa-times"></i> Reject
                 </button>
             @endif    
-            @if(in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[3,5])))
+            @if(in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[3,5]))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
                 <i class="fas fa-save mr-2"></i> Update
                 </button>
@@ -426,6 +443,7 @@
     $(document).ready(function() {
 
       var supplier_names = {!! json_encode($supplier_names) !!};
+      var currencies = {!! json_encode($currencies) !!};
 
       $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -438,6 +456,18 @@
       });
 
       $(".supplier").val({{ $lcRequest->supplier_id }}).trigger('change');
+
+      $(".currency").select2({
+        placeholder: "Select Currency",
+        data: currencies.map(function(currency) {
+            return { id: currency.id, text: currency.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".currency").val({{ $lcRequest->currency_id }}).trigger('change');
 
       $.validator.setDefaults({
         submitHandler: function(form) {

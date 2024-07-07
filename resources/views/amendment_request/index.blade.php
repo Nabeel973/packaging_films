@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Amendment Request Enquiry</h1>
+  <h1>LC Amendment Requests</h1>
 @endsection
 
 @section('content')
@@ -20,6 +20,8 @@
               <th>Shipment Name</th>
               <th>Details</th>
               <th>Status</th>
+              <th>Amount</th>
+              <th>Currency</th>
               <th>Updated By</th>
               <th>Updated At</th>
               <th>Action</th>
@@ -99,10 +101,12 @@
       },
       columns: [
           { data: "id" },
-          { data: "lc_number",searchable: true },
+          { data: "link",searchable: true },
           { data: "shipment_name",searchable: true },
           { data: "details",searchable: true },
           { data: "status",searchable: true },
+          { data: "amount",searchable: true },
+          { data: "currency_name",searchable: true },
           { data: "updated_by",searchable: true },
           { data: "updated_at",searchable: true },
           { data: "action", orderable: false, searchable: false }

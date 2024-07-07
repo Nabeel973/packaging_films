@@ -56,6 +56,22 @@
               </div>
             </div>
           </div>
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="amount">Amount*</label>
+                <input type="text" name="amount" class="form-control" id="amount" placeholder="Enter Amount">
+              </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>Select Currency*</label>
+                    <select class="currency form-control" id="currency" name="currency">
+                    </select>
+                    
+                </div>
+            </div>
+          </div>
           <div class="row mb-4">
             <div class="col-md-6">
               <div class="form-check mt-4">
@@ -64,6 +80,7 @@
               </div>
             </div>
           </div>
+         
           <div class="row mt-2">
             <div class="col-12">
               <div class="card card-warning collapsed-card">
@@ -159,6 +176,20 @@
 
       $(".supplier").val('').trigger('change');
 
+      var currency_names = {!! json_encode($currencies) !!};
+
+      $(".currency").select2({
+        placeholder: "Select Currency",
+        data: currency_names.map(function(currency) {
+            return { id: currency.id, text: currency.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".currency").val('').trigger('change');
+
       $.validator.setDefaults({
         submitHandler: function(form) {
           $('#submit-button').prop('disabled', true);
@@ -170,6 +201,12 @@
       $('#quickForm').validate({
         rules: {
           shipment_name: {
+            required: true,
+          },
+          currency: {
+            required: true,
+          },
+          amount: {
             required: true,
           },
           supplier: {
@@ -201,6 +238,12 @@
         messages: {
           shipment_name: {
             required: "Please enter a shipment name",
+          },
+          currency: {
+            required: "Please select a currency ",
+          },
+          amount: {
+            required: "Please enter a amount",
           },
           supplier: {
             required: "Please select a supplier",

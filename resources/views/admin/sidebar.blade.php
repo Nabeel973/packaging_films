@@ -121,7 +121,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user"></i>
               <p>
-                LC Enquiry
+                LC Opening Requests 
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -148,7 +148,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-user"></i>
               <p>
-                Amendment Request Enquiry
+                LC Amendment Requests
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
