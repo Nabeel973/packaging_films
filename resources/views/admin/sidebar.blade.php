@@ -1,8 +1,8 @@
 <aside class="main-sidebar elevation-4 sidebar-light-warning">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link">
-      <img src="{{asset("dist/img/AdminLTELogo.png")}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+    <a href="{{route('dashboard')}}" class="brand-link">
+      <img src="{{asset("dist/img/logo.png")}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <span class="brand-text font-weight-light">Packaging Films</span>
     </a>
 
     <!-- Sidebar -->
@@ -119,7 +119,7 @@
           @endif  
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
+              <i class="fas fa-book-open"></i>
               <p>
                 LC Opening Requests 
                 <i class="right fas fa-angle-left"></i>
@@ -146,7 +146,9 @@
           @if(in_array(session('role_id'),[1,4,5]))
           <li class="nav-item">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-user"></i>
+             
+              <i class="fas fa-book-reader"></i>
+          
               <p>
                 LC Amendment Requests
                 <i class="right fas fa-angle-left"></i>
