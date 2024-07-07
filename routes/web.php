@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LCRequestController;
 use App\Http\Controllers\ResetPaswordController;
 use App\Http\Controllers\UserManagementController;
@@ -30,7 +31,6 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
    
     Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('login.password.reset');
-
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -80,9 +80,7 @@ Route::middleware('auth')->group(function () {
     // Or with multiple roles
     Route::group(['middleware' => ['role:SystemAdmin|FinanceHead|CommercialHead|TreasuryOfficer|CommercialOfficer',]], function () 
     {
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 
         Route::prefix('lc_request')->name('lc_request.')->group(function () {
             Route::get('/',[LCRequestController::class,'index'])->name('index');
