@@ -14,7 +14,12 @@
                        <!-- Image Section -->
             <div class="col-md-4">
                 <div class="text-center">
-                    <img src="{{ url('storage/' . $user->image) }}" class="rounded-circle img-fluid" alt="Profile Image" height="500px" width="500px">
+                    @if($user->image != null)
+                        <img src="{{ url('storage/' . $user->image) }}" class="rounded-circle img-fluid" alt="Profile Image" height="215px" width="215px">
+                    @else
+                        <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="rounded-circle img-fluid" alt="Profile Image" height="215px" width="215px">
+                    @endif
+
                     {{-- <img src="{{ url($user->image) }}" class="rounded-circle img-fluid" alt="Profile Image"> --}}
                 </div>
             </div>
