@@ -10,7 +10,7 @@
         <div class="card">
             <div class="card-body">
                    <div class="row m-2">
-                    <h3>LC Requests</h3>
+                    <h3>LC Opening Requests</h3>
                    </div>
                    <div class="row">
                         <div class="col-lg-3 col-6">
@@ -247,7 +247,7 @@
         <div class="card">
             <div class="card-body">
                    <div class="row m-2">
-                    <h3>Amendment LC Requests</h3>
+                    <h3>LC Amendment Requests</h3>
                    </div>
                    <div class="row">
                         <div class="col-lg-3 col-6">
