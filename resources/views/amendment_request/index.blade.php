@@ -22,6 +22,8 @@
               <th>Status</th>
               <th>Amount</th>
               <th>Currency</th>
+              <th>Bank Name</th>
+              <th>Transmitted LC Number</th>
               <th>Updated By</th>
               <th>Updated At</th>
               <th>Action</th>
@@ -107,6 +109,8 @@
           { data: "status",searchable: true },
           { data: "amount",searchable: true },
           { data: "currency_name",searchable: true },
+          { data: "bank_name",searchable: true },
+          { data: "lc_number",searchable: true },
           { data: "updated_by",searchable: true },
           { data: "updated_at",searchable: true },
           { data: "action", orderable: false, searchable: false }

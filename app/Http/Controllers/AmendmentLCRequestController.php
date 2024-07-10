@@ -28,7 +28,8 @@ class AmendmentLCRequestController extends Controller
                 ->join('lc_request_status','lc_request_status.id','amendment_lc_request.status_id')
                 ->join('currencies','currencies.id','lc_request.currency_id')
                 ->leftjoin('users as u','u.id','amendment_lc_request.updated_by')
-                ->select('lc_request.id as lc_request_number','lc_request.shipment_name as shipment_name','lc_request_status.name as status','amendment_lc_request.*','u.name as updated_by','currencies.name as currency_name','lc_request.amount as amount');
+                ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
+                ->select('lc_request.id as lc_request_number','lc_request.shipment_name as shipment_name','lc_request_status.name as status','amendment_lc_request.*','u.name as updated_by','currencies.name as currency_name','lc_request.amount as amount','d.bank_name as bank_name','d.transmited_lc_number as lc_number');
 
                 $amendment_lc_request = $amendment_lc_request->get();
               

@@ -302,7 +302,7 @@
               <input type="text" name="lc_number" id="lc_number" class="form-control">
             </div>
             <div class="form-group">
-              <label>Upload Transit LC Copy*</label>
+              <label>Upload Amednment Copy*</label>
               <input type="file" class="form-control" id="transmited_lc_document" name="transmited_lc_document">
             </div>
           </div>

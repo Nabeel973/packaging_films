@@ -28,6 +28,8 @@
               <th>Amount</th>
               <th>Currency</th>
               <th>Amendment Added</th>
+              <th>Bank Name</th>
+              <th>Transmitted LC Number</th>
               {{-- <th>Created By</th>
               <th>Created At</th> --}}
               <th>Updated By</th>
@@ -121,6 +123,8 @@
           { data: "amount",searchable: true },
           { data: "currency_name",searchable: true },
           { data: "amendment_request_count",searchable: true },
+          { data: "bank_name",searchable: true },
+          { data: "lc_number",searchable: true },
           // { data: "created_by",searchable: true },
           // { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },

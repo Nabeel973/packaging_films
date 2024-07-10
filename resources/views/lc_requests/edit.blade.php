@@ -288,7 +288,7 @@
            {{-- Bank Document End --}}
 
           <div class="row justify-content-center mt-2">
-            @if((in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && $lcRequest->status_id == 2 ))
+            @if((in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && in_array($lcRequest->status_id,[2,6]) ))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
                 <i class="fas fa-times"></i> Reject
                 </button>
@@ -417,7 +417,7 @@
               <input type="text" name="lc_number" id="lc_number" class="form-control">
             </div>
             <div class="form-group">
-              <label>Upload Transit LC Copy*</label>
+              <label>Upload Transmitted LC Copy*</label>
               <input type="file" class="form-control" id="transmited_lc_document" name="transmited_lc_document">
             </div>
           </div>

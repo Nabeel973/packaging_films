@@ -143,7 +143,7 @@
             </ul>
           </li>
 
-          @if(in_array(session('role_id'),[1,4,5]))
+          {{-- @if(in_array(session('role_id'),[1,4,5])) --}}
           <li class="nav-item">
             <a href="#" class="nav-link">
              
@@ -163,7 +163,7 @@
               </li>
             </ul>
           </li>
-          @endif  
+          {{-- @endif   --}}
 
         </ul>
       </nav>

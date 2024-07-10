@@ -36,14 +36,15 @@ class LCRequestController extends Controller
                 ->join('suppliers','suppliers.id','lc_request.supplier_id')
                 ->join('currencies','currencies.id','lc_request.currency_id')
                 ->leftjoin('users as u','u.id','lc_request.updated_by')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name');
+                ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number');
 
                 $users = $users->get();
                 
             return DataTables::of($users)
                 // ->addIndexColumn()
                 ->editColumn('priority', function ($row) {
-                    return $row->priority == 1 ? 'High' : 'Low';
+                    return $row->priority == 1 ? 'High' : 'Normal';
                 })
                 ->editColumn('draft_required', function ($row) {
                     return $row->draft_required == 1 ? 'Yes' : 'No';
@@ -57,10 +58,14 @@ class LCRequestController extends Controller
                         <div class="dropdown-menu">
                             <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>';
                     
-                    if (in_array(session('role_id'),[1,3]) && $row->priority == 0) {
-                        $actionBtn .= '<a class="dropdown-item set-priority-high" href="javascript:void(0)" data-id="'.$row->id.'">Set Priority High</a>';
-                    }
-
+                        if (in_array(session('role_id'), [1, 3])) {
+                            if ($row->priority == 0) {
+                                $text = 'Set Priority High';
+                            } else {
+                                $text = 'Set Priority Normal';
+                            }
+                            $actionBtn .= '<a class="dropdown-item set-priority-high" href="javascript:void(0)" data-id="' . $row->id . '">' . $text . '</a>';
+                        }
                    
                     $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
                     
@@ -272,6 +277,8 @@ class LCRequestController extends Controller
             LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lcRequest->id); //adds performa document5
     
             LCRequestStatusEmailJob::dispatch($lcRequest);
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+           
             return redirect()->route('lc_request.index')->with('status', 'LC Request updated successfully!');
         }
       
@@ -311,7 +318,8 @@ class LCRequestController extends Controller
 
         if ($lcRequest) {
             // Perform the update operation
-            $lcRequest->priority = 1; // Example update, change as needed
+            $priority = ($lcRequest->priority == 0) ? 1 : 0;
+            $lcRequest->priority = $priority; // Example update, change as needed
             $lcRequest->updated_by = Auth::id();
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
@@ -360,6 +368,9 @@ class LCRequestController extends Controller
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
 
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            LCRequestStatusEmailJob::dispatch($lcRequest);
+
             return redirect()->back()->with('status', 'Applied for bank successfully!');
         }
 
@@ -407,6 +418,9 @@ class LCRequestController extends Controller
             $lcRequest->updated_by = Auth::id();
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
+
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            LCRequestStatusEmailJob::dispatch($lcRequest);
 
             return redirect()->back()->with('status', 'Transited Successfully!');
         }
