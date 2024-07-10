@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Jobs\LCRequestStatusEmailJob;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\LCRequestController;
+use App\Jobs\LCAmendmentRequestStatusEmailJob;
 use App\Http\Controllers\LCRequestJourneyController;
 
 class AmendmentLCRequestController extends Controller
@@ -108,6 +109,7 @@ class AmendmentLCRequestController extends Controller
         LCRequestController::uploadDocuments($request,$amendment_lc_request,"document_5","amendment_documents",$amendment_lc_request->id); //adds performa document5
 
         LCRequestJourneyController::add($id,Auth::id(),$lc_request->status_id,Carbon::now(),NULL,$amendment_lc_request->id,11);
+        LCAmendmentRequestStatusEmailJob::dispatch($amendment_lc_request);
         // LCRequestStatusEmailJob::dispatch($lc_request);
          // Redirect to a specific route with success message
         return redirect()->route('amendment_request.index')->with('status', 'Amendment Request generated successfully.');
@@ -153,7 +155,9 @@ class AmendmentLCRequestController extends Controller
             LCRequestController::uploadDocuments($request,$amendment,"bank_document","amendment_documents",$amendment->id); //adds bank  documents
 
             LCRequestJourneyController::add($amendment->lcRequest->id,Auth::id(),$amendment->lcRequest->status_id,Carbon::now(),NULL,$amendment->id,7);
-
+            
+            LCAmendmentRequestStatusEmailJob::dispatch($amendment);
+            
             return redirect()->back()->with('status', 'Applied for bank successfully!');
         }
 
@@ -191,6 +195,8 @@ class AmendmentLCRequestController extends Controller
             LCRequestController::uploadDocuments($request,$amendment,"transmited_lc_document","amendment_documents",$amendment->id);
 
             LCRequestJourneyController::add($amendment->lcRequest->id,Auth::id(),$amendment->lcRequest->status_id,Carbon::now(),NULL,$amendment->id,10);
+
+            LCAmendmentRequestStatusEmailJob::dispatch($amendment);
 
             return redirect()->back()->with('status', 'Transited Successfully!');
         }
