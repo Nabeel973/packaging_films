@@ -20,7 +20,7 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $path = storage_path("app/public/{$user->image}");
-        $storage_link = Storage::url($url->image);
+        $storage_link = Storage::url($user->image);
         return view('profile.edit', [
             'user' => $user,
             'image_path'  => $path,
