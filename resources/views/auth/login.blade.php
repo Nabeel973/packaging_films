@@ -8,21 +8,36 @@
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="../../plugins/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" href="{{asset("plugins/fontawesome-free/css/all.min.css")}}">
   <!-- icheck bootstrap -->
-  <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <link rel="stylesheet" href="{{asset("plugins/icheck-bootstrap/icheck-bootstrap.min.css")}}">
   <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="{{asset("dist/css/adminlte.min.css")}}">
+
+  <style>
+    body {
+      background:  url('{{ asset('dist/img/LP 1_2.jpg') }}') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.6); /* White with 80% opacity */
+    }
+    .login-card-body {
+      background-color: transparent; /* Ensure inner card body is transparent */
+    }
+   
+  </style>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <h3>International Packaging Films Ltd</h3>
+    <h3 class="text-black font-weight-bold">International Packaging Films Ltd</h3>
   </div>
   <!-- /.login-logo -->
-  <div class="card">
+  <div class="card card-md">
     <div class="card-body login-card-body">
-      <h3 class="login-box-msg">SIGN IN</h3>
+      <h3 class="login-box-msg font-weight-bold">SIGN IN</h3>
       <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
       <form method="POST" action="{{ route('login') }}" id="quickForm">
         @csrf        
@@ -52,7 +67,7 @@
         <div class="row">
           <div class="col-8">
             <div class="icheck-primary">
-              <input type="checkbox" name="remember" id="remember">
+              <input type="checkbox" name="remember" id="remember" class="checkbox">
               <label for="remember">
                 Remember Me
               </label>
@@ -65,21 +80,21 @@
       </form>
 
       <p class="mt-2 text-center">
-        <a href="{{ route('password.request') }}">Forgot Password</a>
+        <a href="{{ route('password.request') }}" class="font-weight-bold">Forgot Password</a>
       </p>
     </div>
   </div>
 </div>
 
 <!-- jQuery -->
-<script src="../../plugins/jquery/jquery.min.js"></script>
+<script src="{{asset("plugins/jquery/jquery.min.js")}}"></script>
 <!-- Bootstrap 4 -->
-<script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="{{asset("plugins/bootstrap/js/bootstrap.bundle.min.js")}}"></script>
 <!-- AdminLTE App -->
-<script src="../../dist/js/adminlte.min.js"></script>
+<script src="{{asset("dist/js/adminlte.min.js")}}"></script>
 <!-- jquery-validation -->
-<script src="../../plugins/jquery-validation/jquery.validate.min.js"></script>
-<script src="../../plugins/jquery-validation/additional-methods.min.js"></script>
+<script src="{{asset("plugins/jquery-validation/jquery.validate.min.js")}}"></script>
+<script src="{{asset("plugins/jquery-validation/additional-methods.min.js")}}"></script>
 <script>
   $(function () {
     $.validator.setDefaults({
