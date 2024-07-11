@@ -29,7 +29,8 @@ class LCAmendmentRequestStatusEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = User::where('id',1)->get();
+        // $users = User::where('id',1)->get();
+        $users = User::all();
         Notification::send($users, new LCAmendmentRequestStatusUpdateEmail($this->amendment_lc_request));
     }
 }
