@@ -19,7 +19,6 @@ class ProfileController extends Controller
     {
         $user = $request->user();
         $path = storage_path("app/public/{$user->image}");
-        //dd($path);
         return view('profile.edit', [
             'user' => $user,
             'image_path'  => $path
@@ -31,7 +30,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-       
+        //dd($request->all(),$request->user());
         //$request->authenticate();
         //dd( $request->user()->fill($request->validated()));
         if ($request->user()->isDirty('email')) {
