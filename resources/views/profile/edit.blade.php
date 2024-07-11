@@ -33,11 +33,11 @@
                     @method('PATCH')
                     <div class="form-group">
                         <label for="fullName">Full Name</label>
-                        <input type="text" class="form-control" id="fullName" name="name" placeholder="Enter your full name" required value="{{ old('name', $user->name) }}">
+                        <input type="text" class="form-control" id="fullName" name="name" placeholder="Enter your full name" required value="{{ old('name', $user->name) }}" disabled="true">
                     </div>
                     <div class="form-group">
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required value="{{ old('email', $user->email) }}">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required value="{{ old('email', $user->email) }}" disabled="true">
                     </div>
                     {{-- <div class="form-group">
                         <label for="phone">Phone Number</label>

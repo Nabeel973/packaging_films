@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,15 +29,11 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        //dd($request->all(),$request->user());
-        //$request->authenticate();
-        //dd( $request->user()->fill($request->validated()));
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-        //dd($request->hasFile('image'));
+   
+        $user = User::find($request->user()->id);
+   
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = time() . '.' . $image->getClientOriginalExtension();
@@ -49,9 +46,9 @@ class ProfileController extends Controller
 
             // Store the new image in the user's directory
             $imagePath = $image->storeAs($userDirectory, $imageName);
-            $request->user()->image = $imagePath;
+            $user->image = $imagePath;
+            $user->save();
         }
-        $request->user()->save();
 
         return Redirect::route('profile.edit')->with('status', 'Profile Updated Successfully');
     }
