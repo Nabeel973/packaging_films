@@ -541,7 +541,7 @@
 <script src="{{ asset('plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('plugins/jquery-validation/additional-methods.min.js') }}"></script>
 <script src="plugins/chart.js/Chart.min.js"></script>
-<script src="../../plugins/toastr/toastr.min.js"></script>
+<script src="{{ asset('/plugins/toastr/toastr.min.js')}}"></script>
 
 <script>
   $(document).ready(function() {

@@ -26,7 +26,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
       <!-- Toastr -->
-  <link rel="stylesheet" href="../../plugins/toastr/toastr.min.css">
+  <link rel="stylesheet" href="{{asset("plugins/toastr/toastr.min.css")}}">
 </head>
 <body class="hold-transition sidebar-mini accent-warning">
 <div class="wrapper">
