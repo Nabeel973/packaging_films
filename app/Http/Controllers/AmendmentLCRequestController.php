@@ -168,7 +168,7 @@ class AmendmentLCRequestController extends Controller
 
         $validator = Validator::make($request->all(), [
             'amendment_lc_request_id' => 'required|integer',
-            'lc_number' => 'required|string|max:255',
+            // 'lc_number' => 'required|string|max:255',
             'transmited_lc_document' => 'required|max:1024',
         ]);
 
@@ -186,7 +186,7 @@ class AmendmentLCRequestController extends Controller
 
         if ($amendment) {
             // Perform the update operation
-            $amendment->transmited_lc_number = $request->lc_number;
+            // $amendment->transmited_lc_number = $request->lc_number;
             $amendment->status_id = 10;
             $amendment->updated_by = Auth::id();
             $amendment->updated_at = Carbon::now();

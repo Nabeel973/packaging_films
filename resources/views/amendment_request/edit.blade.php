@@ -42,7 +42,7 @@
             <div class="col-12">
               <div class="card card-warning collapsed-card">
                 <div class="card-header">
-                  <h3 class="card-title">View/Update Documents</h3>
+                  <h3 class="card-title">Other Supporting Documents</h3>
   
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -191,14 +191,14 @@
                  <!-- /.card-header -->
                  <div class="card-body">
                    <div class="row">
-                     <div class="col-md-6">
+                     {{-- <div class="col-md-6">
                       <div class="form-group">
                          <label for="otherDocuments">Transmited LC Number</label>
                          <input type="text" class="form-control" value="{{$amendmentLcRequest->transmited_lc_number}}" disabled="true">
                         
                       </div>
              
-                     </div>
+                     </div> --}}
                      <div class="col-md-6">
                        <div class="form-group">
                           <label for="otherDocuments">Transmited LC Document</label>
@@ -297,10 +297,10 @@
           <div class="modal-body">
          
             <input type="hidden" name="amendment_lc_request_id" id="amendment_lc_request_id" value="{{ $amendmentLcRequest->id }}">
-            <div class="form-group">
+            {{-- <div class="form-group">
               <label for="cancelReasonTextarea">Enter LC Number*</label>
               <input type="text" name="lc_number" id="lc_number" class="form-control">
-            </div>
+            </div> --}}
             <div class="form-group">
               <label>Upload Amednment Copy*</label>
               <input type="file" class="form-control" id="transmited_lc_document" name="transmited_lc_document">
