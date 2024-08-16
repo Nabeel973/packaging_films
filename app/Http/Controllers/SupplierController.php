@@ -18,7 +18,17 @@ class SupplierController extends Controller
          $supplier = Supplier::get();
         //  return response()->json($supplier);
         return DataTables::of($supplier)
+        ->editColumn('status',function($row){
+            if ($row->status == 1) {
+                return '<span class="badge badge-success">Active</span>';
+            } else {
+                return '<span class="badge badge-danger">Inactive</span>';
+            }
+        })
         ->addColumn('action', function ($row){
+            // Determine the status text
+            $text = ($row->status == 1) ? 'Set Inactive' : 'Set Active';
+            
             $actionBtn = '
             <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,12 +36,13 @@ class SupplierController extends Controller
                 </button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>
+                    <a class="dropdown-item status-btn" href="javascript:void(0)" data-id="' . $row->id . '">' . $text . '</a>
                 </div>
             </div>';
             
             return $actionBtn;
         })
-        ->rawColumns(['action'])
+        ->rawColumns(['action','status'])
         ->make(true);
       }
  
@@ -89,5 +100,17 @@ class SupplierController extends Controller
     
         // Redirect to a specific route with success message
         return redirect()->route('supplier.index')->with('status', 'Supplier updated successfully.');
+    }
+
+    public function updateStatus($id){
+      
+        if($id){
+            $supplier = Supplier::find($id);
+            $supplier->status = ($supplier->status == 1) ? 0 : 1;
+            $supplier->save();
+            return response()->json(['success' => true]);
+           
+        }
+        return response()->json(['success' => false, 'message' => 'Supplier not found']);
     }
 }

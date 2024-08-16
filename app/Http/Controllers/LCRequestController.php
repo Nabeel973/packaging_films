@@ -89,7 +89,7 @@ class LCRequestController extends Controller
      }
 
     public function add(){
-        $supplier_names = Supplier::all();
+        $supplier_names = Supplier::where('status',1)->get();
         $currencies = Currency::all();
         return view('lc_requests.add',compact('supplier_names','currencies'));
     }
@@ -150,7 +150,7 @@ class LCRequestController extends Controller
 
     public function edit($id){
         $lcRequest = LCRequest::find($id);
-        $supplier_names = Supplier::all();
+        $supplier_names = Supplier::where('status',1)->get();
         $disable = true;
         $currencies = Currency::all();
 

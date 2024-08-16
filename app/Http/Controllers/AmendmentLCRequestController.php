@@ -35,11 +35,6 @@ class AmendmentLCRequestController extends Controller
                 $amendment_lc_request = $amendment_lc_request->get();
               
             return DataTables::of($amendment_lc_request)
-                // ->addColumn('lc_number', function($row) {
-                //     $url = route('lc_request.edit', ['id' => $row->lc_request_number]);
-                //     return '<a href="'.$url.'">'.$row->lc_request_number.'</a>';
-                // })
-                // ->addColumn('link', '<a href="#">Html Column</a>')
                  ->addColumn('link', function($row) {
                     $url = route('lc_request.edit', ['id' => $row->lc_request_number]);
                     return '<a href="'.$url.'">'.$row->lc_request_number.'</a>';
