@@ -163,12 +163,13 @@ class LCRequestController extends Controller
 
     public function update(Request $request, $id)
     {
-        //dd($request->all());
+       
         $lcRequest = LcRequest::find($id);
 
         if ($request->input('action') == 'approve') {
             // Handle approval logic
             $lcRequest->status_id = 2;
+            $lcRequest->opening_deadline = $request->lc_opening_date;
             $lcRequest->reason_code = null;
             $lcRequest->updated_by = Auth::id();
             $lcRequest->updated_at = Carbon::now();
@@ -287,12 +288,12 @@ class LCRequestController extends Controller
     public function rejectReason(Request $request){
         
         $lc_request = LCRequest::find($request->lc_request_id);
-        $status_id = 0;
+        $status_id = $lc_request->status_id;
 
-        if(Auth::user()->role_id == 3){
+        if($status_id == 1 && in_array(Auth::user()->role_id,[1,3])){
             $status_id = 3;
         }
-        else if(Auth::user()->role_id == 4){
+        else if(in_array($status_id,[2,4]) && in_array(Auth::user()->role_id,[1,4])){
             $status_id = 5;
         }
         
