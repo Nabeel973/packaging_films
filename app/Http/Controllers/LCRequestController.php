@@ -35,9 +35,10 @@ class LCRequestController extends Controller
                 ->join('lc_request_status','lc_request_status.id','lc_request.status_id')
                 ->join('suppliers','suppliers.id','lc_request.supplier_id')
                 ->join('currencies','currencies.id','lc_request.currency_id')
+                ->join('companies','companies.id','lc_request.company_id')
                 ->leftjoin('users as u','u.id','lc_request.updated_by')
                 ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number');
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number','companies.name as company_name');
 
                 $users = $users->get();
                 
