@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/user-submit',[UserManagementController::class,'submit'])->name('user.submit');
         Route::get('/user/edit/{id}',[UserManagementController::class,'edit'])->name('user.edit');
         Route::put('/user/update/{id}',[UserManagementController::class,'update'])->name('user.update');
+        Route::post('/user/status/{id}',[UserManagementController::class,'updateStatus'])->name('user.status');
 
         Route::prefix('supplier')->name('supplier.')->group(function () {
             Route::get('/management',[SupplierController::class,'index'])->name('index');
@@ -54,6 +55,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/submit',[SupplierController::class,'submit'])->name('submit');
             Route::get('/edit/{id}',[SupplierController::class,'edit'])->name('edit');
             Route::put('/update/{id}',[SupplierController::class,'update'])->name('update');
+            Route::post('/update/status/{id}',[SupplierController::class,'updateStatus'])->name('update.status');
         });
         
     });

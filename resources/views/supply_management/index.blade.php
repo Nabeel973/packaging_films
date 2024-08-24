@@ -18,6 +18,7 @@
               <th>ID</th>
               <th>Name</th>
               <th>Created At</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
             </thead>          
@@ -43,6 +44,7 @@
 <script src="{{asset("plugins/datatables-buttons/js/buttons.html5.min.js")}}"></script>
 {{-- <script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script> --}}
 <script src="{{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}"></script>    
+<script src="{{ asset('/plugins/toastr/toastr.min.js')}}"></script>
 
 <script>
 
@@ -81,7 +83,7 @@
         //     columns: ':not(:last-child)' // Exclude the last column (Action button)
         //   }
         // },
-        // 'colvis'
+        'colvis'
       ],
       "ajax": {
         "url": "{{ route('supplier.list') }}",
@@ -98,6 +100,7 @@
           { data: "id" },
           { data: "name",searchable: true },
           { data: "created_at",searchable: true },
+          { data: "status",searchable: true },
           { data: "action", orderable: false, searchable: false }
         ],
         paging: true,
@@ -127,13 +130,43 @@
         window.location.href = editUrl; // Redirect to the edit page
     });
   
-    // Handle delete button click event
-    $('#example1').on('click', '.delete-btn', function(e) {
-      e.preventDefault();
-      var userId = $(this).data('id');
-      // Perform delete operation based on userId
-      // For example, show confirmation modal
-      // $('#deleteUserModal').modal('show');
+     // Handle status button click event
+    $('#example1').on('click', '.status-btn', function(e) {
+        e.preventDefault(); // Prevent the default action of the link
+
+        var supplierId = $(this).data('id'); // Get the user ID from the button data attribute
+
+        if (supplierId) {
+            // Prepare the URL with the user ID
+            var url = "{{ route('supplier.update.status', ':id') }}"; // Laravel route with a placeholder
+            url = url.replace(':id', supplierId); // Replace placeholder with actual user ID
+
+            // Perform the AJAX request
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                  "_token": "{{ csrf_token() }}",
+                },  
+                success: function(response) {
+                    // Handle success
+                    if (response.success) {
+                        table.draw();
+                        toastr.success('Supplier Status Updated Successfully'); // Show success message
+                    } else {
+                        toastr.error(response.message); // Show error message
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    var errorMessage = 'An error occurred. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message; // Get the error message from the response
+                    }
+                    toastr.error(errorMessage); // Show error message
+                }
+            });
+        }
     });
   });
   </script>

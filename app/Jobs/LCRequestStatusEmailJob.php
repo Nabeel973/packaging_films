@@ -29,7 +29,7 @@ class LCRequestStatusEmailJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = User::all();
+        $users = User::where('status',1)->get();
         // $users = User::where('id',1)->get();
         Notification::send($users, new LCRequestStatusUpdateEmail($this->lc_request));
     }

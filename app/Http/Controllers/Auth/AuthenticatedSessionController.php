@@ -31,6 +31,12 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
+        
+        // Check if the user's status is not 1
+        if ($user->status != 1) {
+            Auth::logout();
+            return redirect()->back()->withErrors(['status' => 'Your account is inactive.']);
+        }
        
         $permissions = ($user->role->id != 1) ? $user->role->getAllPermissions()->pluck('id') : array();        
 

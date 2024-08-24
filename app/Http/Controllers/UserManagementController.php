@@ -21,20 +21,32 @@ class UserManagementController extends Controller
                 ->get();
 
                 return DataTables::of($users)
-                ->addColumn('action', function ($row){
+                ->editColumn('status',function($row){
+                    if ($row->status == 1) {
+                        return '<span class="badge badge-success">Active</span>';
+                    } else {
+                        return '<span class="badge badge-danger">Inactive</span>';
+                    }
+                })
+                ->addColumn('action', function ($row) {
+                    // Determine the status text
+                    $text = ($row->status == 1) ? 'Set Inactive' : 'Set Active';
+                
+                    // Create the action button HTML
                     $actionBtn = '
                     <div class="btn-group">
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Actions
                         </button>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>
+                            <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="' . $row->id . '">Edit</a>
+                            <a class="dropdown-item status-btn" href="javascript:void(0)" data-id="' . $row->id . '">' . $text . '</a>
                         </div>
                     </div>';
-                    
+                
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','status'])
                 ->make(true);
     }
 
@@ -120,6 +132,19 @@ class UserManagementController extends Controller
     
         // Redirect to a specific route with success message
         return redirect()->route('user.index')->with('status', 'User updated successfully.');
+    }
+
+    public function updateStatus($id){
+      
+        if($id){
+            $user = User::find($id);
+            $status =  ($user->status == 1) ? 0 : 1;
+            $user->status = $status;
+            $user->save();
+            return response()->json(['success' => true]);
+           
+        }
+        return response()->json(['success' => false, 'message' => 'User not found']);
     }
     
 }
