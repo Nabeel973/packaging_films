@@ -97,7 +97,7 @@
         //     columns: ':not(:last-child)' // Exclude the last column (Action button)
         //   }
         // },
-        // 'colvis'
+        'colvis'
       ],
       "ajax": {
         "url": "{{ route('lc_request.list') }}",
