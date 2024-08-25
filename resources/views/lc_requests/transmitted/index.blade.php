@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Pending LC Opening Requests</h1>
+  <h1>Transmitted LC Opening Requests</h1>
 @endsection
 
 @section('content')
@@ -12,72 +12,6 @@
       <div class="card">
         <div class="card-body">
           <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
-
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                  <label>Select Supplier*</label>
-                  <select class="supplier form-control" id="supplier" name="supplier">
-                  </select>
-                  
-              </div>
-             
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputFrom">Quantity From</label>
-                  <input type="number" class="form-control" id="quantity_from" placeholder="Start Quantity" min="0">
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="inputTo">Quantity To</label>
-                  <input type="number" class="form-control" id="quantity_to" placeholder="To Quantity" min="0">
-                </div>
-              </div>
-              
-            </div>
-            
-            <div class="col-md-4">
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputFrom">Value From</label>
-                  <input type="number" class="form-control" id="value_from" placeholder="Value From" min="0" >
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="inputTo">Value To</label>
-                  <input type="number" class="form-control" id="value_to" placeholder="Value To" min="0">
-                </div>
-              </div>
-              
-            </div>
-          </div>
-
-          <div class="row mb-4">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Date range:</label>
-
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="far fa-calendar-alt"></i>
-                    </span>
-                  </div>
-                  <input type="text" class="form-control float-right" id="date_range">
-                </div>
-                <!-- /.input group -->
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <button class="btn btn-warning btn-md">Search</button>
-              </div>
-            </div>
-          </div>
-
-
           <table id="example1" class="table table-bordered table-striped">
             <thead>
             <tr>
@@ -120,45 +54,16 @@
 <script src="{{asset("plugins/datatables-buttons/js/dataTables.buttons.min.js")}}"></script>
 <script src="{{asset("plugins/datatables-buttons/js/buttons.bootstrap4.min.js")}}"></script>
 <script src="{{asset("plugins/jszip/jszip.min.js")}}"></script>
-
+<script src="{{asset("plugins/pdfmake/pdfmake.min.js")}}"></script>
+<script src="{{asset("plugins/pdfmake/vfs_fonts.js")}}"></script>
 <script src="{{asset("plugins/datatables-buttons/js/buttons.html5.min.js")}}"></script>
+{{-- <script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script> --}}
 <script src="{{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}"></script>    
 <script src="{{ asset('/plugins/toastr/toastr.min.js')}}"></script>
-  <!-- Select2 -->
-  <script src="{{asset("plugins/select2/js/select2.full.min.js")}}"></script>
-
-  <script src="{{ asset('plugins/moment/moment.min.js')}}"></script>
-  <script src="{{ asset('plugins/inputmask/jquery.inputmask.min.js') }}"></script>
-  <!-- date-range-picker -->
-  <script src="{{ asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
- <!-- Tempusdominus Bootstrap 4 -->
-  <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-
-
 <script>
 
   $(document).ready(function() {
-
-      //Date range picker
-      $('#reservation').daterangepicker();
-
-
-
-    var supplier_names = {!! json_encode($supplier_names) !!};
-
-    $(".supplier").select2({
-        placeholder: "Select Supplier",
-        data: supplier_names.map(function(supplier) {
-            return { id: supplier.id, text: supplier.name };
-        }),
-        width: '100%',
-        dropdownAutoWidth: true,
-        //allowClear: true // Add this line to allow clearing the selection
-      });
-
-      $(".supplier").val('').trigger('change');
-
-    var customTitle = 'Pending LC Enquiry';
+    var customTitle = 'Transmitted LC Enquiry';
     var table = $("#example1").DataTable({
       processing: true,
       serverSide: true,
@@ -188,7 +93,7 @@
         'colvis'
       ],
       "ajax": {
-        "url": "{{ route('lc_request.pending.list') }}",
+        "url": "{{ route('lc_request.transmitted.list') }}",
         "type": "GET",
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
@@ -251,38 +156,6 @@
         window.location.href = editUrl; // Redirect to the edit page
     });
   
-    // // Handle priority button click event
-    $('#example1').on('click', '.set-priority-high', function(e) {
-      e.preventDefault();
-      var lc_request_id = $(this).data('id');
-      if (lc_request_id) {
-            $.ajax({
-                url: '{{ route("lc_request.set-priority") }}', // The API endpoint to hit
-                type: 'POST',
-                data: {
-                    lc_request_id: lc_request_id,
-                    _token: '{{ csrf_token() }}' // Include CSRF token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Reload the table or the specific part of the page
-                        table.ajax.reload(null, false);
-                        toastr.success('Priority Updated');
-                    } else {
-                        // Handle the error
-                        toastr.error('Failed to set the priority.');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle AJAX error
-                    toastr.error('An error occurred: ' + error);
-                }
-            });
-          }
-      else{
-        //
-      }
-    });
 
     $('#example1').on('click', '.amendment-request', function(e) {
       e.preventDefault();

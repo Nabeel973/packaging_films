@@ -23,12 +23,12 @@ use App\Http\Controllers\LCRequestJourneyController;
 class LCRequestController extends Controller
 {
 
-    public function index(){
-       
-        return view('lc_requests.index');
+    public function pending_index(){
+        $supplier_names = Supplier::where('status',1)->get();
+        return view('lc_requests.index',[ 'supplier_names' => $supplier_names ]);
     }
 
-    public function list(){
+    public function pending_list($condition = null){
 
         if(\request()->ajax()){
             $users = LCRequest::join('users','users.id','lc_request.created_by')
@@ -37,7 +37,8 @@ class LCRequestController extends Controller
                 ->join('currencies','currencies.id','lc_request.currency_id')
                 ->leftjoin('users as u','u.id','lc_request.updated_by')
                 ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number');
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number')
+                ->where('lc_request_status.id','!=',10);
 
                 $users = $users->get();
                 
@@ -68,14 +69,6 @@ class LCRequestController extends Controller
                         }
                    
                     $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
-                    
-                   
-                    $amendment_request = AmendmentLCRequest::where('lc_request_id',$row->id)->latest()->first();
-
-                    if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$amendment_request || ($row->amendment_request_count > 0 && $amendment_request->status_id == 10 ))) {
-                        $actionBtn .= '<a class="dropdown-item amendment-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Amendment Request</a>';
-                    }
-    
 
                     $actionBtn .= '
                         </div>
@@ -465,6 +458,56 @@ class LCRequestController extends Controller
             return DataTables::of($lc_request_logs)
                 ->make(true);
     }
+
+
+    public function transmitted_index(){
+       
+        return view('lc_requests.transmitted.index');
+    }
+
+    public function transmitted_list(){
+
+        if(\request()->ajax()){
+            $users = LCRequest::join('users','users.id','lc_request.created_by')
+                ->join('lc_request_status','lc_request_status.id','lc_request.status_id')
+                ->join('suppliers','suppliers.id','lc_request.supplier_id')
+                ->join('currencies','currencies.id','lc_request.currency_id')
+                ->leftjoin('users as u','u.id','lc_request.updated_by')
+                ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
+                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number')
+                ->where('lc_request_status.id',10);
+
+                $users = $users->get();
+                
+            return DataTables::of($users)
+                // ->addIndexColumn()
+                ->editColumn('draft_required', function ($row) {
+                    return $row->draft_required == 1 ? 'Yes' : 'No';
+                })
+                ->addColumn('action', function ($row){
+                    $actionBtn = '
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>';
+                    
+                   
+                    $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
+
+                    $actionBtn .= '
+                        </div>
+                    </div>';
+                    
+                    return $actionBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+     }
+
+
 }
 
 
