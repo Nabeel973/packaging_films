@@ -12,6 +12,7 @@
       <div class="card">
         <div class="card-body">
           <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
+          @include('lc_requests.filters', ['supplier_names' => $supplier_names])
           <table id="example1" class="table table-bordered table-striped">
             <thead>
             <tr>
@@ -60,9 +61,55 @@
 {{-- <script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script> --}}
 <script src="{{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}"></script>    
 <script src="{{ asset('/plugins/toastr/toastr.min.js')}}"></script>
+
+  <!-- Select2 -->
+  <script src="{{asset("plugins/select2/js/select2.full.min.js")}}"></script>
+
+  <script src="{{ asset('plugins/moment/moment.min.js')}}"></script>
+  <script src="{{ asset('plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+  <!-- date-range-picker -->
+  <script src="{{ asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
+ <!-- Tempusdominus Bootstrap 4 -->
+  <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 <script>
 
   $(document).ready(function() {
+
+        //Date range picker
+   
+      $('#date_range').daterangepicker({
+        autoUpdateInput: false, // Prevents auto updating of the input
+        opens: 'left', // Adjust the position as needed
+        locale: {
+            format: 'YYYY-MM-DD', // Adjust date format as needed
+            cancelLabel: 'Clear'
+        }
+      });
+
+      
+    var supplier_names = {!! json_encode($supplier_names) !!};
+
+    $(".supplier").select2({
+        placeholder: "Select Supplier",
+        data: supplier_names.map(function(supplier) {
+            return { id: supplier.id, text: supplier.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+    $(".supplier").val('').trigger('change');
+
+        // Handle the apply and cancel buttons
+      $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+          $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+      });
+
+      $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
     var customTitle = 'Transmitted LC Enquiry';
     var table = $("#example1").DataTable({
       processing: true,
@@ -95,6 +142,15 @@
       "ajax": {
         "url": "{{ route('lc_request.transmitted.list') }}",
         "type": "GET",
+        "data": function(d) {
+        // Add the filter values to the data object
+        d.supplier_id = $('#supplier').val();
+        d.quantity_from = $('#quantity_from').val();
+        d.quantity_to = $('#quantity_to').val();
+        d.value_from = $('#value_from').val();
+        d.value_to = $('#value_to').val();
+        d.date_range = $('#date_range').val(); // Assuming you're using a date range picker
+      },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
             return json.data;
@@ -176,6 +232,10 @@
           window.location.href = editUrl; // Redirect to the edit page
         }
     });
+
+    $('#search').on('click', function() {
+    table.ajax.reload();
+  });
 
 
   });

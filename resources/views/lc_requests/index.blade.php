@@ -12,71 +12,8 @@
       <div class="card">
         <div class="card-body">
           <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
-
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                  <label>Select Supplier*</label>
-                  <select class="supplier form-control" id="supplier" name="supplier">
-                  </select>
-                  
-              </div>
-             
-            </div>
-
-            <div class="col-md-4">
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputFrom">Quantity From</label>
-                  <input type="number" class="form-control" id="quantity_from" placeholder="Start Quantity" min="0">
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="inputTo">Quantity To</label>
-                  <input type="number" class="form-control" id="quantity_to" placeholder="To Quantity" min="0">
-                </div>
-              </div>
-              
-            </div>
-            
-            <div class="col-md-4">
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="inputFrom">Value From</label>
-                  <input type="number" class="form-control" id="value_from" placeholder="Value From" min="0" >
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="inputTo">Value To</label>
-                  <input type="number" class="form-control" id="value_to" placeholder="Value To" min="0">
-                </div>
-              </div>
-              
-            </div>
-          </div>
-
-          <div class="row mb-4">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>Date range:</label>
-
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <i class="far fa-calendar-alt"></i>
-                    </span>
-                  </div>
-                  <input type="text" class="form-control float-right" id="date_range">
-                </div>
-                <!-- /.input group -->
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <button class="btn btn-warning btn-md">Search</button>
-              </div>
-            </div>
-          </div>
-
+  
+          @include('lc_requests.filters', ['supplier_names' => $supplier_names])
 
           <table id="example1" class="table table-bordered table-striped">
             <thead>
@@ -140,9 +77,24 @@
   $(document).ready(function() {
 
       //Date range picker
-      $('#reservation').daterangepicker();
+   
+      $('#date_range').daterangepicker({
+        autoUpdateInput: false, // Prevents auto updating of the input
+        opens: 'left', // Adjust the position as needed
+        locale: {
+            format: 'YYYY-MM-DD', // Adjust date format as needed
+            cancelLabel: 'Clear'
+        }
+      });
 
+      // Handle the apply and cancel buttons
+    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+    });
 
+    $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+        $(this).val('');
+    });
 
     var supplier_names = {!! json_encode($supplier_names) !!};
 
@@ -190,6 +142,15 @@
       "ajax": {
         "url": "{{ route('lc_request.pending.list') }}",
         "type": "GET",
+        "data": function(d) {
+        // Add the filter values to the data object
+        d.supplier_id = $('#supplier').val();
+        d.quantity_from = $('#quantity_from').val();
+        d.quantity_to = $('#quantity_to').val();
+        d.value_from = $('#value_from').val();
+        d.value_to = $('#value_to').val();
+        d.date_range = $('#date_range').val(); // Assuming you're using a date range picker
+      },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
             return json.data;
@@ -284,15 +245,15 @@
       }
     });
 
-    $('#example1').on('click', '.amendment-request', function(e) {
-      e.preventDefault();
-      var lc_request_id = $(this).data('id');
-        if (lc_request_id) {
-          var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
-          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
-          window.location.href = editUrl; // Redirect to the edit page
-        }
-    });
+    // $('#example1').on('click', '.amendment-request', function(e) {
+    //   e.preventDefault();
+    //   var lc_request_id = $(this).data('id');
+    //     if (lc_request_id) {
+    //       var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
+    //       editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+    //       window.location.href = editUrl; // Redirect to the edit page
+    //     }
+    // });
 
     $('#example1').on('click', '.view-logs', function(e) {
       e.preventDefault();
@@ -303,6 +264,10 @@
           window.location.href = editUrl; // Redirect to the edit page
         }
     });
+
+    $('#search').on('click', function() {
+    table.ajax.reload();
+  });
 
 
   });
