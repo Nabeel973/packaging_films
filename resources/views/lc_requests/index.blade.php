@@ -77,7 +77,9 @@
   $(document).ready(function() {
 
       //Date range picker
-   
+
+      $('#date_range').attr('placeholder', 'Select a date range');
+
       $('#date_range').daterangepicker({
         autoUpdateInput: false, // Prevents auto updating of the input
         opens: 'left', // Adjust the position as needed
@@ -105,7 +107,7 @@
         }),
         width: '100%',
         dropdownAutoWidth: true,
-        //allowClear: true // Add this line to allow clearing the selection
+        allowClear: true // Add this line to allow clearing the selection
       });
 
       $(".supplier").val('').trigger('change');
