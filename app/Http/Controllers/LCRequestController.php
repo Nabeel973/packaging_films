@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Company;
 use App\Models\Currency;
 use App\Models\Document;
 use App\Models\Supplier;
@@ -112,14 +113,16 @@ class LCRequestController extends Controller
     public function add(){
         $supplier_names = Supplier::where('status',1)->get();
         $currencies = Currency::all();
-        return view('lc_requests.add',compact('supplier_names','currencies'));
+        $companies = Company::all();
+        return view('lc_requests.add',compact('supplier_names','currencies','companies'));
     }
 
     public function submit(Request $request){
-       
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'shipment_name' => 'required|string|max:255',
             'supplier' => 'required|integer',
+            'company_id' => 'required|integer',
             'payment_terms' => 'required|string',
             'currency' => 'required|integer',
             'amount' => 'required|numeric',
@@ -140,6 +143,7 @@ class LCRequestController extends Controller
 
         $lc_request = new LCRequest();
         $lc_request->shipment_name = $request->shipment_name;
+        $lc_request->company_id = $request->company_id;
         $lc_request->supplier_id = $request->supplier;
         $lc_request->item_name = $request->item_name;
         $lc_request->quantity = $request->item_quantity;
@@ -157,11 +161,11 @@ class LCRequestController extends Controller
         $document->save();
 
         LCRequestController::uploadDocuments($request,$document,"performa_invoice","performa_invoices",$lc_request->id); //adds performa invoice
-        LCRequestController::uploadDocuments($request,$document,"document_1","documents",$lc_request->id); //adds performa document1
-        LCRequestController::uploadDocuments($request,$document,"document_2","documents",$lc_request->id); //adds performa document2
-        LCRequestController::uploadDocuments($request,$document,"document_3","documents",$lc_request->id); //adds performa document3
-        LCRequestController::uploadDocuments($request,$document,"document_4","documents",$lc_request->id); //adds performa document4
-        LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lc_request->id); //adds performa document5
+        LCRequestController::uploadDocuments($request,$document,"document_1","documents",$lc_request->id); //adds document1
+        LCRequestController::uploadDocuments($request,$document,"document_2","documents",$lc_request->id); //adds document2
+        LCRequestController::uploadDocuments($request,$document,"document_3","documents",$lc_request->id); //adds document3
+        LCRequestController::uploadDocuments($request,$document,"document_4","documents",$lc_request->id); //adds document4
+        LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lc_request->id); //adds document5
 
         LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now());
         LCRequestStatusEmailJob::dispatch($lc_request);
@@ -174,12 +178,13 @@ class LCRequestController extends Controller
         $supplier_names = Supplier::where('status',1)->get();
         $disable = true;
         $currencies = Currency::all();
+        $companies = Company::all();
 
         if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5])))
         {  
             $disable = false;
         }
-        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable','currencies'));
+        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable','currencies','companies'));
     }
 
     public function update(Request $request, $id)
@@ -243,6 +248,7 @@ class LCRequestController extends Controller
             $validator = Validator::make($request->all(), [
                 'shipment_name' => 'required|string|max:255',
                 'supplier' => 'required|integer',
+                'company_id' => 'required|integer',
                 'payment_terms' => 'required|string',
                 'currency' => 'required|integer',
                 'amount' => 'required|numeric',
@@ -264,6 +270,7 @@ class LCRequestController extends Controller
 
             $lcRequest->shipment_name = $request->input('shipment_name');
             $lcRequest->supplier_id = $request->input('supplier');
+            $lcRequest->company_id = $request->input('company_id');
             $lcRequest->item_name = $request->input('item_name');
             $lcRequest->quantity = $request->input('item_quantity');
             $lcRequest->payment_terms = $request->input('payment_terms');

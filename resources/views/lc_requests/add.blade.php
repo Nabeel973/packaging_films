@@ -79,6 +79,14 @@
                 <label class="form-check-label">LC Draft Required</label>
               </div>
             </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                  <label>Select Company*</label>
+                  <select class="company form-control" id="company" name="company_id">
+                  </select>
+                  
+              </div>
+          </div>
           </div>
          
           <div class="row mt-2">
@@ -162,7 +170,9 @@
   <script src="{{asset("plugins/select2/js/select2.full.min.js")}}"></script>
   <script>
     $(document).ready(function() {
+
       var supplier_names = {!! json_encode($supplier_names) !!};
+      var companies = {!! json_encode($companies) !!};
 
       $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -198,12 +208,27 @@
         }
       });
       
+      $(".company").select2({
+        placeholder: "Select Company",
+        data: companies.map(function(company) {
+            return { id: company.id, text: company.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".company").val('').trigger('change');
+
       $('#quickForm').validate({
         rules: {
           shipment_name: {
             required: true,
           },
           currency: {
+            required: true,
+          },
+          company_id: {
             required: true,
           },
           amount: {
@@ -244,6 +269,9 @@
           },
           amount: {
             required: "Please enter a amount",
+          },
+          company_id: {
+            required: "Please select a company",
           },
           supplier: {
             required: "Please select a supplier",

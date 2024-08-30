@@ -90,27 +90,33 @@
                   <label class="form-check-label">LC Draft Required</label>
                 </div>
               </div>
-              
-              {{-- @if(in_array($lcRequest->status_id,[1])) --}}
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>LC Opening Date:</label>
-                      <div class="input-group date" id="datepicker" data-target-input="nearest">
-                          <input type="text" class="form-control datetimepicker-input" data-target="#datepicker" id="lc_opening_date" name="lc_opening_date" value="{{ $lcRequest->opening_deadline }}"   
-                            @if(Auth::user()->role_id != 3 || ($lcRequest->opening_deadline != null && Auth::user()->role_id == 3)) 
-                              disabled
-                            @endif/>
-                          
-                          <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
-                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                          </div>
-                      </div>
-                  </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                    <label>Select Company*</label>
+                    <select class="company form-control" id="currency" name="company" {{ $disable ? 'disabled' : '' }}>
+                    </select>
+                    
                 </div>
-              {{-- @endif   --}}
-             
+            </div>
+              
           </div>
           <div class="row mb-4">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>LC Opening Date:</label>
+                  <div class="input-group date" id="datepicker" data-target-input="nearest">
+                      <input type="text" class="form-control datetimepicker-input" data-target="#datepicker" id="lc_opening_date" name="lc_opening_date" value="{{ $lcRequest->opening_deadline }}"   
+                        @if(Auth::user()->role_id != 3 || ($lcRequest->opening_deadline != null && Auth::user()->role_id == 3)) 
+                          disabled
+                        @endif/>
+                      
+                      <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                      </div>
+                  </div>
+              </div>
+            </div>
               @if(in_array($lcRequest->status_id,[3,5]))
                 <div class="col-md-6">
                   <div class="form-group">
@@ -119,6 +125,7 @@
                   </div>
                 </div>
               @endif
+              
           </div>
          
           {{-- View Documents Start --}}
@@ -472,6 +479,7 @@
 
       var supplier_names = {!! json_encode($supplier_names) !!};
       var currencies = {!! json_encode($currencies) !!};
+      var companies = {!! json_encode($companies) !!};
 
       $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -495,7 +503,20 @@
         //allowClear: true // Add this line to allow clearing the selection
       });
 
-      $(".currency").val({{ $lcRequest->currency_id }}).trigger('change');
+      $(".currency").val({{ $lcRequest->company_id }}).trigger('change');
+
+      $(".company").select2({
+        placeholder: "Select Company",
+        data: companies.map(function(company) {
+            return { id: company.id, text: company.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".company").val({{ $lcRequest->company_id }}).trigger('change');
+
 
       $.validator.setDefaults({
         submitHandler: function(form) {
