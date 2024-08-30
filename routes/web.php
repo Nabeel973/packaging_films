@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('supplier')->name('supplier.')->group(function () {
             Route::get('/management',[SupplierController::class,'index'])->name('index');
-            Route::get('/user-list',[SupplierController::class,'list'])->name('list');
+            Route::get('/list',[SupplierController::class,'list'])->name('list');
             Route::get('/add',[SupplierController::class,'add'])->name('add');
             Route::post('/submit',[SupplierController::class,'submit'])->name('submit');
             Route::get('/edit/{id}',[SupplierController::class,'edit'])->name('edit');
@@ -85,8 +85,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
 
         Route::prefix('lc_request')->name('lc_request.')->group(function () {
-            Route::get('/',[LCRequestController::class,'index'])->name('index');
-            Route::get('/list',[LCRequestController::class,'list'])->name('list');
+            Route::get('/pending',[LCRequestController::class,'pending_index'])->name('pending.index');
+            Route::get('/pending/list',[LCRequestController::class,'pending_list'])->name('pending.list');
+
+            Route::get('/transmitted',[LCRequestController::class,'transmitted_index'])->name('transmitted.index');
+            Route::get('/transmitted-list',[LCRequestController::class,'transmitted_list'])->name('transmitted.list');
+
             Route::get('/edit/{id}',[LCRequestController::class,'edit'])->name('edit');
             Route::put('/update/{id}',[LCRequestController::class,'update'])->name('update');
             Route::post('/reject/reason',[LCRequestController::class,'rejectReason'])->name('reject-reason');

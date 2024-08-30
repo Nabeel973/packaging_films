@@ -23,26 +23,53 @@ use App\Http\Controllers\LCRequestJourneyController;
 class LCRequestController extends Controller
 {
 
-    public function index(){
-       
-        return view('lc_requests.index');
+    public function pending_index(){
+        $supplier_names = Supplier::where('status',1)->get();
+        return view('lc_requests.index',[ 'supplier_names' => $supplier_names ]);
     }
 
-    public function list(){
+    protected function buildLcRequestQuery($request)
+    {
+        $lc_request = LCRequest::join('users', 'users.id', 'lc_request.created_by')
+                    ->join('lc_request_status', 'lc_request_status.id', 'lc_request.status_id')
+                    ->join('suppliers', 'suppliers.id', 'lc_request.supplier_id')
+                    ->join('currencies', 'currencies.id', 'lc_request.currency_id')
+                    ->leftJoin('users as u', 'u.id', 'lc_request.updated_by')
+                    ->leftJoin('documents as d', 'd.lc_request_id', 'lc_request.id')
+                    ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number');
 
-        if(\request()->ajax()){
-            $users = LCRequest::join('users','users.id','lc_request.created_by')
-                ->join('lc_request_status','lc_request_status.id','lc_request.status_id')
-                ->join('suppliers','suppliers.id','lc_request.supplier_id')
-                ->join('currencies','currencies.id','lc_request.currency_id')
-                ->join('companies','companies.id','lc_request.company_id')
-                ->leftjoin('users as u','u.id','lc_request.updated_by')
-                ->leftjoin('documents as d','d.lc_request_id','lc_request.id')
-                ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number','companies.name as company_name');
+        if ($request->filled('supplier_id')) {
+            $lc_request->where('lc_request.supplier_id', (int) $request->supplier_id);
+        }
+        if ($request->filled('quantity_from')) {
+            $lc_request->where('lc_request.quantity', '>=',(int) $request->quantity_from);
+        }
+        if ($request->filled('quantity_to')) {
+            $lc_request->where('lc_request.quantity', '<=',(int) $request->quantity_to);
+        }
+        if ($request->filled('value_from')) {
+            $lc_request->where('lc_request.amount', '>=', (double) $request->value_from);
+        }
+        if ($request->filled('value_to')) {
+            $lc_request->where('lc_request.amount', '<=',(double) $request->value_to);
+        }
+        if ($request->filled('date_range')) {
+            [$start_date, $end_date] = explode(' - ', $request->date_range);
+            $start_date = Carbon::parse($start_date)->startOfDay()->toDateTimeString();
+            $end_date = Carbon::parse($end_date)->endOfDay()->toDateTimeString();
+            $lc_request->whereBetween('lc_request.created_at', [$start_date, $end_date]);
+        }
+        return $lc_request;
+    }
 
-                $users = $users->get();
-                
-            return DataTables::of($users)
+    public function pending_list(Request $request)
+    {   
+       
+        $lc_request = $this->buildLcRequestQuery($request)
+                        ->where('lc_request_status.id', '!=', 10)
+                        ->get();
+
+        return DataTables::of($lc_request)
                 // ->addIndexColumn()
                 ->editColumn('priority', function ($row) {
                     return $row->priority == 1 ? 'High' : 'Normal';
@@ -69,14 +96,6 @@ class LCRequestController extends Controller
                         }
                    
                     $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
-                    
-                   
-                    $amendment_request = AmendmentLCRequest::where('lc_request_id',$row->id)->latest()->first();
-
-                    if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$amendment_request || ($row->amendment_request_count > 0 && $amendment_request->status_id == 10 ))) {
-                        $actionBtn .= '<a class="dropdown-item amendment-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Amendment Request</a>';
-                    }
-    
 
                     $actionBtn .= '
                         </div>
@@ -85,9 +104,9 @@ class LCRequestController extends Controller
                     return $actionBtn;
                 })
                 ->rawColumns(['action'])
-                ->make(true);
-        }
-     }
+                ->make(true);       
+    }
+
 
     public function add(){
         $supplier_names = Supplier::where('status',1)->get();
@@ -466,6 +485,56 @@ class LCRequestController extends Controller
             return DataTables::of($lc_request_logs)
                 ->make(true);
     }
+
+
+    public function transmitted_index(){
+        $supplier_names = Supplier::where('status',1)->get();
+        return view('lc_requests.transmitted.index',['supplier_names' => $supplier_names]);
+    }
+
+    public function transmitted_list(Request $request){
+           
+    $lc_request = $this->buildLcRequestQuery($request)
+    ->where('lc_request_status.id',10)
+    ->get();
+
+        
+    return DataTables::of($lc_request)
+        // ->addIndexColumn()
+        ->editColumn('priority', function ($row) {
+            return $row->priority == 1 ? 'High' : 'Normal';
+        })
+        ->editColumn('draft_required', function ($row) {
+            return $row->draft_required == 1 ? 'Yes' : 'No';
+        })
+        ->addColumn('action', function ($row){
+            $actionBtn = '
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Actions
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item edit-btn" href="javascript:void(0)" data-id="'.$row->id.'">Edit</a>';
+            
+            
+            $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
+
+            $actionBtn .= '
+                </div>
+            </div>';
+            
+            return $actionBtn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+        
+     }
+
+
+   
+
+
+
 }
 
 

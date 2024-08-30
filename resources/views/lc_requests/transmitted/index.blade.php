@@ -1,7 +1,7 @@
 @extends('admin.app')
 
 @section('content-header')
-  <h1>Pending LC Opening Requests</h1>
+  <h1>Transmitted LC Opening Requests</h1>
 @endsection
 
 @section('content')
@@ -12,15 +12,12 @@
       <div class="card">
         <div class="card-body">
           <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
-  
           @include('lc_requests.filters', ['supplier_names' => $supplier_names])
-
           <table id="example1" class="table table-bordered table-striped">
             <thead>
             <tr>
               <th>ID</th>
               <th>Shipment Name</th>
-              <th>Company</th>
               <th>Supplier Name</th>
               <th>Item Name</th>
               <th>Item Quantity</th>
@@ -58,10 +55,13 @@
 <script src="{{asset("plugins/datatables-buttons/js/dataTables.buttons.min.js")}}"></script>
 <script src="{{asset("plugins/datatables-buttons/js/buttons.bootstrap4.min.js")}}"></script>
 <script src="{{asset("plugins/jszip/jszip.min.js")}}"></script>
-
+<script src="{{asset("plugins/pdfmake/pdfmake.min.js")}}"></script>
+<script src="{{asset("plugins/pdfmake/vfs_fonts.js")}}"></script>
 <script src="{{asset("plugins/datatables-buttons/js/buttons.html5.min.js")}}"></script>
+{{-- <script src="{{asset("plugins/datatables-buttons/js/buttons.print.min.js")}}"></script> --}}
 <script src="{{asset("plugins/datatables-buttons/js/buttons.colVis.min.js")}}"></script>    
 <script src="{{ asset('/plugins/toastr/toastr.min.js')}}"></script>
+
   <!-- Select2 -->
   <script src="{{asset("plugins/select2/js/select2.full.min.js")}}"></script>
 
@@ -71,15 +71,13 @@
   <script src="{{ asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
  <!-- Tempusdominus Bootstrap 4 -->
   <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-
-
 <script>
 
   $(document).ready(function() {
 
       //Date range picker
-
       $('#date_range').attr('placeholder', 'Select a date range');
+  
 
       $('#date_range').daterangepicker({
         autoUpdateInput: false, // Prevents auto updating of the input
@@ -90,15 +88,7 @@
         }
       });
 
-      // Handle the apply and cancel buttons
-    $('#date_range').on('apply.daterangepicker', function(ev, picker) {
-        $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
-    });
-
-    $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
-        $(this).val('');
-    });
-
+      
     var supplier_names = {!! json_encode($supplier_names) !!};
 
     $(".supplier").select2({
@@ -111,9 +101,18 @@
         allowClear: true // Add this line to allow clearing the selection
       });
 
-      $(".supplier").val('').trigger('change');
+    $(".supplier").val('').trigger('change');
 
-    var customTitle = 'Pending LC Enquiry';
+        // Handle the apply and cancel buttons
+      $('#date_range').on('apply.daterangepicker', function(ev, picker) {
+          $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+      });
+
+      $('#date_range').on('cancel.daterangepicker', function(ev, picker) {
+          $(this).val('');
+      });
+
+    var customTitle = 'Transmitted LC Enquiry';
     var table = $("#example1").DataTable({
       processing: true,
       serverSide: true,
@@ -143,7 +142,7 @@
         'colvis'
       ],
       "ajax": {
-        "url": "{{ route('lc_request.pending.list') }}",
+        "url": "{{ route('lc_request.transmitted.list') }}",
         "type": "GET",
         "data": function(d) {
         // Add the filter values to the data object
@@ -165,7 +164,6 @@
       columns: [
           { data: "id" },
           { data: "shipment_name",searchable: true },
-          { data: "company_name",searchable: true },
           { data: "supplier_name",searchable: true },
           { data: "item_name",searchable: true },
           { data: "quantity",searchable: true },
@@ -216,48 +214,16 @@
         window.location.href = editUrl; // Redirect to the edit page
     });
   
-    // // Handle priority button click event
-    $('#example1').on('click', '.set-priority-high', function(e) {
+
+    $('#example1').on('click', '.amendment-request', function(e) {
       e.preventDefault();
       var lc_request_id = $(this).data('id');
-      if (lc_request_id) {
-            $.ajax({
-                url: '{{ route("lc_request.set-priority") }}', // The API endpoint to hit
-                type: 'POST',
-                data: {
-                    lc_request_id: lc_request_id,
-                    _token: '{{ csrf_token() }}' // Include CSRF token
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Reload the table or the specific part of the page
-                        table.ajax.reload(null, false);
-                        toastr.success('Priority Updated');
-                    } else {
-                        // Handle the error
-                        toastr.error('Failed to set the priority.');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    // Handle AJAX error
-                    toastr.error('An error occurred: ' + error);
-                }
-            });
-          }
-      else{
-        //
-      }
+        if (lc_request_id) {
+          var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
+          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+          window.location.href = editUrl; // Redirect to the edit page
+        }
     });
-
-    // $('#example1').on('click', '.amendment-request', function(e) {
-    //   e.preventDefault();
-    //   var lc_request_id = $(this).data('id');
-    //     if (lc_request_id) {
-    //       var editUrl = "{{ route('amendment_request.add', ':id') }}"; // Laravel route with a placeholder
-    //       editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
-    //       window.location.href = editUrl; // Redirect to the edit page
-    //     }
-    // });
 
     $('#example1').on('click', '.view-logs', function(e) {
       e.preventDefault();

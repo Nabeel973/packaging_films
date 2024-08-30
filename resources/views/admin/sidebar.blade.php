@@ -127,9 +127,15 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="{{route('lc_request.index')}}" class="nav-link">
+                <a href="{{route('lc_request.pending.index')}}" class="nav-link">
                   <i class="fas fa-list nav-icon"></i>
-                  <p>LC List</p>
+                  <p>Pending LC Requests</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('lc_request.transmitted.index')}}" class="nav-link">
+                  <i class="fas fa-list nav-icon"></i>
+                  <p>Tranmitted LC Requests</p>
                 </a>
               </li>
               @if(in_array(session('role_id'),[1,5]))

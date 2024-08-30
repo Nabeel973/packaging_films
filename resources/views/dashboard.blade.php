@@ -24,7 +24,7 @@
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a href="{{route('lc_request.index')}}" class="small-box-footer">IPAK</a>
+                            <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">IPAK</a>
                             </div>
                         </div>
                       <!-- ./col -->
@@ -54,7 +54,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="{{route('lc_request.index')}}" class="small-box-footer">PETPAK</a>
+                          <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">PETPAK</a>
                         </div>
                       </div>
                       <!-- ./col -->
@@ -69,7 +69,7 @@
                           <div class="icon">
                             <i class="ion ion-stats-bars"></i>
                           </div>
-                          <a href="{{route('lc_request.index')}}" class="small-box-footer">GPAK</a>
+                          <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">GPAK</a>
                         </div>
                       </div>
                    </div> 
