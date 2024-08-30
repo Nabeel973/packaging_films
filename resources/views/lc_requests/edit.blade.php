@@ -90,6 +90,27 @@
                   <label class="form-check-label">LC Draft Required</label>
                 </div>
               </div>
+              
+              {{-- @if(in_array($lcRequest->status_id,[1])) --}}
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>LC Opening Date:</label>
+                      <div class="input-group date" id="datepicker" data-target-input="nearest">
+                          <input type="text" class="form-control datetimepicker-input" data-target="#datepicker" id="lc_opening_date" name="lc_opening_date" value="{{ $lcRequest->opening_deadline }}"   
+                            @if(Auth::user()->role_id != 3 || ($lcRequest->opening_deadline != null && Auth::user()->role_id == 3)) 
+                              disabled
+                            @endif/>
+                          
+                          <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                          </div>
+                      </div>
+                  </div>
+                </div>
+              {{-- @endif   --}}
+             
+          </div>
+          <div class="row mb-4">
               @if(in_array($lcRequest->status_id,[3,5]))
                 <div class="col-md-6">
                   <div class="form-group">
@@ -438,6 +459,13 @@
   <!-- Select2 -->
   <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
   <script src="../../plugins/toastr/toastr.min.js"></script>
+  <!-- InputMask -->
+  <script src="{{ asset('plugins/moment/moment.min.js')}}"></script>
+  <script src="{{ asset('plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+  <!-- date-range-picker -->
+  <script src="{{ asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
+ <!-- Tempusdominus Bootstrap 4 -->
+  <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
 
   <script>
     $(document).ready(function() {
@@ -475,55 +503,60 @@
           form.submit(); // Submit the form
         }
       });
-      
-      $('#quickForm').validate({
+    $('#quickForm').validate({
         rules: {
-          shipment_name: {
-            required: true,
-          },
-          supplier: {
-            required: true,
-          },
-          payment_terms: {
-            required: true,
-          },
-          performa_invoice: {
-            extension: "pdf|doc|docx|png|jpg|jpeg",
-          },
-          other_document: {
-            extension: "pdf|doc|docx|png|jpg|jpeg",
-          },
+            shipment_name: {
+                required: true,
+            },
+            supplier: {
+                required: true,
+            },
+            payment_terms: {
+                required: true,
+            },
+            performa_invoice: {
+                extension: "pdf|doc|docx|png|jpg|jpeg",
+            },
+            other_document: {
+                extension: "pdf|doc|docx|png|jpg|jpeg",
+            },
+            lc_opening_date: {
+                required: true,
+            }
         },
         messages: {
-          shipment_name: {
-            required: "Please enter a shipment name",
-          },
-          supplier: {
-            required: "Please select a supplier",
-          },
-          payment_terms: {
-            required: "Please enter payment terms",
-          },
-          performa_invoice: {
-            extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
-          },
-          other_document: {
-            extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
-          },
+            shipment_name: {
+                required: "Please enter a shipment name",
+            },
+            supplier: {
+                required: "Please select a supplier",
+            },
+            payment_terms: {
+                required: "Please enter payment terms",
+            },
+            performa_invoice: {
+                extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
+            },
+            other_document: {
+                extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
+            },
+            lc_opening_date: {
+              required: "Please select a date."
+            }
         },
         errorElement: 'span',
         errorPlacement: function (error, element) {
-          error.addClass('invalid-feedback');
-          element.closest('.form-group').append(error);
+            error.addClass('invalid-feedback');
+            element.closest('.form-group').append(error);
         },
         highlight: function (element, errorClass, validClass) {
-          $(element).addClass('is-invalid');
-          $('.btn').prop('disabled', false);
+            $(element).addClass('is-invalid');
+            $('.btn').prop('disabled', false);
         },
         unhighlight: function (element, errorClass, validClass) {
-          $(element).removeClass('is-invalid');
+            $(element).removeClass('is-invalid');
         }
-      });
+    });
 
       $('#cancelReasonForm').validate({
         rules: {
@@ -630,6 +663,24 @@
       $('#quickFom rm, #transitForm, #uploadDocumentForm, #cancelReasonForm').on('invalid-form.validate', function() {
           $('.btn').prop('disabled', false);
       });
+
+    //       //Datemask dd/mm/yyyy
+    // $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+    // //Datemask2 mm/dd/yyyy
+    // $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+    // //Money Euro
+    // $('[data-mask]').inputmask()
+
+      $('#datepicker').datetimepicker({
+        format: 'YYYY-MM-DD' // Use the correct format for your date
+      });
+
+      $('#datepicker').on("change", function(e) {
+          console.log($('#lc_opening_date').val());
+    });
+
+
+
 
     });
   </script>
