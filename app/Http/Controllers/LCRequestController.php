@@ -520,6 +520,13 @@ class LCRequestController extends Controller
             
             $actionBtn .= '<a class="dropdown-item view-logs" href="javascript:void(0)" data-id="'.$row->id.'">View Logs</a>';
 
+               
+            $amendment_request = AmendmentLCRequest::where('lc_request_id',$row->id)->latest()->first();
+
+            if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$amendment_request || ($row->amendment_request_count > 0 && $amendment_request->status_id == 10 ))) {
+                $actionBtn .= '<a class="dropdown-item amendment-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Amendment Request</a>';
+            }
+
             $actionBtn .= '
                 </div>
             </div>';
