@@ -165,7 +165,7 @@ class LCRequestController extends Controller
         LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now());
         LCRequestStatusEmailJob::dispatch($lc_request);
          // Redirect to a specific route with success message
-        return redirect()->route('lc_request.index')->with('status', 'Request generated successfully.');
+        return redirect()->route('lc_request.pending.index')->with('status', 'Request generated successfully.');
     }
 
     public function edit($id){
@@ -199,7 +199,7 @@ class LCRequestController extends Controller
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
-            return redirect()->route('lc_request.index')->with('status', 'LC Request approved successfully!');
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request approved successfully!');
         }
 
         if ($request->input('action') == 'next') {
@@ -217,7 +217,7 @@ class LCRequestController extends Controller
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
-            return redirect()->route('lc_request.index')->with('status', 'LC Request status updated successfully!');
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
         }
 
         if ($request->input('action') == 'transmit') {
@@ -232,7 +232,7 @@ class LCRequestController extends Controller
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
-            return redirect()->route('lc_request.index')->with('status', 'LC Request status updated successfully!');
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
         }
         
 
@@ -300,7 +300,7 @@ class LCRequestController extends Controller
             LCRequestStatusEmailJob::dispatch($lcRequest);
             LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
            
-            return redirect()->route('lc_request.index')->with('status', 'LC Request updated successfully!');
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request updated successfully!');
         }
       
     }
@@ -327,7 +327,7 @@ class LCRequestController extends Controller
 
         LCRequestStatusEmailJob::dispatch($lc_request);
 
-         return redirect()->route('lc_request.index')->with('status', 'LC Request rejected successfully!');
+         return redirect()->route('lc_request.pending.index')->with('status', 'LC Request rejected successfully!');
     }
 
     public function setPriority(Request $request){
