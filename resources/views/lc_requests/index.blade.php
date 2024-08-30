@@ -33,6 +33,7 @@
               <th>Amendment Added</th>
               <th>Bank Name</th>
               <th>Transmitted LC Number</th>
+              <th>LC Opening Deadline</th>
               {{-- <th>Created By</th>
               <th>Created At</th> --}}
               <th>Updated By</th>
@@ -177,6 +178,7 @@
           { data: "amendment_request_count",searchable: true },
           { data: "bank_name",searchable: true },
           { data: "lc_number",searchable: true },
+          { data: "opening_deadline",searchable: true },
           // { data: "created_by",searchable: true },
           // { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },
