@@ -18,6 +18,7 @@
             <tr>
               <th>ID</th>
               <th>Shipment Name</th>
+              <th>Company</th>
               <th>Supplier Name</th>
               <th>Item Name</th>
               <th>Item Quantity</th>
@@ -164,6 +165,7 @@
       columns: [
           { data: "id" },
           { data: "shipment_name",searchable: true },
+          { data: "company_name",searchable: true },
           { data: "supplier_name",searchable: true },
           { data: "item_name",searchable: true },
           { data: "quantity",searchable: true },
