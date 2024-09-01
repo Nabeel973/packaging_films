@@ -141,23 +141,32 @@
           extend: 'copy',
           title: customTitle,
           exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
+            columns: function(idx, data, node) {
+          // Include only visible columns, except the last column
+              return table.column(idx).visible() && idx !== (table.columns().count() - 1);
+            }
           }
         },
         {
           extend: 'csv',
           title: customTitle,
           exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
+            columns: function(idx, data, node) {
+          // Include only visible columns, except the last column
+              return table.column(idx).visible() && idx !== (table.columns().count() - 1);
+            }
           }
         },
         {
-          extend: 'excel',
-          title: customTitle,
-          exportOptions: {
-            columns: ':not(:last-child)' // Exclude the last column (Action button)
-          }
-        },
+        extend: 'excel',
+        title: customTitle,
+        exportOptions: {
+          columns: function(idx, data, node) {
+          // Include only visible columns, except the last column
+          return table.column(idx).visible() && idx !== (table.columns().count() - 1);
+        }
+      }
+      },
 
         'colvis'
       ],

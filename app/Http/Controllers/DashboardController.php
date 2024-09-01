@@ -69,8 +69,9 @@ class DashboardController extends Controller
     ->whereBetween('amendment_lc_request.created_at', [$fromDate, $toDateEndOfDay])
     ->where('amendment_lc_request.status_id', '!=', 10)
     ->selectRaw('companies.id, companies.name, COUNT(amendment_lc_request.id) as amendment_count')
-    ->groupBy('companies.id', 'companies.name')
+    ->groupBy('companies.id')
     ->get()->toArray();
+    // dd($pendingAmendment);
 
 // Query for transmitted amendment counts
     $transmittedAmendment = Company::join('lc_request', 'lc_request.company_id', '=', 'companies.id')
@@ -82,7 +83,7 @@ class DashboardController extends Controller
         ->orderBy('month_name')
         ->get()->toArray();
 
-        $totalAmendmentRequests = array_sum(array_column($pendingAmendment, 'amendment_count'));
+    $totalAmendmentRequests = array_sum(array_column($pendingAmendment, 'amendment_count'));
 
     return view('dashboard',compact('pendingLcRequests','tranmittedLCmonthWiseAmounts','totalPendingLcRequests','pendingAmendment','transmittedAmendment','totalAmendmentRequests'));
     }
