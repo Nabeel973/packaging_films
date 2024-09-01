@@ -26,7 +26,8 @@ class LCRequestController extends Controller
 
     public function pending_index(){
         $supplier_names = Supplier::where('status',1)->get();
-        return view('lc_requests.index',[ 'supplier_names' => $supplier_names ]);
+        $companies = Company::all();
+        return view('lc_requests.index',[ 'supplier_names' => $supplier_names , 'companies' => $companies]);
     }
 
     protected function buildLcRequestQuery($request)
@@ -54,6 +55,9 @@ class LCRequestController extends Controller
         }
         if ($request->filled('value_to')) {
             $lc_request->where('lc_request.amount', '<=',(double) $request->value_to);
+        }
+        if ($request->filled('company_id')) {
+            $lc_request->where('lc_request.company_id', $request->company_id);
         }
         if ($request->filled('date_range')) {
             [$start_date, $end_date] = explode(' - ', $request->date_range);

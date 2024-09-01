@@ -13,66 +13,28 @@
                     <h3>LC Opening Requests</h3>
                    </div>
                    <div class="row">
+        
+                      @foreach ($pendingLcRequests as $index =>  $lc_request)
+                        @php 
+                          $color = array('bg-success','bg-danger','bg-warning','bg-info');
+                        @endphp
                         <div class="col-lg-3 col-6">
                         <!-- small box -->
-                            <div class="small-box bg-success">
+                            <div class="small-box {{$color[$index]}}">
                             <div class="inner">
-                                <h3>{{$lc_count}}</h3>
+                                <h3>{{$lc_request->pending_lc_request}}</h3>
                 
                                 <p>Requests Pending</p>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
                             </div>
-                            <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">IPAK</a>
+                            <a href="{{route('lc_request.pending.index',['company_id' => $lc_request->company_id])}}" class="small-box-footer">{{$lc_request->company_name}}</a>
                             </div>
                         </div>
-                      <!-- ./col -->
-                      <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-danger">
-                          <div class="inner">
-                            <h3>50</h3>
-            
-                            <p>Requests Pending</p>
-                          </div>
-                          <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                          </div>
-                          <a href="" class="small-box-footer">CPAK</a>
-                        </div>
-                      </div>
-                      <!-- ./col -->
-                      <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-warning">
-                          <div class="inner">
-                            <h3>44</h3>
-            
-                            <p>Requests Pending</p>
-                          </div>
-                          <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                          </div>
-                          <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">PETPAK</a>
-                        </div>
-                      </div>
-                      <!-- ./col -->
-                      <div class="col-lg-3 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                          <div class="inner">
-                            <h3>50</h3>
-            
-                            <p>Requests Pending</p>
-                          </div>
-                          <div class="icon">
-                            <i class="ion ion-stats-bars"></i>
-                          </div>
-                          <a href="{{route('lc_request.pending.index')}}" class="small-box-footer">GPAK</a>
-                        </div>
-                      </div>
-                   </div> 
+                      @endforeach
+                   </div>
+                 
                    <div class="row">
                     <div class="col-lg-6">
                         <div class="card">
@@ -83,104 +45,21 @@
                             </div>
                           </div>
                           <div class="card-body">
-                            {{-- <div class="d-flex">
-                              <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">$18,230.00</span>
-                                <span>Sales Over Time</span>
-                              </p>
-                              <p class="ml-auto d-flex flex-column text-right">
-                                <span class="text-success">
-                                  <i class="fas fa-arrow-up"></i> 33.1%
-                                </span>
-                                <span class="text-muted">Since last month</span>
-                              </p>
-                            </div> --}}
-                            <!-- /.d-flex -->
-            
+                    
                             <div class="position-relative mb-4">
                               <canvas id="sales-chart" height="200"></canvas>
                             </div>
             
-                            {{-- <div class="d-flex flex-row justify-content-end">
-                              <span class="mr-2">
-                                <i class="fas fa-square text-primary"></i> This year
-                              </span>
-            
-                              <span>
-                                <i class="fas fa-square text-gray"></i> Last year
-                              </span>
-                            </div> --}}
                           </div>
                         </div>
-                        <!-- /.card -->
-            
-                        {{-- <div class="card">
-                          <div class="card-header border-0">
-                            <h3 class="card-title">Online Store Overview</h3>
-                            <div class="card-tools">
-                              <a href="#" class="btn btn-sm btn-tool">
-                                <i class="fas fa-download"></i>
-                              </a>
-                              <a href="#" class="btn btn-sm btn-tool">
-                                <i class="fas fa-bars"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
-                              <p class="text-success text-xl">
-                                <i class="ion ion-ios-refresh-empty"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-up text-success"></i> 12%
-                                </span>
-                                <span class="text-muted">CONVERSION RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                            <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
-                              <p class="text-warning text-xl">
-                                <i class="ion ion-ios-cart-outline"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-up text-warning"></i> 0.8%
-                                </span>
-                                <span class="text-muted">SALES RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                            <div class="d-flex justify-content-between align-items-center mb-0">
-                              <p class="text-danger text-xl">
-                                <i class="ion ion-ios-people-outline"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-down text-danger"></i> 1%
-                                </span>
-                                <span class="text-muted">REGISTRATION RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                          </div>
-                        </div> --}}
+                   
                     </div>
                     <div class="col-lg-6">
                           <div class="card">
               <div class="card-header">
                 <h3 class="card-title">All Companies Pending Requests</h3>
 
-                {{-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> --}}
               </div>
-              <!-- /.card-header -->
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-8">
@@ -204,36 +83,6 @@
                 </div>
                 <!-- /.row -->
               </div>
-              <!-- /.card-body -->
-              {{-- <div class="card-footer p-0">
-                <ul class="nav nav-pills flex-column">
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      United States of America
-                      <span class="float-right text-danger">
-                        <i class="fas fa-arrow-down text-sm"></i>
-                        12%</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      India
-                      <span class="float-right text-success">
-                        <i class="fas fa-arrow-up text-sm"></i> 4%
-                      </span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      China
-                      <span class="float-right text-warning">
-                        <i class="fas fa-arrow-left text-sm"></i> 0%
-                      </span>
-                    </a>
-                  </li>
-                </ul>
-              </div> --}}
-              <!-- /.footer -->
             </div>
                     </div>
                    </div>
@@ -254,8 +103,8 @@
                         <!-- small box -->
                             <div class="small-box bg-success">
                             <div class="inner">
-                                <h3>{{$amendment_lc_count}}</h3>
-                
+                                <h3>{{  $pendingAmendment[0] ?  $pendingAmendment[0]['amendment_count']  : 0 }}</h3>
+                             
                                 <p>Requests Pending</p>
                             </div>
                             <div class="icon">
@@ -269,7 +118,7 @@
                         <!-- small box -->
                         <div class="small-box bg-danger">
                           <div class="inner">
-                            <h3>50</h3>
+                            <h3> <h3>{{  $pendingAmendment[1] ?  $pendingAmendment[1]['amendment_count'] : 0 }}</h3></h3>
             
                             <p>Requests Pending</p>
                           </div>
@@ -284,7 +133,7 @@
                         <!-- small box -->
                         <div class="small-box bg-warning">
                           <div class="inner">
-                            <h3>44</h3>
+                            <h3>{{  $pendingAmendment[2] ?  $pendingAmendment[2]['amendment_count'] : 0}}</h3>
             
                             <p>Requests Pending</p>
                           </div>
@@ -299,7 +148,7 @@
                         <!-- small box -->
                         <div class="small-box bg-info">
                           <div class="inner">
-                            <h3>50</h3>
+                            <h3>{{  $pendingAmendment[3] ?  $pendingAmendment[3]['amendment_count'] : 0 }}</h3>
             
                             <p>Requests Pending</p>
                           </div>
@@ -310,6 +159,7 @@
                         </div>
                       </div>
                    </div> 
+                  
                    <div class="row">
                     <div class="col-lg-6">
                         <div class="card">
@@ -320,102 +170,22 @@
                             </div>
                           </div>
                           <div class="card-body">
-                            {{-- <div class="d-flex">
-                              <p class="d-flex flex-column">
-                                <span class="text-bold text-lg">$18,230.00</span>
-                                <span>Sales Over Time</span>
-                              </p>
-                              <p class="ml-auto d-flex flex-column text-right">
-                                <span class="text-success">
-                                  <i class="fas fa-arrow-up"></i> 33.1%
-                                </span>
-                                <span class="text-muted">Since last month</span>
-                              </p>
-                            </div> --}}
-                            <!-- /.d-flex -->
             
                             <div class="position-relative mb-4">
                               <canvas id="sales-chart2" height="200"></canvas>
                             </div>
-            
-                            {{-- <div class="d-flex flex-row justify-content-end">
-                              <span class="mr-2">
-                                <i class="fas fa-square text-primary"></i> This year
-                              </span>
-            
-                              <span>
-                                <i class="fas fa-square text-gray"></i> Last year
-                              </span>
-                            </div> --}}
+
                           </div>
                         </div>
                         <!-- /.card -->
             
-                        {{-- <div class="card">
-                          <div class="card-header border-0">
-                            <h3 class="card-title">Online Store Overview</h3>
-                            <div class="card-tools">
-                              <a href="#" class="btn btn-sm btn-tool">
-                                <i class="fas fa-download"></i>
-                              </a>
-                              <a href="#" class="btn btn-sm btn-tool">
-                                <i class="fas fa-bars"></i>
-                              </a>
-                            </div>
-                          </div>
-                          <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
-                              <p class="text-success text-xl">
-                                <i class="ion ion-ios-refresh-empty"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-up text-success"></i> 12%
-                                </span>
-                                <span class="text-muted">CONVERSION RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                            <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
-                              <p class="text-warning text-xl">
-                                <i class="ion ion-ios-cart-outline"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-up text-warning"></i> 0.8%
-                                </span>
-                                <span class="text-muted">SALES RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                            <div class="d-flex justify-content-between align-items-center mb-0">
-                              <p class="text-danger text-xl">
-                                <i class="ion ion-ios-people-outline"></i>
-                              </p>
-                              <p class="d-flex flex-column text-right">
-                                <span class="font-weight-bold">
-                                  <i class="ion ion-android-arrow-down text-danger"></i> 1%
-                                </span>
-                                <span class="text-muted">REGISTRATION RATE</span>
-                              </p>
-                            </div>
-                            <!-- /.d-flex -->
-                          </div>
-                        </div> --}}
+                    
                     </div>
                     <div class="col-lg-6">
                           <div class="card">
               <div class="card-header">
                 <h3 class="card-title">All Companies Pending Requests</h3>
 
-                {{-- <div class="card-tools">
-                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                    <i class="fas fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-tool" data-card-widget="remove">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div> --}}
               </div>
               <!-- /.card-header -->
               <div class="card-body">
@@ -442,35 +212,7 @@
                 <!-- /.row -->
               </div>
               <!-- /.card-body -->
-              {{-- <div class="card-footer p-0">
-                <ul class="nav nav-pills flex-column">
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      United States of America
-                      <span class="float-right text-danger">
-                        <i class="fas fa-arrow-down text-sm"></i>
-                        12%</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      India
-                      <span class="float-right text-success">
-                        <i class="fas fa-arrow-up text-sm"></i> 4%
-                      </span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      China
-                      <span class="float-right text-warning">
-                        <i class="fas fa-arrow-left text-sm"></i> 0%
-                      </span>
-                    </a>
-                  </li>
-                </ul>
-              </div> --}}
-              <!-- /.footer -->
+          
             </div>
                     </div>
                    </div>
@@ -601,23 +343,32 @@
     var $salesChart = $('#sales-chart')
     // eslint-disable-next-line no-unused-vars
     var salesChart = new Chart($salesChart, {
-        type: 'bar',
-        data: {
-        labels: ['JAN','FEB','MAR','APR','MAY','JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+    type: 'bar',
+    data: {
+        labels: [
+            @foreach($tranmittedLCmonthWiseAmounts as $tranmitted_data)
+                '{{ $tranmitted_data->month_name }}'{{ !$loop->last ? ',' : '' }}
+            @endforeach
+        ],
         datasets: [
             {
-            backgroundColor: '#ffc107',
-            borderColor: '#ffc107',
-            data: [1000, 2000, 3000, 2500, 2700, 2500, 3000]
-            },
+                backgroundColor: '#ffc107',
+                borderColor: '#ffc107',
+                data: [
+                    @foreach($tranmittedLCmonthWiseAmounts as $tranmitted_data)
+                        {{ $tranmitted_data->total_amount }}{{ !$loop->last ? ',' : '' }}
+                    @endforeach
+                ]
+            }
+            // Uncomment and customize the dataset below if needed
             // {
-            //   backgroundColor: '#ced4da',
-            //   borderColor: '#ced4da',
-            //   data: [700, 1700, 2700, 2000, 1800, 1500, 2000]
+            //     backgroundColor: '#ced4da',
+            //     borderColor: '#ced4da',
+            //     data: [700, 1700, 2700, 2000, 1800, 1500, 2000]
             // }
         ]
-        },
-        options: {
+    },
+    options: {
         maintainAspectRatio: false,
         tooltips: {
             mode: mode,
@@ -632,38 +383,36 @@
         },
         scales: {
             yAxes: [{
-            // display: false,
-            gridLines: {
-                display: true,
-                lineWidth: '4px',
-                color: 'rgba(0, 0, 0, .2)',
-                zeroLineColor: 'transparent'
-            },
-            ticks: $.extend({
-                beginAtZero: true,
-
-                // Include a dollar sign in the ticks
-                callback: function (value) {
-                if (value >= 1000) {
-                    value /= 1000
-                    value += 'k'
+                gridLines: {
+                    display: true,
+                    lineWidth: '4px',
+                    color: 'rgba(0, 0, 0, .2)',
+                    zeroLineColor: 'transparent'
+                },
+                ticks: {
+                    beginAtZero: true,
+                    callback: function (value) {
+                      console.log(value);
+                        if (value >= 1000) {
+                            value /= 1000
+                            value += 'k'
+                        }
+                        return value
+                    },
+                    ...ticksStyle // Use spread syntax for merging styles
                 }
-
-                //   return '$' + value
-                return value
-                }
-            }, ticksStyle)
             }],
             xAxes: [{
-            display: true,
-            gridLines: {
-                display: false
-            },
-            ticks: ticksStyle
+                display: true,
+                gridLines: {
+                    display: false
+                },
+                ticks: ticksStyle // Ensure this variable is defined
             }]
         }
-        }
-    })
+    }
+    });
+
 
     // - PIE CHART -
     //-------------
@@ -678,7 +427,12 @@
         ],
         datasets: [
         {
-            data: [700, 500, 400, 600],
+            // data: [700, 500, 400, 600],
+            data: [
+                    @foreach($pendingLcRequests as $request)
+                      {{ number_format(($request->pending_lc_request / $totalPendingLcRequests) * 100, 2) }},
+                    @endforeach
+                ],
             backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef']
         }
         ]

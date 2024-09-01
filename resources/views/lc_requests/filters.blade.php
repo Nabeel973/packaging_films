@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-4">
       <div class="form-group">
-          <label>Select Supplier*</label>
+          <label>Select Supplier</label>
           <select class="supplier form-control" id="supplier" name="supplier">
           </select>
           
@@ -54,6 +54,15 @@
         <!-- /.input group -->
       </div>
     </div>
+    {{-- <div class="col-md-4">
+      <div class="form-group">
+          <label>Select Company</label>
+          <select class="company_id form-control" id="company_id" name="company_id">
+          </select>
+          
+      </div>
+     
+    </div> --}}
     <div class="col-md-2 mt-4">
       <div class="form-group">
         {{-- <button class="btn btn-warning btn-lg rounded-pill p-4">Search</button> --}}

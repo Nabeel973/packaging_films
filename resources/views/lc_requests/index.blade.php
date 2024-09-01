@@ -78,6 +78,8 @@
 
   $(document).ready(function() {
 
+    var company_id = '{{ request()->query('company_id') }}'; 
+
       //Date range picker
 
       $('#date_range').attr('placeholder', 'Select a date range');
@@ -101,6 +103,7 @@
     });
 
     var supplier_names = {!! json_encode($supplier_names) !!};
+ 
 
     $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -112,7 +115,22 @@
         allowClear: true // Add this line to allow clearing the selection
       });
 
-      $(".supplier").val('').trigger('change');
+    $(".supplier").val('').trigger('change');
+
+    var companies = {!! json_encode($companies) !!};
+    
+    $(".company_id").select2({
+        placeholder: "Select Company",
+        data: companies.map(function(company) {
+            return { id: company.id, text: company.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        allowClear: true // Add this line to allow clearing the selection
+      });
+
+    $(".company_id").val(company_id).trigger('change');
+
 
     var customTitle = 'Pending LC Enquiry';
     var table = $("#example1").DataTable({
@@ -154,6 +172,7 @@
         d.value_from = $('#value_from').val();
         d.value_to = $('#value_to').val();
         d.date_range = $('#date_range').val(); // Assuming you're using a date range picker
+        d.company_id = company_id; // Pass company_id to the server
       },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
