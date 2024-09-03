@@ -19,7 +19,7 @@
                             <!-- small box -->
                             <div class="small-box bg-success">
                                 <div class="inner">
-                                    <h3>{{ isset($pendingLcRequests[0]->pending_lc_request) ? $pendingLcRequests[0]->pending_lc_request: 0 }}</h3>
+                                    <h3>{{ (isset($pendingLcRequests[0]->pending_lc_request) && $pendingLcRequests[0]->company_id == 1) ? $pendingLcRequests[0]->pending_lc_request: 0 }}</h3>
                                     <p>Requests Pending</p>
                                 </div>
                                 <div class="icon">
@@ -33,7 +33,7 @@
                             <!-- small box -->
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                  <h3>{{ isset($pendingLcRequests[1]->pending_lc_request) ? $pendingLcRequests[1]->pending_lc_request: 0 }}</h3>
+                                  <h3>{{ (isset($pendingLcRequests[1]->pending_lc_request) && $pendingLcRequests[1]->company_id == 2) ? $pendingLcRequests[1]->pending_lc_request: 0 }}</h3>
 
                                     <p>Requests Pending</p>
                                 </div>
@@ -48,7 +48,7 @@
                             <!-- small box -->
                             <div class="small-box bg-warning">
                                 <div class="inner">
-                                  <h3>{{ isset($pendingLcRequests[2]->pending_lc_request) ? $pendingLcRequests[2]->pending_lc_request: 0 }}</h3>
+                                  <h3>{{ (isset($pendingLcRequests[2]->pending_lc_request) && $pendingLcRequests[2]->company_id == 3) ? $pendingLcRequests[2]->pending_lc_request: 0 }}</h3>
 
                                     <p>Requests Pending</p>
                                 </div>
@@ -63,7 +63,7 @@
                             <!-- small box -->
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                  <h3>{{ isset($pendingLcRequests[3]->pending_lc_request) ? $pendingLcRequests[3]->pending_lc_request: 0 }}</h3>
+                                  <h3>{{ (isset($pendingLcRequests[3]->pending_lc_request)   && $pendingLcRequests[3]->company_id == 4) ? $pendingLcRequests[3]->pending_lc_request: 0 }}</h3>
 
                                     <p>Requests Pending</p>
                                 </div>
@@ -144,7 +144,7 @@
                             <!-- small box -->
                             <div class="small-box bg-success">
                                 <div class="inner">
-                                    <h3>{{ isset($pendingAmendment[0]['amendment_count']) ? $pendingAmendment[0]['amendment_count'] : 0 }}
+                                    <h3>{{ (isset($pendingAmendment[0]['amendment_count']) && $pendingAmendment[0]['company_id'] == 1) ? $pendingAmendment[0]['amendment_count'] : 0 }}
                                     </h3>
 
 
@@ -161,7 +161,7 @@
                             <!-- small box -->
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3>{{ isset($pendingAmendment[1]['amendment_count']) ? $pendingAmendment[1]['amendment_count'] : 0 }}
+                                    <h3>{{ (isset($pendingAmendment[1]['amendment_count']) && $pendingAmendment[1]['company_id'] == 2) ? $pendingAmendment[1]['amendment_count'] : 0 }}
                                     </h3>
 
 
@@ -178,7 +178,7 @@
                             <!-- small box -->
                             <div class="small-box bg-warning">
                                 <div class="inner">
-                                    <h3>{{ isset($pendingAmendment[2]['amendment_count']) ? $pendingAmendment[2]['amendment_count'] : 0 }}
+                                    <h3>{{ (isset($pendingAmendment[2]['amendment_count'])  && $pendingAmendment[2]['company_id'] == 3) ? $pendingAmendment[2]['amendment_count'] : 0 }}
                                     </h3>
 
 
@@ -195,7 +195,7 @@
                             <!-- small box -->
                             <div class="small-box bg-info">
                                 <div class="inner">
-                                    <h3>{{ isset($pendingAmendment[3]['amendment_count']) ? $pendingAmendment[3]['amendment_count'] : 0 }}
+                                    <h3>{{ (isset($pendingAmendment[3]['amendment_count']) && $pendingAmendment[3]['company_id'] == 4) ? $pendingAmendment[3]['amendment_count'] : 0 }}
                                     </h3>
                                     <p>Requests Pending</p>
                                 </div>
@@ -486,7 +486,7 @@
                     // data: [700, 500, 400, 600],
                     data: [
                         @foreach ($pendingLcRequests as $request)
-                            {{ number_format(($request->pending_lc_request / $totalPendingLcRequests) * 100, 2) }},
+                            {{ number_format(($request->pending_lc_request / $totalPendingLcRequests) * 100, 2) }}  ,
                         @endforeach
                     ],
                     backgroundColor: ['#00a65a','#f56954', '#f39c12', '#00c0ef']
@@ -495,6 +495,15 @@
             var pieOptions = {
                 legend: {
                     display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var currentValue = dataset.data[tooltipItem.index];
+                            return currentValue + '%';  // Append percentage sign
+                        }
+                    }
                 }
             }
             // Create pie or douhnut chart
@@ -615,6 +624,15 @@
             var pieOptions2 = {
                 legend: {
                     display: false
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var dataset = data.datasets[tooltipItem.datasetIndex];
+                            var currentValue = dataset.data[tooltipItem.index];
+                            return currentValue + '%';  // Append percentage sign
+                        }
+                    }
                 }
             }
             // Create pie or douhnut chart

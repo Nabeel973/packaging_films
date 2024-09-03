@@ -226,7 +226,7 @@
         info: true,
         responsive: true, 
         autoWidth: false,
-        order: [[8, 'asc']],  // Set default sort order on the "priority" column (index 8)
+        order: [[9, 'asc']],  // Set default sort order on the "priority" column (index 8)
       "initComplete": function () {
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');

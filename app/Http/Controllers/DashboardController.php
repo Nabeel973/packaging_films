@@ -29,6 +29,7 @@ class DashboardController extends Controller
             AND lc_request.created_at <= :toDateEndOfDay
             AND lc_request.status_id != 10
             GROUP BY companies.id
+            ORDER BY companies.id
         ";
 
         $pendingLcRequests = DB::select($pendingLcRequestsSql,[
@@ -68,8 +69,9 @@ class DashboardController extends Controller
     ->leftJoin('amendment_lc_request', 'amendment_lc_request.lc_request_id', '=', 'lc_request.id')
     ->whereBetween('amendment_lc_request.created_at', [$fromDate, $toDateEndOfDay])
     ->where('amendment_lc_request.status_id', '!=', 10)
-    ->selectRaw('companies.id, companies.name, COUNT(amendment_lc_request.id) as amendment_count')
+    ->selectRaw('companies.id as company_id, companies.name, COUNT(amendment_lc_request.id) as amendment_count')
     ->groupBy('companies.id')
+    ->orderBy('companies.id')
     ->get()->toArray();
     // dd($pendingAmendment);
 
