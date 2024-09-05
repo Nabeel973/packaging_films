@@ -53,7 +53,8 @@ class DashboardController extends Controller
             AND created_at <= :toDateEndOfDay
             AND status_id = 10
           GROUP BY month_number, month_name
-        ORDER BY month_number DESC
+          HAVING total_amount > 0
+          ORDER BY month_number DESC
         ";
     
         // Execute the query using Laravel's DB facade
@@ -93,8 +94,10 @@ class DashboardController extends Controller
         WHERE amendment_lc_request.created_at >= :fromDate
         AND amendment_lc_request.created_at <= :toDateEndOfDay
         GROUP BY month_number, month_name
+        HAVING amendment_count > 0
         ORDER BY month_number DESC
-        ";
+    ";
+
 
 
 
