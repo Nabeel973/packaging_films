@@ -12,67 +12,23 @@
                     <div class="row m-2">
                         <h3>LC Opening Requests</h3>
                     </div>
-
-
                     <div class="row">
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-success">
-                                <div class="inner">
-                                    <h3>{{ (isset($pendingLcRequests[0]->pending_lc_request) && $pendingLcRequests[0]->company_id == 1) ? $pendingLcRequests[0]->pending_lc_request: 0 }}</h3>
-                                    <p>Requests Pending</p>
+                        @foreach ($pendingLcRequests as $index => $lc_request)
+                            <div class="col-lg-3 col-6">
+                                <!-- small box -->
+                                <div class="small-box {{$colors[$index]}}">
+                                    <div class="inner">
+                                        <h3>{{ $lc_request->pending_lc_request}}</h3>
+                                        <p>Requests Pending</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="ion ion-stats-bars"></i>
+                                    </div>
+                                    <a href="{{ route('lc_request.pending.index',['company_id' => $lc_request->company_id]) }}" class="small-box-footer">{{ $lc_request->company_name}}</a>
                                 </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('lc_request.pending.index',['company_id' => 1]) }}" class="small-box-footer">IPAK</a>
                             </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                  <h3>{{ (isset($pendingLcRequests[1]->pending_lc_request) && $pendingLcRequests[1]->company_id == 2) ? $pendingLcRequests[1]->pending_lc_request: 0 }}</h3>
-
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('lc_request.pending.index',['company_id' => 2]) }}"class="small-box-footer">CPAK</a>
-                            </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-warning">
-                                <div class="inner">
-                                  <h3>{{ (isset($pendingLcRequests[2]->pending_lc_request) && $pendingLcRequests[2]->company_id == 3) ? $pendingLcRequests[2]->pending_lc_request: 0 }}</h3>
-
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('lc_request.pending.index',['company_id' => 3]) }}" class="small-box-footer">PETPAK</a>
-                            </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                  <h3>{{ (isset($pendingLcRequests[3]->pending_lc_request)   && $pendingLcRequests[3]->company_id == 4) ? $pendingLcRequests[3]->pending_lc_request: 0 }}</h3>
-
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('lc_request.pending.index',['company_id' => 4]) }}" class="small-box-footer">GPAK</a>
-                            </div>
-                        </div>
+                            
+                        @endforeach
                     </div>
 
 
@@ -140,71 +96,22 @@
                         <h3>LC Amendment Requests</h3>
                     </div>
                     <div class="row">
+                        @foreach ($pendingAmendment as $index => $amendment)
                         <div class="col-lg-3 col-6">
                             <!-- small box -->
-                            <div class="small-box bg-success">
+                            <div class="small-box {{$colors[$index]}}">
                                 <div class="inner">
-                                    <h3>{{ (isset($pendingAmendment[0]['amendment_count']) && $pendingAmendment[0]['company_id'] == 1) ? $pendingAmendment[0]['amendment_count'] : 0 }}
-                                    </h3>
-
-
+                                    <h3>{{ $amendment->amendment_count}}</h3>
                                     <p>Requests Pending</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-stats-bars"></i>
                                 </div>
-                                <a href="{{ route('amendment_request.index') }}" class="small-box-footer">IPAK</a>
+                                <a href="{{ route('amendment_request.index') }}" class="small-box-footer">{{ $amendment->company_name}}</a>
                             </div>
                         </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-danger">
-                                <div class="inner">
-                                    <h3>{{ (isset($pendingAmendment[1]['amendment_count']) && $pendingAmendment[1]['company_id'] == 2) ? $pendingAmendment[1]['amendment_count'] : 0 }}
-                                    </h3>
-
-
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('amendment_request.index') }}" class="small-box-footer">CPAK</a>
-                            </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-warning">
-                                <div class="inner">
-                                    <h3>{{ (isset($pendingAmendment[2]['amendment_count'])  && $pendingAmendment[2]['company_id'] == 3) ? $pendingAmendment[2]['amendment_count'] : 0 }}
-                                    </h3>
-
-
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('amendment_request.index') }}" class="small-box-footer">PETPAK</a>
-                            </div>
-                        </div>
-                        <!-- ./col -->
-                        <div class="col-lg-3 col-6">
-                            <!-- small box -->
-                            <div class="small-box bg-info">
-                                <div class="inner">
-                                    <h3>{{ (isset($pendingAmendment[3]['amendment_count']) && $pendingAmendment[3]['company_id'] == 4) ? $pendingAmendment[3]['amendment_count'] : 0 }}
-                                    </h3>
-                                    <p>Requests Pending</p>
-                                </div>
-                                <div class="icon">
-                                    <i class="ion ion-stats-bars"></i>
-                                </div>
-                                <a href="{{ route('amendment_request.index') }}" class="small-box-footer">GPAK</a>
-                            </div>
-                        </div>
+                        
+                    @endforeach
                     </div>
 
                     <div class="row">
@@ -531,7 +438,7 @@
                 data: {
                   labels: [
                         @foreach ($transmittedAmendment as $tranmitted_data)
-                            '{{ $tranmitted_data['month_name'] }}'
+                            '{{ $tranmitted_data->month_name }}'
                             {{ !$loop->last ? ',' : '' }}
                         @endforeach
                     ],
@@ -540,7 +447,8 @@
                             borderColor: '#ffc107',
                             data: [
                                 @foreach ($transmittedAmendment as $tranmitted_data)
-                                    {{ $tranmitted_data['total_amount'] }}{{ !$loop->last ? ',' : '' }}
+                                    {{ $tranmitted_data->amendment_count }}
+                                    {{ !$loop->last ? ',' : '' }}
                                 @endforeach
                             ]
                         },
@@ -614,8 +522,8 @@
                   ],
                 datasets: [{
                     data: [
-                        @foreach ($pendingAmendment as $request)
-                            {{ number_format(($request['amendment_count'] / $totalAmendmentRequests) * 100, 2) }},
+                        @foreach ($pendingAmendment as $amendment)
+                            {{ number_format(($amendment->amendment_count / $totalAmendmentRequests) * 100, 2) }},
                         @endforeach
                     ],
                     backgroundColor: ['#00a65a','#f56954', '#f39c12', '#00c0ef']
