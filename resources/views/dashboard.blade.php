@@ -523,7 +523,7 @@
                 datasets: [{
                     data: [
                         @foreach ($pendingAmendment as $amendment)
-                            {{ number_format(($amendment->amendment_count / $totalAmendmentRequests) * 100, 2) }},
+                        {{ $totalAmendmentRequests > 0 ? number_format(($amendment->amendment_count / $totalAmendmentRequests) * 100, 2) : 0 }},
                         @endforeach
                     ],
                     backgroundColor: ['#00a65a','#f56954', '#f39c12', '#00c0ef']

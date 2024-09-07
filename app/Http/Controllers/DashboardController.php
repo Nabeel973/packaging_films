@@ -87,7 +87,7 @@ class DashboardController extends Controller
         SELECT 
             MONTH(amendment_lc_request.created_at) AS month_number,
             MONTHNAME(amendment_lc_request.created_at) AS month_name, 
-            COUNT(DISTINCT CASE WHEN amendment_lc_request.status_id != 10 THEN amendment_lc_request.id END) AS amendment_count
+            COUNT(DISTINCT CASE WHEN amendment_lc_request.status_id = 10 THEN amendment_lc_request.id END) AS amendment_count
         FROM companies
         LEFT JOIN lc_request ON lc_request.company_id = companies.id
         LEFT JOIN amendment_lc_request ON amendment_lc_request.lc_request_id = lc_request.id
