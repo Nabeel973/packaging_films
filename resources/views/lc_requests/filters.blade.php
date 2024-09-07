@@ -63,6 +63,15 @@
       </div>
      
     </div> --}}
+    <div class="col-md-4">
+      <div class="form-group">
+          <label>Select Payment Terms</label>
+          <select class="payment_id form-control" id="payment_id" name="payment_id">
+          </select>
+          
+      </div>
+     
+    </div>
     <div class="col-md-2 mt-4">
       <div class="form-group">
         {{-- <button class="btn btn-warning btn-lg rounded-pill p-4">Search</button> --}}

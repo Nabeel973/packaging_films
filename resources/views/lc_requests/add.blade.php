@@ -46,7 +46,9 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Payment Terms*</label>
-                <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms">
+                {{-- <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms"> --}}
+                <select class="payment_id form-control" id="payment_id" name="payment_id">
+                </select>
               </div>
             </div>
             <div class="col-md-6">
@@ -173,6 +175,7 @@
 
       var supplier_names = {!! json_encode($supplier_names) !!};
       var companies = {!! json_encode($companies) !!};
+      var payments = {!! json_encode($payments) !!};
 
       $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -199,6 +202,19 @@
       });
 
       $(".currency").val('').trigger('change');
+
+
+      $(".payment_id").select2({
+        placeholder: "Select Payment",
+        data: payments.map(function(payment) {
+            return { id: payment.id, text: payment.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".payment_id").val('').trigger('change');
 
       $.validator.setDefaults({
         submitHandler: function(form) {
@@ -237,7 +253,7 @@
           supplier: {
             required: true,
           },
-          payment_terms: {
+          payment_id: {
             required: true,
           },
           performa_invoice: {
@@ -276,8 +292,8 @@
           supplier: {
             required: "Please select a supplier",
           },
-          payment_terms: {
-            required: "Please enter payment terms",
+          payment_id: {
+            required: "Please select payment terms",
           },
           performa_invoice: {
             required: "Please attach a performa invoice",

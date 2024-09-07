@@ -103,6 +103,7 @@
     });
 
     var supplier_names = {!! json_encode($supplier_names) !!};
+    var payments = {!! json_encode($payments) !!};
  
 
     $(".supplier").select2({
@@ -131,6 +132,17 @@
 
     $(".company_id").val(company_id).trigger('change');
 
+    $(".payment_id").select2({
+        placeholder: "Select Payment Terms",
+        data: payments.map(function(payment) {
+            return { id: payment.id, text: payment.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        allowClear: true // Add this line to allow clearing the selection
+      });
+
+    $(".payment_id").val('').trigger('change');
 
     var customTitle = 'Pending LC Enquiry';
     var table = $("#example1").DataTable({
@@ -182,6 +194,7 @@
         d.value_to = $('#value_to').val();
         d.date_range = $('#date_range').val(); // Assuming you're using a date range picker
         d.company_id = company_id; // Pass company_id to the server
+        d.payment_id = $('#payment_id').val(); // Pass company_id to the server
       },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
@@ -198,7 +211,7 @@
           { data: "supplier_name",searchable: true },
           { data: "item_name",searchable: true },
           { data: "quantity",searchable: true },
-          { data: "payment_terms",searchable: true },
+          { data: "payment",searchable: true },
           { data: "status",searchable: true },
           { data: "reason_code",searchable: true },
           { data: "priority",searchable: true },

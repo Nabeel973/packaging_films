@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Payment;
 use App\Models\Currency;
 use App\Models\Document;
 use App\Models\Supplier;
@@ -27,7 +28,8 @@ class LCRequestController extends Controller
     public function pending_index(){
         $supplier_names = Supplier::where('status',1)->get();
         $companies = Company::all();
-        return view('lc_requests.index',[ 'supplier_names' => $supplier_names , 'companies' => $companies]);
+        $payments = Payment::all();
+        return view('lc_requests.index',[ 'supplier_names' => $supplier_names , 'companies' => $companies,'payments' => $payments]);
     }
 
     protected function buildLcRequestQuery($request)
@@ -37,9 +39,10 @@ class LCRequestController extends Controller
                     ->join('companies', 'companies.id', 'lc_request.company_id')
                     ->join('suppliers', 'suppliers.id', 'lc_request.supplier_id')
                     ->join('currencies', 'currencies.id', 'lc_request.currency_id')
+                    ->leftjoin('payments', 'payments.id', 'lc_request.payment_id')
                     ->leftJoin('users as u', 'u.id', 'lc_request.updated_by')
                     ->leftJoin('documents as d', 'd.lc_request_id', 'lc_request.id')
-                    ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number','companies.name as company_name');
+                    ->select('lc_request.*','users.name as created_by','lc_request_status.name as status','suppliers.name as supplier_name','u.name as updated_by','currencies.name as currency_name','d.bank_name as bank_name','d.transmited_lc_number as lc_number','companies.name as company_name','payments.name as payment');
 
         if ($request->filled('supplier_id')) {
             $lc_request->where('lc_request.supplier_id', (int) $request->supplier_id);
@@ -58,6 +61,9 @@ class LCRequestController extends Controller
         }
         if ($request->filled('company_id')) {
             $lc_request->where('lc_request.company_id', $request->company_id);
+        }
+        if ($request->filled('payment_id')) {
+            $lc_request->where('lc_request.payment_id', $request->payment_id);
         }
         if ($request->filled('date_range')) {
             [$start_date, $end_date] = explode(' - ', $request->date_range);
@@ -118,7 +124,8 @@ class LCRequestController extends Controller
         $supplier_names = Supplier::where('status',1)->get();
         $currencies = Currency::all();
         $companies = Company::all();
-        return view('lc_requests.add',compact('supplier_names','currencies','companies'));
+        $payments = Payment::all();
+        return view('lc_requests.add',compact('supplier_names','currencies','companies','payments'));
     }
 
     public function submit(Request $request){
@@ -127,7 +134,8 @@ class LCRequestController extends Controller
             'shipment_name' => 'required|string|max:255',
             'supplier' => 'required|integer',
             'company_id' => 'required|integer',
-            'payment_terms' => 'required|string',
+            // 'payment_terms' => 'required|string',
+            'payment_id' => 'required|integer',
             'currency' => 'required|integer',
             'amount' => 'required|numeric',
             'performa_invoice' => 'required|max:1024',
@@ -151,7 +159,8 @@ class LCRequestController extends Controller
         $lc_request->supplier_id = $request->supplier;
         $lc_request->item_name = $request->item_name;
         $lc_request->quantity = $request->item_quantity;
-        $lc_request->payment_terms = $request->payment_terms;
+        // $lc_request->payment_terms = $request->payment_terms;
+        $lc_request->payment_id = $request->payment_id;
         $lc_request->draft_required = ($request->draft_required == 'on') ? 1 : 0;
         $lc_request->created_by = Auth::user()->id;
         $lc_request->currency_id = $request->currency;
@@ -183,6 +192,7 @@ class LCRequestController extends Controller
         $disable = true;
         $currencies = Currency::all();
         $companies = Company::all();
+        $payments = Payment::all();
 
         if(
             (in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[1,4])) || 
@@ -191,7 +201,7 @@ class LCRequestController extends Controller
         {  
             $disable = false;
         }
-        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable','currencies','companies'));
+        return view('lc_requests.edit',compact('supplier_names','lcRequest','disable','currencies','companies','payments'));
     }
 
     public function update(Request $request, $id)
@@ -255,7 +265,7 @@ class LCRequestController extends Controller
                 'shipment_name' => 'required|string|max:255',
                 'supplier' => 'required|integer',
                 'company_id' => 'required|integer',
-                'payment_terms' => 'required|string',
+                'payment_id' => 'required|integer',
                 'currency' => 'required|integer',
                 'amount' => 'required|numeric',
                 'performa_invoice' => 'max:1024',
@@ -279,7 +289,7 @@ class LCRequestController extends Controller
             $lcRequest->company_id = $request->input('company_id');
             $lcRequest->item_name = $request->input('item_name');
             $lcRequest->quantity = $request->input('item_quantity');
-            $lcRequest->payment_terms = $request->input('payment_terms');
+            $lcRequest->payment_id = $request->input('payment_id');
             $lcRequest->draft_required = $request->input('draft_required', false);
             $lcRequest->currency_id = $request->input('currency');
             $lcRequest->amount = $request->input('amount');

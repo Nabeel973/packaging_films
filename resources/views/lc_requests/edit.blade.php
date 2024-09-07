@@ -49,7 +49,9 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label>Payment Terms*</label>
-                <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms" value="{{ $lcRequest->payment_terms }}" {{ $disable ? 'disabled' : '' }}>
+                {{-- <input type="text" name="payment_terms" class="form-control" id="payment_terms" placeholder="Payment Terms" value="{{ $lcRequest->payment_terms }}" {{ $disable ? 'disabled' : '' }}> --}}
+                <select class="payment_id form-control" id="payment_id" name="payment_id" {{ $disable ? 'disabled' : '' }}>
+                </select>
               </div>
             </div>
             <div class="col-md-6">
@@ -482,6 +484,7 @@
       var supplier_names = {!! json_encode($supplier_names) !!};
       var currencies = {!! json_encode($currencies) !!};
       var companies = {!! json_encode($companies) !!};
+      var payments = {!! json_encode($payments) !!};
 
       $(".supplier").select2({
         placeholder: "Select Supplier",
@@ -519,6 +522,18 @@
 
       $(".company").val({{ $lcRequest->company_id }}).trigger('change');
 
+      $(".payment_id").select2({
+        placeholder: "Select Payment Terms",
+        data: payments.map(function(payment) {
+            return { id: payment.id, text: payment.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        //allowClear: true // Add this line to allow clearing the selection
+      });
+
+      $(".payment_id").val({{ $lcRequest->payment_id }}).trigger('change');
+
 
       $.validator.setDefaults({
         submitHandler: function(form) {
@@ -534,7 +549,7 @@
             supplier: {
                 required: true,
             },
-            payment_terms: {
+            payment_id: {
                 required: true,
             },
             performa_invoice: {
@@ -554,8 +569,8 @@
             supplier: {
                 required: "Please select a supplier",
             },
-            payment_terms: {
-                required: "Please enter payment terms",
+            payment_id: {
+                required: "Please select payment terms",
             },
             performa_invoice: {
                 extension: "Please upload a valid PDF, DOC, DOCX, PNG, JPG, or JPEG file",
