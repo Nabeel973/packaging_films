@@ -184,7 +184,10 @@ class LCRequestController extends Controller
         $currencies = Currency::all();
         $companies = Company::all();
 
-        if((session('role_id') == 1 && $lcRequest->status_id == 1) || (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5])))
+        if(
+            (in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[1,4])) || 
+            (session('role_id') == 5 && in_array($lcRequest->status_id,[3,5]))
+        )
         {  
             $disable = false;
         }
@@ -248,7 +251,6 @@ class LCRequestController extends Controller
 
         // Handle update logic
         else{
-
             $validator = Validator::make($request->all(), [
                 'shipment_name' => 'required|string|max:255',
                 'supplier' => 'required|integer',

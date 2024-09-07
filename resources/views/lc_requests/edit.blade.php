@@ -94,7 +94,7 @@
               <div class="col-md-6">
                 <div class="form-group">
                     <label>Select Company*</label>
-                    <select class="company form-control" id="currency" name="company" {{ $disable ? 'disabled' : '' }}>
+                    <select class="company form-control" id="company" name="company_id" {{ $disable ? 'disabled' : '' }}>
                     </select>
                     
                 </div>
@@ -102,21 +102,23 @@
               
           </div>
           <div class="row mb-4">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>LC Opening Date:</label>
-                  <div class="input-group date" id="datepicker" data-target-input="nearest">
-                      <input type="text" class="form-control datetimepicker-input" data-target="#datepicker" id="lc_opening_date" name="lc_opening_date" value="{{ $lcRequest->opening_deadline }}"   
-                        @if(Auth::user()->role_id != 3 || ($lcRequest->opening_deadline != null && Auth::user()->role_id == 3)) 
-                          disabled
-                        @endif/>
-                      
-                      <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                      </div>
-                  </div>
+            @if(($lcRequest->opening_deadline != null) || ($lcRequest->opening_deadline == null && Auth::user()->role_id == 3))
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>LC Opening Date:</label>
+                    <div class="input-group date" id="datepicker" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#datepicker" id="lc_opening_date" name="lc_opening_date" value="{{ $lcRequest->opening_deadline }}"   
+                          @if(Auth::user()->role_id != 3 || ($lcRequest->opening_deadline != null && Auth::user()->role_id == 3)) 
+                            disabled
+                          @endif/>
+                        
+                        <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
               </div>
-            </div>
+            @endif  
               @if(in_array($lcRequest->status_id,[3,5]))
                 <div class="col-md-6">
                   <div class="form-group">
@@ -318,24 +320,24 @@
           <div class="row justify-content-center mt-2">
             @if((in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && in_array($lcRequest->status_id,[2,6]) ))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
-                <i class="fas fa-times"></i> Reject
+                  <i class="fas fa-times"></i> Reject
                 </button>
             @endif    
-            @if(in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[3,5]))
+            @if(in_array(session('role_id'),[1,5]) && in_array($lcRequest->status_id,[1,3,4,5]))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
-                <i class="fas fa-save mr-2"></i> Update
+                  <i class="fas fa-save mr-2"></i> Update
                 </button>
             @endif    
             
             @if(in_array(session('role_id'),[1,3]) && in_array($lcRequest->status_id,[1,4]) )
                 <button type="submit" name="action" value="approve" class="btn btn-success btn-lg mx-2">
-                <i class="fas fa-check"></i> Approve
+                  <i class="fas fa-check"></i> Approve
                 </button>
             @endif 
 
             @if((in_array(session('role_id'),[1,4]) && in_array($lcRequest->status_id,[2,6])))
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
-                <i class="fas fa-check"></i> Apply For Bank
+                  <i class="fas fa-check"></i> Apply For Bank
                 </button>
             @endif   
 
@@ -354,7 +356,7 @@
 
             @if((session('role_id') == 5 && $lcRequest->status_id == 8))
                 <button type="submit" class="btn btn-success btn-lg mx-2"  name="action" value="transmit">
-                <i class="fas fa-check"></i> Ready for Transmit
+                  <i class="fas fa-check"></i> Ready for Transmit
                 </button>
             @endif  
 
@@ -503,7 +505,7 @@
         //allowClear: true // Add this line to allow clearing the selection
       });
 
-      $(".currency").val({{ $lcRequest->company_id }}).trigger('change');
+      $(".currency").val({{ $lcRequest->currency_id }}).trigger('change');
 
       $(".company").select2({
         placeholder: "Select Company",
@@ -684,13 +686,6 @@
       $('#quickFom rm, #transitForm, #uploadDocumentForm, #cancelReasonForm').on('invalid-form.validate', function() {
           $('.btn').prop('disabled', false);
       });
-
-    //       //Datemask dd/mm/yyyy
-    // $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-    // //Datemask2 mm/dd/yyyy
-    // $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
-    // //Money Euro
-    // $('[data-mask]').inputmask()
 
       $('#datepicker').datetimepicker({
         format: 'YYYY-MM-DD' // Use the correct format for your date
