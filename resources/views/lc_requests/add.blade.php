@@ -90,6 +90,14 @@
               </div>
           </div>
           </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Add Comments</label>
+                <textarea id="comments" cols="8" class="form-control" maxlength="1000" name="comments"></textarea>
+              </div>
+            </div>
+          </div>
          
           <div class="row mt-2">
             <div class="col-12">

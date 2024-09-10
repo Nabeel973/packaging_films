@@ -19,6 +19,7 @@
               <th>LC Request ID</th>
               <th>LC Status</th>
               <th>Reason</th>
+              <th>Comments</th>
               <th>Amendment Request ID</th>
               <th>Amendment Request Status</th>
               <th>Created By</th>
@@ -115,6 +116,7 @@
           { data: "lc_request_id",searchable: true },
           { data: "status",searchable: true },
           { data: "reason",searchable: true },
+          { data: "comments",searchable: true },
           { data: "amendment_id",searchable: true },
           { data: "amendment_status",searchable: true },
           { data: "created_by",searchable: true },
@@ -131,7 +133,7 @@
         info: true,
         responsive: true, 
         autoWidth: false,
-        order: [[7, 'desc']],  // Set default sort order on the "priority" column (index 8)
+        order: [[8, 'desc']],  // Set default sort order on the "priority" column (index 8)
       "initComplete": function () {
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');

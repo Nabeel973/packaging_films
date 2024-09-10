@@ -129,12 +129,11 @@ class LCRequestController extends Controller
     }
 
     public function submit(Request $request){
-        // dd($request->all());
+
         $validator = Validator::make($request->all(), [
             'shipment_name' => 'required|string|max:255',
             'supplier' => 'required|integer',
             'company_id' => 'required|integer',
-            // 'payment_terms' => 'required|string',
             'payment_id' => 'required|integer',
             'currency' => 'required|integer',
             'amount' => 'required|numeric',
@@ -144,6 +143,7 @@ class LCRequestController extends Controller
             'document_3' =>'max:1024',
             'document_4' =>'max:1024',
             'document_5' =>'max:1024',
+            'comments' => 'string|max:1000'
         ]);
 
           // Check if validation fails
@@ -159,7 +159,7 @@ class LCRequestController extends Controller
         $lc_request->supplier_id = $request->supplier;
         $lc_request->item_name = $request->item_name;
         $lc_request->quantity = $request->item_quantity;
-        // $lc_request->payment_terms = $request->payment_terms;
+        $lc_request->comments = $request->comments;
         $lc_request->payment_id = $request->payment_id;
         $lc_request->draft_required = ($request->draft_required == 'on') ? 1 : 0;
         $lc_request->created_by = Auth::user()->id;
@@ -180,7 +180,7 @@ class LCRequestController extends Controller
         LCRequestController::uploadDocuments($request,$document,"document_4","documents",$lc_request->id); //adds document4
         LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lc_request->id); //adds document5
 
-        LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now());
+        LCRequestJourneyController::add($lc_request->id,Auth::id(),1,Carbon::now(),null,null,null,$request->comments);
         LCRequestStatusEmailJob::dispatch($lc_request);
          // Redirect to a specific route with success message
         return redirect()->route('lc_request.pending.index')->with('status', 'Request generated successfully.');
@@ -209,6 +209,13 @@ class LCRequestController extends Controller
        
         $lcRequest = LcRequest::find($id);
 
+        $comments = null;
+        if($lcRequest->comments != $request->comments){
+            $comments = $request->comments;
+        }
+
+        $lcRequest->comments = $request->comments;
+
         if ($request->input('action') == 'approve') {
             // Handle approval logic
             $lcRequest->status_id = 2;
@@ -218,7 +225,7 @@ class LCRequestController extends Controller
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
 
-            LCRequestJourneyController::add($lcRequest->id,Auth::id(),2,Carbon::now());
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),2,Carbon::now(),null,null,null,$comments);
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
@@ -236,7 +243,7 @@ class LCRequestController extends Controller
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
 
-            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now(),null,null,null,$comments);
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
@@ -251,7 +258,7 @@ class LCRequestController extends Controller
             $lcRequest->updated_at = Carbon::now();
             $lcRequest->save();
 
-            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now(),null,null,null,$comments);
             
             LCRequestStatusEmailJob::dispatch($lcRequest);
             
@@ -322,7 +329,7 @@ class LCRequestController extends Controller
             LCRequestController::uploadDocuments($request,$document,"document_5","documents",$lcRequest->id); //adds performa document5
     
             LCRequestStatusEmailJob::dispatch($lcRequest);
-            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now(),null,null,null,$comments);
            
             return redirect()->route('lc_request.pending.index')->with('status', 'LC Request updated successfully!');
         }
@@ -503,7 +510,7 @@ class LCRequestController extends Controller
                     ->join('currencies','currencies.id','lc_request.currency_id')
                     ->leftJoin('amendment_lc_request','amendment_lc_request.id','lc_request_journey.amendment_request_id')
                     ->leftJoin('lc_request_status as lcs','lcs.id','lc_request_journey.amendment_request_status_id')
-                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at','lcs.name as amendment_status',)
+                    ->select('lc_request_journey.id as id','lc_request.id as lc_request_id','lc_request_status.name as status','lc_request_journey.reason_code as reason','lc_request_journey.amendment_request_id as amendment_id','users.name as created_by','lc_request_journey.created_at','lcs.name as amendment_status','lc_request_journey.comments as comments')
                     ->where('lc_request.id',$request->id)
                     ->get();
 

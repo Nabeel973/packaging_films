@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class LCRequestJourneyController extends Controller
 {
-    public static function add($lc_request_id,$user_id,$status_id,$created_at,$reason_code = null,$amendment_request_id = null,$amendment_request_status_id = null){
+    public static function add($lc_request_id,$user_id,$status_id,$created_at,$reason_code = null,$amendment_request_id = null,$amendment_request_status_id = null,$comments = null){
 
         $journey = new LCRequestJourney();
         $journey->lc_request_id = $lc_request_id;
@@ -18,6 +18,7 @@ class LCRequestJourneyController extends Controller
         $journey->reason_code = $reason_code;
         $journey->amendment_request_id = $amendment_request_id;
         $journey->amendment_request_status_id = $amendment_request_status_id;
+        $journey->comments = $comments;
         $journey->save();
         
     }

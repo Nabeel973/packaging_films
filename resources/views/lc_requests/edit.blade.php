@@ -121,15 +121,25 @@
                 </div>
               </div>
             @endif  
-              @if(in_array($lcRequest->status_id,[3,5]))
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Rejected Reason</label>
-                    <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" disabled="true">{{ $lcRequest->reason_code }}</textarea>
-                  </div>
+            @if(in_array($lcRequest->status_id,[3,5]))
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label>Rejected Reason</label>
+                  <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" disabled="true">{{ $lcRequest->reason_code }}</textarea>
                 </div>
-              @endif
+              </div>
+            @endif
               
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Add Comments</label>
+                <span class="text-warning pl-4">Note: This part should not be updated for rejection</span>
+                <textarea id="comments" cols="8" class="form-control" maxlength="1000" name="comments">{{ $lcRequest->comments}} </textarea>
+              </div>
+            </div>
           </div>
          
           {{-- View Documents Start --}}
