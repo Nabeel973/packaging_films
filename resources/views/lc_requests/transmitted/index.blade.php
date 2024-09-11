@@ -177,7 +177,8 @@
         d.quantity_to = $('#quantity_to').val();
         d.value_from = $('#value_from').val();
         d.value_to = $('#value_to').val();
-        d.date_range = $('#date_range').val(); // Assuming you're using a date range picker
+        d.date_range = $('#date_range').val(); 
+        d.payment_id = $('#payment_id').val();
       },
         dataSrc: function(json) {
           if (Array.isArray(json.data)) {
