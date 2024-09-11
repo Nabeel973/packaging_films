@@ -514,7 +514,8 @@ class LCRequestController extends Controller
 
     public function transmitted_index(){
         $supplier_names = Supplier::where('status',1)->get();
-        return view('lc_requests.transmitted.index',['supplier_names' => $supplier_names]);
+        $payments = Payment::all();
+        return view('lc_requests.transmitted.index',['supplier_names' => $supplier_names,'payments' => $payments]);
     }
 
     public function transmitted_list(Request $request){

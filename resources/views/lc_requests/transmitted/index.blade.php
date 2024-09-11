@@ -114,6 +114,21 @@
           $(this).val('');
       });
 
+      var payments = {!! json_encode($payments) !!};
+
+      $(".payment_id").select2({
+        placeholder: "Select Payment Terms",
+        data: payments.map(function(payment) {
+            return { id: payment.id, text: payment.name };
+        }),
+        width: '100%',
+        dropdownAutoWidth: true,
+        allowClear: true // Add this line to allow clearing the selection
+      });
+
+    $(".payment_id").val('').trigger('change');
+
+    
     var customTitle = 'Transmitted LC Enquiry';
     var table = $("#example1").DataTable({
       processing: true,
@@ -179,7 +194,7 @@
           { data: "supplier_name",searchable: true },
           { data: "item_name",searchable: true },
           { data: "quantity",searchable: true },
-          { data: "payment_terms",searchable: true },
+          { data: "payment",searchable: true },
           { data: "status",searchable: true },
           { data: "reason_code",searchable: true },
           { data: "priority",searchable: true },
