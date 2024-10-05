@@ -206,8 +206,6 @@
           { data: "bank_name",searchable: true },
           { data: "lc_number",searchable: true },
           { data: "opening_deadline",searchable: true },
-          // { data: "created_by",searchable: true },
-          // { data: "created_at",searchable: true },
           { data: "updated_by",searchable: true },
           { data: "updated_at",searchable: true },
           { data: "action", orderable: false, searchable: false }
@@ -236,8 +234,6 @@
       e.preventDefault();
       var lc_request_id = $(this).data('id');
       console.log(lc_request_id);
-      // Perform edit operation based on userId
-      // For example, redirect to user page
       var editUrl = "{{ route('lc_request.edit', ':id') }}"; // Laravel route with a placeholder
         editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
         window.location.href = editUrl; // Redirect to the edit page
@@ -259,6 +255,16 @@
       var lc_request_id = $(this).data('id');
         if (lc_request_id) {
           var editUrl = "{{ route('lc_request.logs_view', ':id') }}"; // Laravel route with a placeholder
+          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+          window.location.href = editUrl; // Redirect to the edit page
+        }
+    });
+
+    $('#example1').on('click', '.clearance-request', function(e) {
+      e.preventDefault();
+      var lc_request_id = $(this).data('id');
+        if (lc_request_id) {
+          var editUrl = "{{ route('clearance_request.add', ':id') }}"; // Laravel route with a placeholder
           editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
           window.location.href = editUrl; // Redirect to the edit page
         }

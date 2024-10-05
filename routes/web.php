@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LCRequestController;
 use App\Http\Controllers\ResetPaswordController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\ShipmentClearanceController;
 use App\Http\Controllers\AmendmentLCRequestController;
 
 /*
@@ -103,6 +104,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/',[AmendmentLCRequestController::class,'index'])->name('index');
             Route::get('/list',[AmendmentLCRequestController::class,'list'])->name('list');
             Route::get('/edit/{id}',[AmendmentLCRequestController::class,'edit'])->name('edit');
+            // Route::put('/update/{id}',[AmendmentLCRequestController::class,'update'])->name('update');
+        });
+
+        Route::prefix('clearance_request')->name('clearance_request.')->group(function () {
+            Route::get('/',[ShipmentClearanceController::class,'index'])->name('index');
+            Route::get('/list',[ShipmentClearanceController::class,'list'])->name('list');
+            Route::get('/add/{id}',[ShipmentClearanceController::class,'add'])->name('add');
+            Route::post('/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('submit');
             // Route::put('/update/{id}',[AmendmentLCRequestController::class,'update'])->name('update');
         });
 

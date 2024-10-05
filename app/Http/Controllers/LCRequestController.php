@@ -11,6 +11,7 @@ use App\Models\Document;
 use App\Models\Supplier;
 use App\Models\LCRequest;
 use Illuminate\Http\Request;
+use App\Models\ClearanceRequest;
 use App\Models\LCRequestJourney;
 use Yajra\DataTables\DataTables;
 use App\Models\AmendmentLCRequest;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Jobs\LCRequestStatusEmailJob;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\LCRequestController;
 use App\Notifications\LCRequestStatusUpdateEmail;
 use App\Http\Controllers\LCRequestJourneyController;
 
@@ -481,7 +483,7 @@ class LCRequestController extends Controller
     }
 
     public static function uploadDocuments(Request $request, $document, $field_name, $directory_name,$lc_request_id)
-    {
+    {  
         if ($request->hasFile($field_name)) {
             $uploadedDocument = $request->file($field_name);
             $documentName = time() . '.' . $field_name . '.' . $uploadedDocument->getClientOriginalExtension();
@@ -557,6 +559,12 @@ class LCRequestController extends Controller
 
             if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$amendment_request || ($row->amendment_request_count > 0 && $amendment_request->status_id == 10 ))) {
                 $actionBtn .= '<a class="dropdown-item amendment-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Amendment Request</a>';
+            }
+
+            $clearance_request = ClearanceRequest::where('lc_request_id',$row->id)->latest()->first();
+
+            if ( in_array(session('role_id'),[1,5]) && $row->status_id == 10 && (!$clearance_request)) {
+                $actionBtn .= '<a class="dropdown-item clearance-request" href="javascript:void(0)" data-id="'.$row->id.'">Add Shipment Clearance Request</a>';
             }
 
             $actionBtn .= '
