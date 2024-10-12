@@ -112,7 +112,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/list',[ShipmentClearanceController::class,'list'])->name('list');
             Route::get('/add/{id}',[ShipmentClearanceController::class,'add'])->name('add');
             Route::post('/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('submit');
-            // Route::put('/update/{id}',[AmendmentLCRequestController::class,'update'])->name('update');
+            
+            Route::get('/edit/{id}',[ShipmentClearanceController::class,'edit'])->name('edit');
+            Route::post('/update/{id}',[ShipmentClearanceController::class,'update'])->name('update');
+            Route::post('/status/update',[ShipmentClearanceController::class,'status_update'])->name('status_update');
+            Route::get('{id}/view-logs',[ShipmentClearanceController::class,'view_logs'])->name('view_logs');
+            Route::get('/status/update',[ShipmentClearanceController::class,'log_list'])->name('logs');
         });
 
     

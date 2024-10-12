@@ -9,6 +9,11 @@ class Document extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
     public function lcRequest()
     {
         return $this->belongsTo(LCRequest::class, 'lc_request_id');

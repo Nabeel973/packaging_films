@@ -170,7 +170,25 @@
             </ul>
           </li>
           {{-- @endif   --}}
-
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+             
+              <i class="fas fa-book-reader"></i>
+          
+              <p>
+                Clearance Requests
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{route('clearance_request.index')}}" class="nav-link">
+                  <i class="fas fa-list nav-icon"></i>
+                  <p>List</p>
+                </a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

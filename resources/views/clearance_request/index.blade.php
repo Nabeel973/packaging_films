@@ -26,6 +26,7 @@
               <th>Shipment Date</th>
               <th>Expected Arrival Date</th>
               <th>Actual Arrival Date</th>
+              <th>Status</th>
               <th>Action</th>
             </tr>
             </thead>          
@@ -122,7 +123,8 @@
           { data: "bill_number",searchable: true },
           { data: "shipment_date",searchable: true },
           { data: "expected_arrival_date",searchable: true },
-          { data: "expected_arrival_date",searchable: true },
+          { data: "actual_arrival_date",searchable: true },
+          { data: "status",searchable: true },
           { data: "action", orderable: false, searchable: false }
           
         ],
@@ -141,6 +143,63 @@
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
       }
+    });
+
+
+    $('#example1').on('click', '.edit-btn', function(e) {
+      e.preventDefault();
+      var clearnace_request = $(this).data('id');
+      console.log('clearnace_request:',clearnace_request);
+        if (clearnace_request) {
+          var editUrl = "{{ route('clearance_request.edit', ':id') }}"; // Laravel route with a placeholder
+          editUrl = editUrl.replace(':id', clearnace_request); // Replace placeholder with actual user ID
+          window.location.href = editUrl; // Redirect to the edit page
+        }
+    });
+
+      // // Handle priority button click event
+      $('#example1').on('click', '.shipment_arrived', function(e) {
+      e.preventDefault();
+      var clearnace_request = $(this).data('id');
+      console.log('clearnace_request:',clearnace_request);
+      
+      if (clearnace_request) {
+            $.ajax({
+                url: '{{ route("clearance_request.status_update") }}', // The API endpoint to hit
+                type: 'POST',
+                data: {
+                  clearnace_request_id: clearnace_request,
+                    _token: '{{ csrf_token() }}' // Include CSRF token
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Reload the table or the specific part of the page
+                        table.ajax.reload(null, false);
+                        toastr.success('Status Updated');
+                    } else {
+                        // Handle the error
+                        toastr.error('Failed to update the status.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle AJAX error
+                    toastr.error('An error occurred: ' + error);
+                }
+            });
+          }
+     
+    });
+
+
+    $('#example1').on('click', '.view-logs', function(e) {
+      e.preventDefault();
+      var clearnace_request = $(this).data('id');
+      console.log('clearnace_request:',clearnace_request);
+        if (clearnace_request) {
+          var url = "{{ route('clearance_request.view_logs', ':id') }}"; // Laravel route with a placeholder
+          url = url.replace(':id', clearnace_request); // Replace placeholder with actual user ID
+          window.location.href = url; // Redirect to the edit page
+        }
     });
 
 

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->string('tracking_number')->nullable();
             $table->date('shipment_date')->nullable();
             $table->date('expected_arrival_date')->nullable();
+            $table->date('actual_arrival_date')->nullable();
             $table->string('document')->nullable();
             $table->string('picture')->nullable();
             $table->integer('status_id')->index();
             $table->integer('created_by')->index();
-            $table->integer('updated_by')->index()->nullable();
             $table->timestamps();
         });
     }
