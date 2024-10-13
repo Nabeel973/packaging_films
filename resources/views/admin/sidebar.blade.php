@@ -173,7 +173,7 @@
           <li class="nav-item">
             <a href="#" class="nav-link">
              
-              <i class="fas fa-book-reader"></i>
+              <i class="fas fa-tablet"></i>
           
               <p>
                 Clearance Requests
