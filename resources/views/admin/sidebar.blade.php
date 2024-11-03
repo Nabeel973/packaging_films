@@ -189,6 +189,35 @@
               </li>
             </ul>
           </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link">
+             
+              <i class="fas fa-tablet"></i>
+          
+              <p>
+                Import Requests
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                {{-- <a href="{{route('clearance_request.index')}}" class="nav-link">
+                  <i class="fas fa-list nav-icon"></i>
+                  <p>List</p>
+                </a> --}}
+                @if(in_array(session('role_id'),[1,5]))
+                  <a href="{{route('import_request.add')}}" class="nav-link">
+                    <i class="fas fa-plus nav-icon"></i>
+                    <p>Add</p>
+                  </a>
+                @endif  
+                <a href="{{route('import_request.index')}}" class="nav-link">
+                  <i class="fas fa-list nav-icon"></i>
+                  <p>List</p>
+                </a>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->

@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LCRequestController;
 use App\Http\Controllers\ResetPaswordController;
+use App\Http\Controllers\ImportRequestController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\ShipmentClearanceController;
 use App\Http\Controllers\AmendmentLCRequestController;
@@ -119,6 +120,20 @@ Route::middleware('auth')->group(function () {
             Route::get('{id}/view-logs',[ShipmentClearanceController::class,'view_logs'])->name('view_logs');
             Route::get('/status/update',[ShipmentClearanceController::class,'log_list'])->name('logs');
         });
+
+        Route::prefix('import_request')->name('import_request.')->group(function () {
+            Route::get('/',[ImportRequestController::class,'index'])->name('index');
+            Route::get('/list',[ImportRequestController::class,'list'])->name('list');
+            Route::get('/add',[ImportRequestController::class,'add'])->name('add');
+            Route::post('/submit',[ImportRequestController::class,'submit'])->name('submit');
+            
+            // Route::get('/edit/{id}',[ShipmentClearanceController::class,'edit'])->name('edit');
+            // Route::post('/update/{id}',[ShipmentClearanceController::class,'update'])->name('update');
+            // Route::post('/status/update',[ShipmentClearanceController::class,'status_update'])->name('status_update');
+            // Route::get('{id}/view-logs',[ShipmentClearanceController::class,'view_logs'])->name('view_logs');
+            // Route::get('/status/update',[ShipmentClearanceController::class,'log_list'])->name('logs');
+        });
+
 
     
     });

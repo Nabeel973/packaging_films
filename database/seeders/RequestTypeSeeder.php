@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\RequestType;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RequestTypeSeeder extends Seeder
 {
@@ -14,7 +15,7 @@ class RequestTypeSeeder extends Seeder
     {
         $requests = array('Import Advances','Open Account','Cash Against Documents','FOC');
         foreach ($requests as $request) {
-            RequestTypeSeeder::create(['name' => $request]);
+            RequestType::create(['name' => $request]);
         }
 
     }
