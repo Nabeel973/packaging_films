@@ -126,9 +126,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/list',[ImportRequestController::class,'list'])->name('list');
             Route::get('/add',[ImportRequestController::class,'add'])->name('add');
             Route::post('/submit',[ImportRequestController::class,'submit'])->name('submit');
+            Route::post('/set-priority',[ImportRequestController::class,'setPriority'])->name('set-priority');
             
-            // Route::get('/edit/{id}',[ShipmentClearanceController::class,'edit'])->name('edit');
-            // Route::post('/update/{id}',[ShipmentClearanceController::class,'update'])->name('update');
+            Route::get('{id}/view-logs',[ImportRequestController::class,'viewLogs'])->name('logs_view');
+            Route::get('/logs',[ImportRequestController::class,'getLogs'])->name('logs');
+
+            Route::get('/edit/{id}',[ImportRequestController::class,'edit'])->name('edit');
+            Route::post('/update/{id}',[ImportRequestController::class,'update'])->name('update');
+            Route::post('/reject/reason',[ImportRequestController::class,'rejectReason'])->name('reject-reason');
             // Route::post('/status/update',[ShipmentClearanceController::class,'status_update'])->name('status_update');
             // Route::get('{id}/view-logs',[ShipmentClearanceController::class,'view_logs'])->name('view_logs');
             // Route::get('/status/update',[ShipmentClearanceController::class,'log_list'])->name('logs');

@@ -174,7 +174,201 @@ class ImportRequestController extends Controller
           
             return redirect()->route('import_requests.pending.index')->with('status', 'Request generated successfully.');
         } catch (\Exception $e) {
-            Log::error("Import Request Save Failed: " . $e->getMessage() . 'additional_info' . $e);
+            return redirect()->back()->with('error', 'An Error Occured.');
         }
+    }
+
+    public function viewLogs($id){
+        return view('import_requests.logs',compact('id'));
+    }
+
+    public function getLogs(Request $request){
+        $import_requests_logs = ImportRequestJourney::join('import_requests','import_request_journeys.import_request_id','import_requests.id')
+                    ->join('users','users.id','import_request_journeys.user_id')
+                    ->join('import_request_statuses','import_request_statuses.id','import_request_journeys.status_id')
+                    ->join('currencies','currencies.id','import_requests.currency_id')
+                    ->select('import_request_journeys.id as id','import_requests.id as import_requests_id','import_request_statuses.name as status','import_request_journeys.reason_code as reason','users.name as created_by','import_request_journeys.created_at as created_at','import_request_journeys.comments as comments')
+                    ->where('import_requests.id',$request->id)
+                    ->get();
+
+            return DataTables::of($import_requests_logs)
+                ->make(true);
+    }
+
+
+    public function setPriority(Request $request){
+
+        $import_request_id = $request->input('import_request_id');
+
+        // Find the LC request by ID and update the value
+        $import_request = ImportRequest::find($import_request_id);
+
+        if ($import_request) {
+            // Perform the update operation
+            $priority = ($import_request->priority == 0) ? 1 : 0;
+            $import_request->priority = $priority; // Example update, change as needed
+            $import_request->updated_at = Carbon::now();
+            $import_request->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function edit($id){
+        $importRequest = ImportRequest::find($id);
+        $supplier_names = Supplier::where('status',1)->get();
+        $disable = true;
+        $currencies = Currency::all();
+        $companies = Company::all();
+        $request_types = RequestType::all();
+
+        if(
+            (in_array(session('role_id'),[1,5]) && in_array($importRequest->status_id,[1,4])) || 
+            (session('role_id') == 5 && in_array($importRequest->status_id,[3,5]))
+        )
+        {  
+            $disable = false;
+        }
+        return view('import_requests.edit',compact('supplier_names','importRequest','disable','currencies','companies','request_types'));
+    }
+
+    public function update(Request $request, $id)
+    {
+       
+        $importRequest = ImportRequest::find($id);
+
+        $comments = null;
+        if($importRequest->comments != $request->comments){
+            $comments = $request->comments;
+        }
+
+        $importRequest->comments = $request->comments;
+
+        if ($request->input('action') == 'approve') {
+            // Handle approval logic
+            $importRequest->status_id = 2;
+            $importRequest->reason_code = null;
+            $importRequest->updated_at = Carbon::now();
+            $importRequest->save();
+
+            LCRequestJourneyController::add($importRequest->id,Auth::id(),2,Carbon::now(),null,null,null,$comments);
+            
+            // LCRequestStatusEmailJob::dispatch($importRequest);
+            
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request approved successfully!');
+        }
+
+        if ($request->input('action') == 'next') {
+            // Handle approval logic
+
+            if($importRequest->draft_required == 1){
+                $importRequest->status_id = 8;
+            }
+            
+            $importRequest->updated_at = Carbon::now();
+            $importRequest->save();
+
+            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
+            
+            // LCRequestStatusEmailJob::dispatch($importRequest);
+            
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
+        }
+
+        if ($request->input('action') == 'transmit') {
+            // Handle approval logic
+
+            $importRequest->status_id = 9;
+            $importRequest->updated_at = Carbon::now();
+            $importRequest->save();
+
+            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
+            
+            // LCRequestStatusEmailJob::dispatch($importRequest);
+            
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
+        }
+        
+
+        // Handle update logic
+        else{
+            $validator = Validator::make($request->all(), [
+                'shipment_name' => 'required|string|max:255',
+                'supplier' => 'required|integer',
+                'company_id' => 'required|integer',
+                'payment_id' => 'required|integer',
+                'currency' => 'required|integer',
+                'amount' => 'required|numeric',
+                'performa_invoice' => 'max:1024',
+                'document_1' =>'max:1024',
+                'document_2' =>'max:1024',
+                'document_3' =>'max:1024',
+                'document_4' =>'max:1024',
+                'document_5' =>'max:1024',
+            ]);
+    
+              // Check if validation fails
+              if ($validator->fails()) {
+                return redirect()->back()
+                                 ->withErrors($validator)
+                                 ->withInput();
+            }
+
+
+            $importRequest->shipment_name = $request->input('shipment_name');
+            $importRequest->supplier_id = $request->input('supplier');
+            $importRequest->company_id = $request->input('company_id');
+            $importRequest->item_name = $request->input('item_name');
+            $importRequest->quantity = $request->input('item_quantity');
+            $importRequest->payment_id = $request->input('payment_id');
+            $importRequest->draft_required = $request->input('draft_required', false);
+            $importRequest->currency_id = $request->input('currency');
+            $importRequest->amount = $request->input('amount');
+            $importRequest->reason_code = null;
+            if($importRequest->status_id == 5){    //disperency identified
+                $importRequest->status_id = 6;  //disperency removed 
+            }
+            else{
+                $importRequest->status_id = 4;  //adjusted
+            }
+            
+            $importRequest->updated_by = Auth::id();
+            $importRequest->updated_at = Carbon::now();
+            $importRequest->draft_required = ($request->draft_required == 'on') ? 1 : 0;
+            $importRequest->save();
+
+            if($importRequest->documents){
+                $document = $importRequest->documents;
+            }
+            else{
+                $document = new Document();
+                $document->lc_request_id = $request->id;
+            }
+
+            LCRequestController::uploadDocuments($request,$document,"performa_invoice","performa_invoices",$importRequest->id); //adds performa invoice
+            LCRequestController::uploadDocuments($request,$document,"document_1","documents",$importRequest->id); //adds performa document1
+            LCRequestController::uploadDocuments($request,$document,"document_2","documents",$importRequest->id); //adds performa document2
+            LCRequestController::uploadDocuments($request,$document,"document_3","documents",$importRequest->id); //adds performa document3
+            LCRequestController::uploadDocuments($request,$document,"document_4","documents",$importRequest->id); //adds performa document4
+            LCRequestController::uploadDocuments($request,$document,"document_5","documents",$importRequest->id); //adds performa document5
+    
+            // LCRequestStatusEmailJob::dispatch($importRequest);
+            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
+           
+            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request updated successfully!');
+        }
+      
+    }
+
+    public function rejectReason(Request $request){
+        
+        $importRequest = ImportRequest::find($request->import_request);
+        $journeyController = ImportRequestJourneyController::class; // or another controller
+        $journeyMethod = 'add'; // specify the method dynamically if needed
+        $emailJob = null; // or another job class
+
+    Helper::rejectReason($importRequest, $request->reason, $journeyController, $journeyMethod,$emailJob);
     }
 }

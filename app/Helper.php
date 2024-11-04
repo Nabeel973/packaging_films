@@ -26,7 +26,32 @@ class Helper
         }
     }
 
-    public function addJourney(){
-        
+    public function rejectReason($model, $reason = null, $journeyController = null, $journeyMethod = 'add', $emailJob = null)
+    {
+        $status_id = $model->status_id;
+    
+        if ($status_id == 1 && in_array(Auth::user()->role_id, [1, 3])) {
+            $status_id = 3;
+        } elseif (in_array($status_id, [2, 4]) && in_array(Auth::user()->role_id, [1, 4])) {
+            $status_id = 5;
+        }
+    
+        $model->status_id = $status_id;
+        $model->reason_code = $reason;
+        $model->updated_at = Carbon::now();
+        $model->save();
+    
+        // Use the specified controller and method for the journey, if provided
+        if ($journeyController && method_exists($journeyController, $journeyMethod)) {
+            app($journeyController)->$journeyMethod($model->id, Auth::id(), $status_id, Carbon::now(), $reason);
+        }
+    
+        // Dispatch email if provided
+        if ($emailJob) {
+            $emailJob::dispatch($model);
+        }
+    
+        return redirect()->back()->with('status', 'Request rejected successfully!');
     }
+    
 }

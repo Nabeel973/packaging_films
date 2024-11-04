@@ -155,7 +155,7 @@
         info: true,
         responsive: true, 
         autoWidth: false,
-        order: [[9, 'asc']],  // Set default sort order on the "priority" column (index 8)
+        order: [[8, 'asc']],  // Set default sort order on the "priority" column (index 8)
       "initComplete": function () {
         // Append buttons container after DataTables initialization
         this.api().buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
@@ -166,25 +166,25 @@
   
     $('#example1').on('click', '.edit-btn', function(e) {
       e.preventDefault();
-      var lc_request_id = $(this).data('id');
-      console.log(lc_request_id);
+      var import_request_id = $(this).data('id');
+      console.log(import_request_id);
       // Perform edit operation based on userId
       // For example, redirect to user page
-      var editUrl = "{{ route('lc_request.edit', ':id') }}"; // Laravel route with a placeholder
-        editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+      var editUrl = "{{ route('import_request.edit', ':id') }}"; // Laravel route with a placeholder
+        editUrl = editUrl.replace(':id', import_request_id); // Replace placeholder with actual user ID
         window.location.href = editUrl; // Redirect to the edit page
     });
   
     // // Handle priority button click event
     $('#example1').on('click', '.set-priority-high', function(e) {
       e.preventDefault();
-      var lc_request_id = $(this).data('id');
-      if (lc_request_id) {
+      var import_request_id = $(this).data('id');
+      if (import_request_id) {
             $.ajax({
-                url: '{{ route("lc_request.set-priority") }}', // The API endpoint to hit
+                url: '{{ route("import_request.set-priority") }}', // The API endpoint to hit
                 type: 'POST',
                 data: {
-                    lc_request_id: lc_request_id,
+                    import_request_id: import_request_id,
                     _token: '{{ csrf_token() }}' // Include CSRF token
                 },
                 success: function(response) {
@@ -211,17 +211,17 @@
 
     $('#example1').on('click', '.view-logs', function(e) {
       e.preventDefault();
-      var lc_request_id = $(this).data('id');
-        if (lc_request_id) {
-          var editUrl = "{{ route('lc_request.logs_view', ':id') }}"; // Laravel route with a placeholder
-          editUrl = editUrl.replace(':id', lc_request_id); // Replace placeholder with actual user ID
+      var import_request_id = $(this).data('id');
+        if (import_request_id) {
+          var editUrl = "{{ route('import_request.logs_view', ':id') }}"; // Laravel route with a placeholder
+          editUrl = editUrl.replace(':id', import_request_id); // Replace placeholder with actual user ID
           window.location.href = editUrl; // Redirect to the edit page
         }
     });
 
-    $('#search').on('click', function() {
-    table.ajax.reload();
-  });
+  //   $('#search').on('click', function() {
+  //   table.ajax.reload();
+  // });
 
 
   });
