@@ -69,16 +69,25 @@ Route::middleware('auth')->group(function () {
 
         Route::get('amendment-request/{id}/add',[AmendmentLCRequestController::class,'add'])->name('amendment_request.add');
         Route::post('amendment-request/{id}/submit',[AmendmentLCRequestController::class,'submit'])->name('amendment_request.submit');
+
+        Route::get('/add/{id}',[ShipmentClearanceController::class,'add'])->name('add');
+        Route::post('/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('submit');
+
+        Route::get('/add',[ImportRequestController::class,'add'])->name('add');
+        Route::post('/submit',[ImportRequestController::class,'submit'])->name('submit');
     });
 
      // for TreasuryOfficer
      Route::group(['middleware' => ['role:TreasuryOfficer|SystemAdmin']], function () {
-        // Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
+      
         Route::post('/apply-for-bank',[LCRequestController::class,'applyForBank'])->name('lc_request.apply_for_bank');
         Route::post('/apply-for-transit',[LCRequestController::class,'applyForTransit'])->name('lc_request.apply_for_transit');
 
         Route::post('amendment/apply-for-bank',[AmendmentLCRequestController::class,'applyForBank'])->name('amendment_request.apply_for_bank');
         Route::post('amendment/apply-for-transit',[AmendmentLCRequestController::class,'applyForTransit'])->name('amendment_request.apply_for_transit');
+
+        Route::post('import_request/apply-for-bank',[ImportRequestController::class,'applyForBank'])->name('import_request.apply_for_bank');
+        Route::post('import_request/apply-for-transit',[ImportRequestController::class,'applyForTransit'])->name('import_request.apply_for_transit');
     });
     
     // Or with multiple roles
@@ -111,8 +120,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('clearance_request')->name('clearance_request.')->group(function () {
             Route::get('/',[ShipmentClearanceController::class,'index'])->name('index');
             Route::get('/list',[ShipmentClearanceController::class,'list'])->name('list');
-            Route::get('/add/{id}',[ShipmentClearanceController::class,'add'])->name('add');
-            Route::post('/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('submit');
+          
             
             Route::get('/edit/{id}',[ShipmentClearanceController::class,'edit'])->name('edit');
             Route::post('/update/{id}',[ShipmentClearanceController::class,'update'])->name('update');
@@ -124,19 +132,17 @@ Route::middleware('auth')->group(function () {
         Route::prefix('import_request')->name('import_request.')->group(function () {
             Route::get('/',[ImportRequestController::class,'index'])->name('index');
             Route::get('/list',[ImportRequestController::class,'list'])->name('list');
-            Route::get('/add',[ImportRequestController::class,'add'])->name('add');
-            Route::post('/submit',[ImportRequestController::class,'submit'])->name('submit');
+           
             Route::post('/set-priority',[ImportRequestController::class,'setPriority'])->name('set-priority');
             
             Route::get('{id}/view-logs',[ImportRequestController::class,'viewLogs'])->name('logs_view');
             Route::get('/logs',[ImportRequestController::class,'getLogs'])->name('logs');
 
             Route::get('/edit/{id}',[ImportRequestController::class,'edit'])->name('edit');
-            Route::post('/update/{id}',[ImportRequestController::class,'update'])->name('update');
+            Route::put('/update/{id}',[ImportRequestController::class,'update'])->name('update');
             Route::post('/reject/reason',[ImportRequestController::class,'rejectReason'])->name('reject-reason');
-            // Route::post('/status/update',[ShipmentClearanceController::class,'status_update'])->name('status_update');
-            // Route::get('{id}/view-logs',[ShipmentClearanceController::class,'view_logs'])->name('view_logs');
-            // Route::get('/status/update',[ShipmentClearanceController::class,'log_list'])->name('logs');
+
+ 
         });
 
 

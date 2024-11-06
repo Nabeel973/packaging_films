@@ -1,16 +1,14 @@
-<!-- resources/views/components/modal.blade.php -->
+<!-- resources/views/components/document-modal.blade.php -->
 @props([
-    'id',
-    'title',
-    'formId',
-    'formAction',
+    'id' => 'documentModal',
+    'title' => 'Upload Document',
+    'formId' => 'uploadDocumentForm',
+    'formAction' => route('lc_request.apply_for_bank'),
     'method' => 'POST',
     'hiddenFields' => [],
-    'textareaId',
-    'textareaLabel',
-    'textareaName',
-    'submitButtonId',
-    'submitButtonText'
+    'fields' => [],
+    'submitButtonId' => 'submitDocument',
+    'submitButtonText' => 'Submit',
 ])
 
 <div class="modal fade" id="{{ $id }}" tabindex="-1" role="dialog" aria-labelledby="{{ $id }}Label" aria-hidden="true">
@@ -22,7 +20,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="{{ $formId }}" method="POST" action="{{ $formAction }}">
+            <form id="{{ $formId }}" method="post" action="{{ $formAction }}" enctype="multipart/form-data">
                 @csrf
                 @method($method)
 
@@ -30,11 +28,17 @@
                     @foreach ($hiddenFields as $name => $value)
                         <input type="hidden" name="{{ $name }}" value="{{ $value }}">
                     @endforeach
-
-                    <div class="form-group">
-                        <label for="{{ $textareaId }}">{{ $textareaLabel }}</label>
-                        <textarea class="form-control" id="{{ $textareaId }}" name="{{ $textareaName }}" rows="3" required></textarea>
-                    </div>
+                    
+                    @foreach ($fields as $field)
+                        <div class="form-group">
+                            <label for="{{ $field['id'] }}">{{ $field['label'] }}</label>
+                            @if ($field['type'] === 'text')
+                                <input type="text" name="{{ $field['name'] }}" id="{{ $field['id'] }}" class="form-control">
+                            @elseif ($field['type'] === 'file')
+                                <input type="file" name="{{ $field['name'] }}" id="{{ $field['id'] }}" class="form-control">
+                            @endif
+                        </div>
+                    @endforeach
                 </div>
 
                 <div class="modal-footer">

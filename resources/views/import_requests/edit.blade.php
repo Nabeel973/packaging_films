@@ -13,7 +13,7 @@
         <div class="font-medium text-sm text-black bg-warning p-2 border rounded-md text-center mb-2">
             Import Request Status : <b>{{$importRequest->status->name}}</b>
         </div>
-        <form id="quickForm" method="post" action="{{ route('lc_request.update', $importRequest->id) }}" enctype="multipart/form-data">
+        <form id="quickForm" method="post" action="{{ route('import_request.update', $importRequest->id) }}" enctype="multipart/form-data">
           @csrf
           @method('PUT')
           <div class="row mb-2">
@@ -230,11 +230,13 @@
            {{-- Bank Document End --}}
 
           <div class="row justify-content-center mt-2">
-            @if((in_array(session('role_id'),[1,3]) && in_array($importRequest->status_id,[1,4])) || (in_array(session('role_id'),[1,4]) && in_array($importRequest->status_id,[2,6]) ))
-                <button type="button" class="btn btn-danger btn-lg mx-2" id="reject">
-                  <i class="fas fa-times"></i> Reject
+            @if((in_array(session('role_id'), [1, 3]) && in_array($importRequest->status_id, [1, 4])) || 
+                (in_array(session('role_id'), [1, 4]) && in_array($importRequest->status_id, [2, 6])))
+                <button type="button" class="btn btn-danger btn-lg mx-2" id="reject" data-toggle="modal" data-target="#rejectReasonModal">
+                    <i class="fas fa-times"></i> Reject
                 </button>
-            @endif    
+            @endif
+
             @if(in_array(session('role_id'),[1,5]) && in_array($importRequest->status_id,[1,3,4,5]))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
                   <i class="fas fa-save mr-2"></i> Update
@@ -248,7 +250,7 @@
             @endif 
 
             @if((in_array(session('role_id'),[1,4]) && in_array($importRequest->status_id,[2,6])))
-                <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank">
+                <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_bank" data-toggle="modal" data-target="#documentModal">
                   <i class="fas fa-check"></i> Apply For Bank
                 </button>
             @endif   
@@ -277,50 +279,49 @@
     </div>
   </div>
 
-  {{-- <div class="modal fade" id="cancelModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cancelModalLabel">Reject Reason</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form id="cancelReasonForm" method="post" action="{{ route('lc_request.reject-reason') }}">
-          @csrf
-          @method('post')
-          <div class="modal-body">
-         
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $importRequest->id }}">
-            <div class="form-group">
-              <label for="cancelReasonTextarea">Enter Reason*</label>
-              <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" required></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div> --}}
-  <x-modal 
-    id="cancelModal"
-    title="Reject Reason"
-    formId="cancelReasonForm"
-    formAction="{{ route('import_request.reject-reason') }}"
-    method="POST"
-    :hiddenFields="['import_request_id' => $importRequest->id]"
-    textareaId="cancelReasonTextarea"
-    textareaLabel="Enter Reason*"
-    textareaName="reason"
-    submitButtonId="submitCancelReason"
-    submitButtonText="Submit"
-/>
+@include('components.reject-reason-modal', [
+    'id' => 'rejectReasonModal',
+    'title' => 'Reject Reason',
+    'formId' => 'cancelReasonForm',
+    'formAction' => route('import_request.reject-reason'),
+    'method' => 'POST',
+    'hiddenFields' => ['import_request_id' => $importRequest->id],
+    'textareaId' => 'cancelReasonTextarea',
+    'textareaLabel' => 'Enter Reason*',
+    'textareaName' => 'reason',
+    'submitButtonId' => 'submitCancelReason',
+    'submitButtonText' => 'Submit'
+])
+
+@include('components.document-modal', [
+    'id' => 'documentModal',
+    'title' => 'Upload Document',
+    'formId' => 'uploadDocumentForm',
+    'formAction' => route('import_request.apply_for_bank'),
+    'method' => 'POST',
+    'hiddenFields' => [
+        'lc_request_id' => $importRequest->id
+    ],
+    'fields' => [
+        [
+            'type' => 'text',
+            'name' => 'bank_name',
+            'id' => 'bank_name',
+            'label' => 'Enter Bank Name*'
+        ],
+        [
+            'type' => 'file',
+            'name' => 'bank_document',
+            'id' => 'bank_document',
+            'label' => 'Upload Document*'
+        ]
+    ],
+    'submitButtonId' => 'submitDocument',
+    'submitButtonText' => 'Submit'
+])
 
 
-  <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
+  {{-- <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -351,40 +352,7 @@
         </form>
       </div>
     </div>
-  </div>
-
-  <div class="modal fade" id="transitModal" tabindex="-1" role="dialog" aria-labelledby="transitModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="transit">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="transitModalLabel">Upload Document</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form id="transitForm" method="post" action="{{ route('lc_request.apply_for_transit') }}" enctype="multipart/form-data">
-          @csrf
-          @method('post')
-          <div class="modal-body">
-         
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $importRequest->id }}">
-            <div class="form-group">
-              <label for="cancelReasonTextarea">Enter LC Number*</label>
-              <input type="text" name="lc_number" id="lc_number" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Upload Transmitted LC Copy*</label>
-              <input type="file" class="form-control" id="transmited_lc_document" name="transmited_lc_document">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+  </div> --}}
 @endsection
 
 @section('scripts')

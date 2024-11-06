@@ -1,7 +1,10 @@
 <?php // Code within app\Helpers\Helper.php
 
 namespace App;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Jobs\Job;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class Helper
@@ -26,8 +29,9 @@ class Helper
         }
     }
 
-    public function rejectReason($model, $reason = null, $journeyController = null, $journeyMethod = 'add', $emailJob = null)
+    public static function rejectReason($model, $reason = null, $journeyController = null, $journeyMethod = 'add', $emailJob = null)
     {
+      
         $status_id = $model->status_id;
     
         if ($status_id == 1 && in_array(Auth::user()->role_id, [1, 3])) {
@@ -51,7 +55,6 @@ class Helper
             $emailJob::dispatch($model);
         }
     
-        return redirect()->back()->with('status', 'Request rejected successfully!');
     }
     
 }

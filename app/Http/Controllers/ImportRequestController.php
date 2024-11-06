@@ -253,11 +253,10 @@ class ImportRequestController extends Controller
             $importRequest->updated_at = Carbon::now();
             $importRequest->save();
 
-            LCRequestJourneyController::add($importRequest->id,Auth::id(),2,Carbon::now(),null,null,null,$comments);
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
+
             
-            // LCRequestStatusEmailJob::dispatch($importRequest);
-            
-            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request approved successfully!');
+            return redirect()->back()->with('status', 'LC Request approved successfully!');
         }
 
         if ($request->input('action') == 'next') {
@@ -270,11 +269,9 @@ class ImportRequestController extends Controller
             $importRequest->updated_at = Carbon::now();
             $importRequest->save();
 
-            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
             
-            // LCRequestStatusEmailJob::dispatch($importRequest);
-            
-            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
+            return redirect()->back()->with('status', 'LC Request status updated successfully!');
         }
 
         if ($request->input('action') == 'transmit') {
@@ -283,30 +280,28 @@ class ImportRequestController extends Controller
             $importRequest->status_id = 9;
             $importRequest->updated_at = Carbon::now();
             $importRequest->save();
-
-            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
             
-            // LCRequestStatusEmailJob::dispatch($importRequest);
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
             
-            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request status updated successfully!');
+            return redirect()->back()->with('status', 'LC Request status updated successfully!');
         }
         
-
         // Handle update logic
         else{
+       
             $validator = Validator::make($request->all(), [
                 'shipment_name' => 'required|string|max:255',
                 'supplier' => 'required|integer',
                 'company_id' => 'required|integer',
-                'payment_id' => 'required|integer',
-                'currency' => 'required|integer',
-                'amount' => 'required|numeric',
-                'performa_invoice' => 'max:1024',
-                'document_1' =>'max:1024',
-                'document_2' =>'max:1024',
-                'document_3' =>'max:1024',
-                'document_4' =>'max:1024',
-                'document_5' =>'max:1024',
+                'item_name' => 'required|string',
+                'item_quantity' => 'required|integer',
+                'request_type_id' => 'required|integer',
+                'currency' => 'nullable|integer',
+                'amount' => 'nullable|numeric',
+                'invoice' => 'max:1024',
+                'shipping_document' => 'max:1024',
+                'paid_gd' => 'max:1024',
+                'comments' => 'string|max:1024'
             ]);
     
               // Check if validation fails
@@ -316,17 +311,16 @@ class ImportRequestController extends Controller
                                  ->withInput();
             }
 
-
-            $importRequest->shipment_name = $request->input('shipment_name');
-            $importRequest->supplier_id = $request->input('supplier');
-            $importRequest->company_id = $request->input('company_id');
-            $importRequest->item_name = $request->input('item_name');
-            $importRequest->quantity = $request->input('item_quantity');
-            $importRequest->payment_id = $request->input('payment_id');
-            $importRequest->draft_required = $request->input('draft_required', false);
-            $importRequest->currency_id = $request->input('currency');
-            $importRequest->amount = $request->input('amount');
-            $importRequest->reason_code = null;
+            $importRequest->shipment_name = $request->shipment_name;
+            $importRequest->company_id = $request->company_id;
+            $importRequest->supplier_id = $request->supplier;
+            $importRequest->item_name = $request->item_name;
+            $importRequest->quantity = $request->item_quantity;
+            $importRequest->comments = $request->comments;
+            $importRequest->currency_id = $request->currency;
+            $importRequest->amount = $request->amount;
+            $importRequest->request_type_id = $request->request_type_id;
+    
             if($importRequest->status_id == 5){    //disperency identified
                 $importRequest->status_id = 6;  //disperency removed 
             }
@@ -334,41 +328,86 @@ class ImportRequestController extends Controller
                 $importRequest->status_id = 4;  //adjusted
             }
             
-            $importRequest->updated_by = Auth::id();
             $importRequest->updated_at = Carbon::now();
-            $importRequest->draft_required = ($request->draft_required == 'on') ? 1 : 0;
             $importRequest->save();
 
             if($importRequest->documents){
                 $document = $importRequest->documents;
             }
             else{
-                $document = new Document();
-                $document->lc_request_id = $request->id;
+                $document = new ImportRequestAttachments();
+                $document->import_request_id = $request->id;
             }
 
-            LCRequestController::uploadDocuments($request,$document,"performa_invoice","performa_invoices",$importRequest->id); //adds performa invoice
-            LCRequestController::uploadDocuments($request,$document,"document_1","documents",$importRequest->id); //adds performa document1
-            LCRequestController::uploadDocuments($request,$document,"document_2","documents",$importRequest->id); //adds performa document2
-            LCRequestController::uploadDocuments($request,$document,"document_3","documents",$importRequest->id); //adds performa document3
-            LCRequestController::uploadDocuments($request,$document,"document_4","documents",$importRequest->id); //adds performa document4
-            LCRequestController::uploadDocuments($request,$document,"document_5","documents",$importRequest->id); //adds performa document5
+            $invoice = $request->file('invoice');
+            $shipping_document = $request->file('shipping_document');
+            $paid_gd = $request->file('paid_gd');
+
+            Helper::uploadDocuments($invoice,$document,"invoice","invoice",$importRequest->id);
+            Helper::uploadDocuments($shipping_document,$document,"shipping_document","shipping_document",$importRequest->id);
+            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","paid_gd",$importRequest->id);
     
-            // LCRequestStatusEmailJob::dispatch($importRequest);
-            LCRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,null,null,$comments);
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
            
-            return redirect()->route('lc_request.pending.index')->with('status', 'LC Request updated successfully!');
+            return redirect()->back()->with('status', 'Import Request updated successfully!');
         }
       
     }
 
     public function rejectReason(Request $request){
         
-        $importRequest = ImportRequest::find($request->import_request);
+        $importRequest = ImportRequest::find($request->import_request_id);
         $journeyController = ImportRequestJourneyController::class; // or another controller
         $journeyMethod = 'add'; // specify the method dynamically if needed
         $emailJob = null; // or another job class
 
-    Helper::rejectReason($importRequest, $request->reason, $journeyController, $journeyMethod,$emailJob);
+        Helper::rejectReason($importRequest, $request->reason, $journeyController, $journeyMethod,$emailJob);
+
+        return redirect()->back()->with('status', 'Request rejected successfully!');
+    }
+
+    public function applyForBank(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'import_request_id' => 'required|integer',
+            'bank_name' => 'required|string|max:255',
+            'bank_document' => 'required|max:1024',
+        ]);
+
+          // Check if validation fails
+          if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
+        }
+
+        $importRequest = ImportRequest::find($request->input('import_request_id'));
+       
+        if ($importRequest) {
+
+            if($importRequest->documents){
+                $document = $importRequest->documents;
+            }
+            else{
+                $document = new Document();
+                $document->lc_request_id =$request->lc_request_id;
+            }
+            
+            $document->bank_name = $request->bank_name;
+            $document->save();
+
+            Helper::uploadDocuments($request,$document,"bank_document","documents",$lcRequest->id); //adds performa document1
+
+            $importRequest->reason_code = null;
+            $importRequest->status_id = 7;
+            $importRequest->updated_at = Carbon::now();
+            $importRequest->save();
+
+            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+
+            return redirect()->back()->with('status', 'Applied for bank successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Error applying for bank!');
     }
 }
