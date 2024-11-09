@@ -32,7 +32,6 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
    
-    Route::post('/password/reset', [PasswordResetController::class, 'reset'])->name('login.password.reset');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -64,17 +63,17 @@ Route::middleware('auth')->group(function () {
 
     // for commercial officer
     Route::group(['middleware' => ['role:CommercialOfficer|SystemAdmin']], function () {
-        Route::get('/add',[LCRequestController::class,'add'])->name('lc_request.add');
-        Route::post('/submit',[LCRequestController::class,'submit'])->name('lc_request.submit');
+        Route::get('lc_request/add',[LCRequestController::class,'add'])->name('lc_request.add');
+        Route::post('lc_request/submit',[LCRequestController::class,'submit'])->name('lc_request.submit');
 
         Route::get('amendment-request/{id}/add',[AmendmentLCRequestController::class,'add'])->name('amendment_request.add');
         Route::post('amendment-request/{id}/submit',[AmendmentLCRequestController::class,'submit'])->name('amendment_request.submit');
 
-        Route::get('/add/{id}',[ShipmentClearanceController::class,'add'])->name('add');
-        Route::post('/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('submit');
+        Route::get('clearance_request/add/{id}',[ShipmentClearanceController::class,'add'])->name('clearance_request.add');
+        Route::post('clearance_request/submit/{id}',[ShipmentClearanceController::class,'submit'])->name('clearance_request.submit');
 
-        Route::get('/add',[ImportRequestController::class,'add'])->name('add');
-        Route::post('/submit',[ImportRequestController::class,'submit'])->name('submit');
+        Route::get('import_request/add',[ImportRequestController::class,'add'])->name('import_request.add');
+        Route::post('import_request/submit',[ImportRequestController::class,'submit'])->name('import_request.submit');
     });
 
      // for TreasuryOfficer

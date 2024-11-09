@@ -47,7 +47,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="amount">Amount</label>
-                <input type="text" name="amount" class="form-control" id="amount" placeholder="Enter Amount">
+                <input type="number" name="amount" class="form-control" id="amount" placeholder="Enter Amount">
               </div>
             </div>
             <div class="col-md-6">
@@ -92,6 +92,7 @@
                     'shipping_document' => 'Shipping Document',
                     'paid_gd' => 'Duty Paid GDs'
                 ];
+                 $title = 'Add Documents'
             @endphp
             @include('components.document-upload', ['documents' => $documents])
 

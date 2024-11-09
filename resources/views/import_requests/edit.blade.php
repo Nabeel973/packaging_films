@@ -112,6 +112,7 @@
                     'shipping_document' => 'Shipping Document',
                     'duty_paid_gd' => 'Duty Paid GDs'
                 ];
+                 $title = 'View Documents'
                 
             @endphp
             @include('components.document-upload', ['documents' => $documents , 'model' => $importRequest])
@@ -119,115 +120,44 @@
 
           {{-- Bank Documents Start --}}
           @if($importRequest->documents && $importRequest->documents->bank_document)
-          {{-- <div class="row mt-2">
-            <div class="col-12">
-              <div class="card card-warning collapsed-card">
-                <div class="card-header">
-                  <h3 class="card-title">View Bank Documents</h3>
   
-                  <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                    </button>
-                  </div>
-                  <!-- /.card-tools -->
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                     <div class="form-group">
-                        <label for="otherDocuments">Bank Name</label>
-                        <input type="text" class="form-control" value="{{$importRequest->documents->bank_name}}" disabled="true">
-                       
-                     </div>
-            
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group">
-                         <label for="otherDocuments">Bank Document</label>
-                         <input type="file" class="form-control" disabled="true">
-                          @if ($importRequest->documents && $importRequest->documents->bank_document)
-                            <a href="{{ asset('storage/'.$importRequest->documents->bank_document) }}" class="btn btn-success mt-2" download>
-                              <i class="fas fa-download"></i> Download
-                            </a>
-                          @endif
-                      </div>
-             
-                     </div>
-              
-                  </div>
-                 
-                </div>
-                <!-- /.card-body -->
-              </div>
-              <!-- /.card -->
-            </div>
-          </div> --}}
-          {{-- <div class="row mt-2">
-            <div class="col-12">
-                <x-bank-documents 
-                    title="View Bank Documents" 
-                    :documents="[
-                        'bank_name' => 'Bank Name',
-                        'bank_document' => 'Bank Document'
-                    ]"
-                    :model="$importRequest"
-                />
-            </div> --}}
-        </div>
+            @include('components.single-document-view', [
+                'title' => 'View Bank Documents',
+                'fields' => [
+                    [
+                        'type' => 'text',
+                        'label' => 'Bank Name',
+                        'id' => 'bank_name',
+                        'name' => 'bank_name',
+                        'value' => $importRequest->documents->bank_name,
+                        'disabled' => true
+                    ],
+                    [
+                        'type' => 'file',
+                        'label' => 'Bank Document',
+                        'id' => 'bank_document',
+                        'name' => 'bank_document',
+                        'url' => asset('storage/' . data_get($importRequest->documents, $importRequest->documents->bank_document)),
+                        'disabled' => true
+                    ]
+                ]
+            ])
+
+          
           @endif
 
-          {{-- Bank Document End --}}
+          @php
+          $supporting_documents = [
+              'payment_support' => 'Payment Support',
+              'bank_endorsed_document' => 'Bank Endorsed Documents',
+              'fi_number_screenshot' => 'FI Number Screenshot'
+          ];
+          $title = 'Add Supporting Documents'
+          
+      @endphp
+      @include('components.document-upload', ['documents' => $supporting_documents , 'model' => $importRequest])
 
-           {{-- Bank Documents Start --}}
-           {{-- @if($importRequest->documents && $importRequest->documents->transmited_lc_document)
-           <div class="row mt-2">
-             <div class="col-12">
-               <div class="card card-warning collapsed-card">
-                 <div class="card-header">
-                   <h3 class="card-title">View Transmited LC Documents</h3>
-   
-                   <div class="card-tools">
-                     <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                     </button>
-                   </div>
-                   <!-- /.card-tools -->
-                 </div>
-                 <!-- /.card-header -->
-                 <div class="card-body">
-                   <div class="row">
-                     <div class="col-md-6">
-                      <div class="form-group">
-                         <label for="otherDocuments">Transmited LC Number</label>
-                         <input type="text" class="form-control" value="{{$importRequest->documents->transmited_lc_number}}" disabled="true">
-                        
-                      </div>
-             
-                     </div>
-                     <div class="col-md-6">
-                       <div class="form-group">
-                          <label for="otherDocuments">Transmited LC Document</label>
-                          <input type="file" class="form-control" disabled="true">
-                           @if ($importRequest->documents && $importRequest->documents->transmited_lc_document)
-                             <a href="{{ asset('storage/'.$importRequest->documents->transmited_lc_document) }}" class="btn btn-success mt-2" download>
-                               <i class="fas fa-download"></i> Download
-                             </a>
-                           @endif
-                       </div>
-              
-                      </div>
-               
-                   </div>
-                  
-                 </div>
-                 <!-- /.card-body -->
-               </div>
-               <!-- /.card -->
-             </div>
-           </div>
-           @endif --}}
- 
-           {{-- Bank Document End --}}
+  
 
           <div class="row justify-content-center mt-2">
             @if((in_array(session('role_id'), [1, 3]) && in_array($importRequest->status_id, [1, 4])) || 
@@ -300,7 +230,7 @@
     'formAction' => route('import_request.apply_for_bank'),
     'method' => 'POST',
     'hiddenFields' => [
-        'lc_request_id' => $importRequest->id
+        'import_request_id' => $importRequest->id
     ],
     'fields' => [
         [

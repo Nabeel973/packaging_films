@@ -166,9 +166,9 @@ class ImportRequestController extends Controller
             $shipping_document = $request->file('shipping_document');
             $paid_gd = $request->file('paid_gd');
             
-            Helper::uploadDocuments($invoice,$document,"invoice","invoice",$import_request->id);
-            Helper::uploadDocuments($shipping_document,$document,"shipping_document","shipping_document",$import_request->id);
-            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","paid_gd",$import_request->id);
+            Helper::uploadDocuments($invoice,$document,"invoice","import_request",$import_request->id);
+            Helper::uploadDocuments($shipping_document,$document,"shipping_document","import_request",$import_request->id);
+            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","import_request",$import_request->id);
     
             ImportRequestJourneyController::add($import_request->id,Auth::id(),1,null,null,$request->comments);
           
@@ -341,11 +341,11 @@ class ImportRequestController extends Controller
 
             $invoice = $request->file('invoice');
             $shipping_document = $request->file('shipping_document');
-            $paid_gd = $request->file('paid_gd');
+            $paid_gd = $request->file('duty_paid_gd');
 
-            Helper::uploadDocuments($invoice,$document,"invoice","invoice",$importRequest->id);
-            Helper::uploadDocuments($shipping_document,$document,"shipping_document","shipping_document",$importRequest->id);
-            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","paid_gd",$importRequest->id);
+            Helper::uploadDocuments($invoice,$document,"invoice","import_request",$importRequest->id);
+            Helper::uploadDocuments($shipping_document,$document,"shipping_document","import_request",$importRequest->id);
+            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","import_request",$importRequest->id);
     
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
            
@@ -389,21 +389,22 @@ class ImportRequestController extends Controller
                 $document = $importRequest->documents;
             }
             else{
-                $document = new Document();
-                $document->lc_request_id =$request->lc_request_id;
+                   $document = new ImportRequestAttachments();
+                $document->import_request_id = $request->import_request_id;
             }
             
             $document->bank_name = $request->bank_name;
             $document->save();
 
-            Helper::uploadDocuments($request,$document,"bank_document","documents",$lcRequest->id); //adds performa document1
+            $bank_file = $request->file('bank_document');
+            Helper::uploadDocuments($bank_file,$document,"bank_document","import_request",$importRequest->id); //adds performa document1
 
             $importRequest->reason_code = null;
             $importRequest->status_id = 7;
             $importRequest->updated_at = Carbon::now();
             $importRequest->save();
 
-            LCRequestJourneyController::add($lcRequest->id,Auth::id(),$lcRequest->status_id,Carbon::now());
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
 
             return redirect()->back()->with('status', 'Applied for bank successfully!');
         }

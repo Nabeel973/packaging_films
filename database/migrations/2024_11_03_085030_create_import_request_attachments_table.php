@@ -17,6 +17,11 @@ return new class extends Migration
             $table->string('invoice')->nullable();
             $table->string('shipping_document')->nullable();
             $table->string('duty_paid_gd')->nullable();
+            $table->string('bank_name')->nullable();
+            $table->string('bank_document')->nullable();
+            $table->string('payment_support')->nullable();
+            $table->string('bank_endorsed_document')->nullable();
+            $table->string('fi_number_screenshot')->nullable();
             $table->timestamps();
         });
     }
