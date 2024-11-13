@@ -121,7 +121,7 @@ class ImportRequestController extends Controller
 
     public function submit(Request $request){
       
-        try {
+    
 
             $validator = Validator::make($request->all(), [
                 'shipment_name' => 'required|string|max:255',
@@ -172,10 +172,7 @@ class ImportRequestController extends Controller
     
             ImportRequestJourneyController::add($import_request->id,Auth::id(),1,null,null,$request->comments);
           
-            return redirect()->route('import_requests.pending.index')->with('status', 'Request generated successfully.');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An Error Occured.');
-        }
+            return redirect()->route('import_request.index')->with('status', 'Request Generated Successfully.');
     }
 
     public function viewLogs($id){
@@ -256,7 +253,7 @@ class ImportRequestController extends Controller
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
 
             
-            return redirect()->back()->with('status', 'LC Request approved successfully!');
+            return redirect()->back()->with('status', 'Import Request approved successfully!');
         }
 
         if ($request->input('action') == 'next') {
@@ -271,7 +268,7 @@ class ImportRequestController extends Controller
 
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
             
-            return redirect()->back()->with('status', 'LC Request status updated successfully!');
+            return redirect()->back()->with('status', 'Import Request status updated successfully!');
         }
 
         if ($request->input('action') == 'transmit') {
@@ -283,7 +280,7 @@ class ImportRequestController extends Controller
             
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
             
-            return redirect()->back()->with('status', 'LC Request status updated successfully!');
+            return redirect()->back()->with('status', 'Import Request status updated successfully!');
         }
         
         // Handle update logic

@@ -33,8 +33,8 @@ class Helper
     {
       
         $status_id = $model->status_id;
-    
-        if ($status_id == 1 && in_array(Auth::user()->role_id, [1, 3])) {
+      
+        if (in_array($status_id,[1,4]) && in_array(Auth::user()->role_id, [1, 3])) {
             $status_id = 3;
         } elseif (in_array($status_id, [2, 4]) && in_array(Auth::user()->role_id, [1, 4])) {
             $status_id = 5;

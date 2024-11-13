@@ -83,17 +83,6 @@
             </div>
               
           </div>
-          <div class="row mb-4">  
-            @if(in_array($importRequest->status_id,[3,5]))
-              <div class="col-md-6">
-                <div class="form-group">
-                  <label>Rejected Reason</label>
-                  <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" disabled="true">{{ $importRequest->reason_code }}</textarea>
-                </div>
-              </div>
-            @endif
-              
-          </div>
 
           <div class="row">
             <div class="col-md-6">
@@ -103,6 +92,14 @@
                 <textarea id="comments" cols="8" class="form-control" maxlength="1000" name="comments">{{ $importRequest->comments}} </textarea>
               </div>
             </div>
+            @if(in_array($importRequest->status_id,[3,5]))
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Rejected Reason</label>
+                <textarea class="form-control" id="cancelReasonTextarea" name="reason" rows="3" disabled="true">{{ $importRequest->reason_code }}</textarea>
+              </div>
+            </div>
+          @endif
           </div>
          
           {{-- View Documents Start --}}
@@ -137,7 +134,7 @@
                         'label' => 'Bank Document',
                         'id' => 'bank_document',
                         'name' => 'bank_document',
-                        'url' => asset('storage/' . data_get($importRequest->documents, $importRequest->documents->bank_document)),
+                        'url' => asset('storage/' . $importRequest->documents->bank_document),
                         'disabled' => true
                     ]
                 ]
@@ -146,22 +143,25 @@
           
           @endif
 
-          @php
-          $supporting_documents = [
-              'payment_support' => 'Payment Support',
-              'bank_endorsed_document' => 'Bank Endorsed Documents',
-              'fi_number_screenshot' => 'FI Number Screenshot'
-          ];
-          $title = 'Add Supporting Documents'
-          
-      @endphp
-      @include('components.document-upload', ['documents' => $supporting_documents , 'model' => $importRequest])
+          @if ($importRequest->status_id > 6)
+            @php
+              $supporting_documents = [
+                  'payment_support' => 'Payment Support',
+                  'bank_endorsed_document' => 'Bank Endorsed Documents',
+                  'fi_number_screenshot' => 'FI Number Screenshot'
+              ];
+              $title = 'Add Supporting Documents';
+              $layout = 'horizontal';
+            @endphp
+            @include('components.document-upload', ['documents' => $supporting_documents , 'model' => $importRequest, 'layout' => $layout,'title' => $title])
+          @endif
+         
 
   
 
           <div class="row justify-content-center mt-2">
             @if((in_array(session('role_id'), [1, 3]) && in_array($importRequest->status_id, [1, 4])) || 
-                (in_array(session('role_id'), [1, 4]) && in_array($importRequest->status_id, [2, 6])))
+                (in_array(session('role_id'), [1, 4]) && in_array($importRequest->status_id, [2])))
                 <button type="button" class="btn btn-danger btn-lg mx-2" id="reject" data-toggle="modal" data-target="#rejectReasonModal">
                     <i class="fas fa-times"></i> Reject
                 </button>
