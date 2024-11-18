@@ -44,7 +44,7 @@
                     <div class="form-group">
                         <label for="{{ $docKey }}">{{ $docLabel }}</label>
                         <input type="file" class="form-control file-input {{ $layout === 'horizontal' ? 'ml-2' : '' }}" 
-                               id="{{ $docKey }}" name="{{ $docKey }}">
+                               id="{{ $docKey }}" name="{{ $docKey }}" {{ $disable ? 'disabled' : '' }}>
                   
                         @if (isset($model) && $model->documents && data_get($model->documents, $docKey))
                         <a href="{{ asset('storage/' . data_get($model->documents, $docKey)) }}" 

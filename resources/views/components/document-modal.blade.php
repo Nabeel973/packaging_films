@@ -30,15 +30,21 @@
                     @endforeach
                     
                     @foreach ($fields as $field)
-                        <div class="form-group">
-                            <label for="{{ $field['id'] }}">{{ $field['label'] }}</label>
-                            @if ($field['type'] === 'text')
-                                <input type="text" name="{{ $field['name'] }}" id="{{ $field['id'] }}" class="form-control">
-                            @elseif ($field['type'] === 'file')
-                                <input type="file" name="{{ $field['name'] }}" id="{{ $field['id'] }}" class="form-control">
+                        <div class="form-group {{ $field['type'] === 'checkbox' ? 'd-flex align-items-center' : '' }}">
+                            @if ($field['type'] === 'checkbox')
+                                <!-- Checkbox with small size and left alignment -->
+                                <input type="checkbox" name="{{ $field['name'] }}" id="{{ $field['id'] }}" 
+                                    class="form-check-small mr-2">
+                                <label for="{{ $field['id'] }}" class="form-check-label">{{ $field['label'] }}</label>
+                            @else
+                                <!-- Default input fields -->
+                                <label for="{{ $field['id'] }}">{{ $field['label'] }}</label>
+                                <input type="{{ $field['type'] }}" name="{{ $field['name'] }}" id="{{ $field['id'] }}" 
+                                    class="form-control">
                             @endif
                         </div>
                     @endforeach
+
                 </div>
 
                 <div class="modal-footer">
@@ -49,3 +55,18 @@
         </div>
     </div>
 </div>
+
+<style>
+  .form-check-small {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+}
+
+
+</style>

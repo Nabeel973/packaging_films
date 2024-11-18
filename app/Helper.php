@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Storage;
 class Helper
 {
 
-    public static function uploadDocuments($file, $document, $field_name, $directory_name,$lc_request_id)
-    {  
+    public static function uploadDocuments($file, $document, $field_name, $directory_name,$id)
+    {  dd($document,$file);
         if ($file) {
             $uploadedDocument = $file;
             $documentName = time() . '.' . $field_name . '.' . $uploadedDocument->getClientOriginalExtension();
-            $documentDirectory = $directory_name . '/' . $lc_request_id;  // Assuming $document has an id field
+            $documentDirectory = $directory_name . '/' . $id;  // Assuming $document has an id field
             $documentPath = $uploadedDocument->storeAs($documentDirectory, $documentName);
 
             // Delete the old file if it exists

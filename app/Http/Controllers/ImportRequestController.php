@@ -233,7 +233,7 @@ class ImportRequestController extends Controller
 
     public function update(Request $request, $id)
     {
-       
+      
         $importRequest = ImportRequest::find($id);
 
         $comments = null;
@@ -271,63 +271,64 @@ class ImportRequestController extends Controller
             return redirect()->back()->with('status', 'Import Request status updated successfully!');
         }
 
-        if ($request->input('action') == 'transmit') {
-            // Handle approval logic
+        // if ($request->input('action') == 'transmit') {
+        //     // Handle approval logic
 
-            $importRequest->status_id = 9;
-            $importRequest->updated_at = Carbon::now();
-            $importRequest->save();
+        //     $importRequest->status_id = 9;
+        //     $importRequest->updated_at = Carbon::now();
+        //     $importRequest->save();
             
-            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
+        //     ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
             
-            return redirect()->back()->with('status', 'Import Request status updated successfully!');
-        }
+        //     return redirect()->back()->with('status', 'Import Request status updated successfully!');
+        // }
         
         // Handle update logic
         else{
-       
-            $validator = Validator::make($request->all(), [
-                'shipment_name' => 'required|string|max:255',
-                'supplier' => 'required|integer',
-                'company_id' => 'required|integer',
-                'item_name' => 'required|string',
-                'item_quantity' => 'required|integer',
-                'request_type_id' => 'required|integer',
-                'currency' => 'nullable|integer',
-                'amount' => 'nullable|numeric',
-                'invoice' => 'max:1024',
-                'shipping_document' => 'max:1024',
-                'paid_gd' => 'max:1024',
-                'comments' => 'string|max:1024'
-            ]);
+            if($importRequest->status_id != 8){
+                $validator = Validator::make($request->all(), [
+                    'shipment_name' => 'required|string|max:255',
+                    'supplier' => 'required|integer',
+                    'company_id' => 'required|integer',
+                    'item_name' => 'required|string',
+                    'item_quantity' => 'required|integer',
+                    'request_type_id' => 'required|integer',
+                    'currency' => 'nullable|integer',
+                    'amount' => 'nullable|numeric',
+                    'invoice' => 'max:1024',
+                    'shipping_document' => 'max:1024',
+                    'paid_gd' => 'max:1024',
+                    'comments' => 'string|max:1024'
+                ]);
+        
+                  // Check if validation fails
+                  if ($validator->fails()) {
+                    return redirect()->back()
+                                     ->withErrors($validator)
+                                     ->withInput();
+                }
     
-              // Check if validation fails
-              if ($validator->fails()) {
-                return redirect()->back()
-                                 ->withErrors($validator)
-                                 ->withInput();
+                $importRequest->shipment_name = $request->shipment_name;
+                $importRequest->company_id = $request->company_id;
+                $importRequest->supplier_id = $request->supplier;
+                $importRequest->item_name = $request->item_name;
+                $importRequest->quantity = $request->item_quantity;
+                $importRequest->comments = $request->comments;
+                $importRequest->currency_id = $request->currency;
+                $importRequest->amount = $request->amount;
+                $importRequest->request_type_id = $request->request_type_id;
+        
+                if($importRequest->status_id == 5){    //disperency identified
+                    $importRequest->status_id = 6;  //disperency removed 
+                }
+                else if($importRequest->status_id != 8){
+                    $importRequest->status_id = 4;  //adjusted
+                }
+                
+                $importRequest->updated_at = Carbon::now();
+                $importRequest->save();
             }
-
-            $importRequest->shipment_name = $request->shipment_name;
-            $importRequest->company_id = $request->company_id;
-            $importRequest->supplier_id = $request->supplier;
-            $importRequest->item_name = $request->item_name;
-            $importRequest->quantity = $request->item_quantity;
-            $importRequest->comments = $request->comments;
-            $importRequest->currency_id = $request->currency;
-            $importRequest->amount = $request->amount;
-            $importRequest->request_type_id = $request->request_type_id;
     
-            if($importRequest->status_id == 5){    //disperency identified
-                $importRequest->status_id = 6;  //disperency removed 
-            }
-            else{
-                $importRequest->status_id = 4;  //adjusted
-            }
-            
-            $importRequest->updated_at = Carbon::now();
-            $importRequest->save();
-
             if($importRequest->documents){
                 $document = $importRequest->documents;
             }
@@ -339,13 +340,13 @@ class ImportRequestController extends Controller
             $invoice = $request->file('invoice');
             $shipping_document = $request->file('shipping_document');
             $paid_gd = $request->file('duty_paid_gd');
-
+           
             Helper::uploadDocuments($invoice,$document,"invoice","import_request",$importRequest->id);
             Helper::uploadDocuments($shipping_document,$document,"shipping_document","import_request",$importRequest->id);
             Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","import_request",$importRequest->id);
-    
+
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
-           
+        
             return redirect()->back()->with('status', 'Import Request updated successfully!');
         }
       
@@ -407,5 +408,61 @@ class ImportRequestController extends Controller
         }
 
         return redirect()->back()->with('error', 'Error applying for bank!');
+    }
+
+    public function applyForTransit(Request $request){
+       
+        $validator = Validator::make($request->all(), [
+            'import_request_id' => 'required|integer',
+            'bank_endorsed_document' => 'max:1024',
+            'payment_support' => 'max:1024',
+            'fi_number_screenshot' => 'max:1024',
+        ]);
+
+          // Check if validation fails
+          if ($validator->fails()) {
+            return redirect()->back()
+                             ->withErrors($validator)
+                             ->withInput();
+        }
+
+        $importRequest = ImportRequest::find($request->input('import_request_id'));
+       
+        if ($importRequest) {
+
+            if($importRequest->documents){
+                $document = $importRequest->documents;
+            }
+            else{
+                
+                $document = new ImportRequestAttachments();
+                $document->import_request_id = $request->import_request_id;
+            }
+
+            $payment_support = $request->file('payment_support');
+            $bank_endorsed_document = $request->file('bank_endorsed_document');
+            $fi_number_screenshot = $request->file('fi_number_screenshot');
+            
+            Helper::uploadDocuments($fi_number_screenshot,$document,"fi_number_screenshot","import_request",$importRequest->id);
+            Helper::uploadDocuments($bank_endorsed_document,$document,"bank_endorsed_document","import_request",$importRequest->id);
+            Helper::uploadDocuments($payment_support,$document,"payment_support","import_request",$importRequest->id);
+
+           if($request->request_completed == 'on'){
+                if($importRequest->request_type_id != 1){
+                    $importRequest->status_id = 8;
+                }
+                else{
+                    $importRequest->status_id = 9;
+                }
+           }
+        
+            $importRequest->save();
+
+            ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
+
+            return redirect()->back()->with('status', 'Status Updated Successfully!');
+        }
+
+        return redirect()->back()->with('error', 'Error applying for Transit!');
     }
 }

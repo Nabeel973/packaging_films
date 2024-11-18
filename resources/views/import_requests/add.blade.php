@@ -92,9 +92,11 @@
                     'shipping_document' => 'Shipping Document',
                     'paid_gd' => 'Duty Paid GDs'
                 ];
-                 $title = 'Add Documents'
+                 $title = 'Add Documents';
+                 $layout = 'horizontal'
+                 $disabled = false
             @endphp
-            @include('components.document-upload', ['documents' => $documents])
+            @include('components.document-upload', ['documents' => $documents,'layout' => $layout, 'disable' => $disabled])
 
           <div class="row justify-content-center mt-2">
         

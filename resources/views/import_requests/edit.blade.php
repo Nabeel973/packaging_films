@@ -109,10 +109,12 @@
                     'shipping_document' => 'Shipping Document',
                     'duty_paid_gd' => 'Duty Paid GDs'
                 ];
-                 $title = 'View Documents'
+                 $title = 'View Documents';
+                 $layout = 'vertical';
+                $disabled = false
                 
             @endphp
-            @include('components.document-upload', ['documents' => $documents , 'model' => $importRequest])
+            @include('components.document-upload', ['documents' => $documents , 'model' => $importRequest, 'layout' => $layout, 'disable' => $disabled])
            {{-- View Documents End --}}
 
           {{-- Bank Documents Start --}}
@@ -139,25 +141,21 @@
                     ]
                 ]
             ])
-
-          
           @endif
 
-          @if ($importRequest->status_id > 6)
+          @if ($importRequest->status_id > 7)
             @php
               $supporting_documents = [
                   'payment_support' => 'Payment Support',
                   'bank_endorsed_document' => 'Bank Endorsed Documents',
                   'fi_number_screenshot' => 'FI Number Screenshot'
               ];
-              $title = 'Add Supporting Documents';
-              $layout = 'horizontal';
+              $title = 'View Supporting Documents';
+              $layout = 'vertical';
+              $disabled = true
             @endphp
-            @include('components.document-upload', ['documents' => $supporting_documents , 'model' => $importRequest, 'layout' => $layout,'title' => $title])
+            @include('components.document-upload', ['documents' => $supporting_documents , 'model' => $importRequest, 'layout' => $layout,'title' => $title , 'disable' => $disabled])
           @endif
-         
-
-  
 
           <div class="row justify-content-center mt-2">
             @if((in_array(session('role_id'), [1, 3]) && in_array($importRequest->status_id, [1, 4])) || 
@@ -167,7 +165,7 @@
                 </button>
             @endif
 
-            @if(in_array(session('role_id'),[1,5]) && in_array($importRequest->status_id,[1,3,4,5]))
+            @if(in_array(session('role_id'),[1,5]) && in_array($importRequest->status_id,[1,3,4,5,8]))
                 <button type="submit" name="action" value="update" class="btn btn-warning btn-lg mx-2" id="submit-button">
                   <i class="fas fa-save mr-2"></i> Update
                 </button>
@@ -251,38 +249,45 @@
 ])
 
 
-  {{-- <div class="modal fade" id="documentModal" tabindex="-1" role="dialog" aria-labelledby="documentModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="documentModalLabel">Upload Document</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <form id="uploadDocumentForm" method="post" action="{{ route('lc_request.apply_for_bank') }}" enctype="multipart/form-data">
-          @csrf
-          @method('post')
-          <div class="modal-body">
-         
-            <input type="hidden" name="lc_request_id" id="lc_request_id" value="{{ $importRequest->id }}">
-            <div class="form-group">
-              <label for="cancelReasonTextarea">Enter Bank Name*</label>
-              <input type="text" name="bank_name" id="bank_name" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Upload Document*</label>
-              <input type="file" class="form-control" id="bank_document" name="bank_document">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" id="submitCancelReason" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div> --}}
+@include('components.document-modal', [
+    'id' => 'transitModal',
+    'title' => 'Apply For Transmit',
+    'formId' => 'transitDocumentForm',
+    'formAction' => route('import_request.apply_for_transit'),
+    'method' => 'POST',
+    'hiddenFields' => [
+        'import_request_id' => $importRequest->id
+    ],
+    'fields' => [
+        [
+            'type' => 'file',
+            'name' => 'payment_support',
+            'id' => 'payment_support',
+            'label' => 'Payment Support'
+        ],
+        [
+            'type' => 'file',
+            'name' => 'bank_endorsed_document',
+            'id' => 'bank_endorsed_document',
+            'label' => 'Bank Endorsed Documents'
+        ],
+        [
+            'type' => 'file',
+            'name' => 'fi_number_screenshot',
+            'id' => 'fi_number_screenshot',
+            'label' => 'FI Number Screenshot'
+        ],
+        [
+            'type' => 'checkbox',
+            'name' => 'request_completed',
+            'id' => 'request_completed',
+            'label' => 'Request Completed*'
+        ]
+    ],
+    'submitButtonId' => 'submitDocument',
+    'submitButtonText' => 'Submit'
+])
+
 @endsection
 
 @section('scripts')
@@ -475,21 +480,15 @@
         }
       });
 
-      $('#transitForm').validate({
+      $('#transitDocumentForm').validate({
         rules: {
-          lc_number: {
-            required: true,
-          },
-          transmited_lc_document: {
+          request_completed: {
             required: true,
           }
         },
         messages: {
-          lc_number: {
-            required: "LC Number is required",
-          },
-          transmited_lc_document: {
-            required: "Document is required",
+          request_completed: {
+            required: "Checkbox is Required",
           }
          
         },
