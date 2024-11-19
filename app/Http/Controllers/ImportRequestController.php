@@ -337,13 +337,13 @@ class ImportRequestController extends Controller
                 $document->import_request_id = $request->id;
             }
 
-            $invoice = $request->file('invoice');
-            $shipping_document = $request->file('shipping_document');
-            $paid_gd = $request->file('duty_paid_gd');
-           
-            Helper::uploadDocuments($invoice,$document,"invoice","import_request",$importRequest->id);
-            Helper::uploadDocuments($shipping_document,$document,"shipping_document","import_request",$importRequest->id);
-            Helper::uploadDocuments($paid_gd,$document,"duty_paid_gd","import_request",$importRequest->id);
+            // $invoice = $request->file('invoice');
+            // $shipping_document = $request->file('shipping_document');
+            // $paid_gd = $request->file('duty_paid_gd');
+         
+            Helper::uploadDocuments($request->file('invoice'),$document,"invoice","import_request",$importRequest->id);
+            Helper::uploadDocuments($request->file('shipping_document'),$document,"shipping_document","import_request",$importRequest->id);
+            Helper::uploadDocuments($request->file('duty_paid_gd'),$document,"duty_paid_gd","import_request",$importRequest->id);
 
             ImportRequestJourneyController::add($importRequest->id,Auth::id(),$importRequest->status_id,Carbon::now(),null,$request->comments);
         

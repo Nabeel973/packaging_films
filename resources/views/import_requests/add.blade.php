@@ -93,7 +93,7 @@
                     'paid_gd' => 'Duty Paid GDs'
                 ];
                  $title = 'Add Documents';
-                 $layout = 'horizontal'
+                 $layout = 'horizontal';
                  $disabled = false
             @endphp
             @include('components.document-upload', ['documents' => $documents,'layout' => $layout, 'disable' => $disabled])

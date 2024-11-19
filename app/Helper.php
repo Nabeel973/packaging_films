@@ -11,7 +11,7 @@ class Helper
 {
 
     public static function uploadDocuments($file, $document, $field_name, $directory_name,$id)
-    {  dd($document,$file);
+    { 
         if ($file) {
             $uploadedDocument = $file;
             $documentName = time() . '.' . $field_name . '.' . $uploadedDocument->getClientOriginalExtension();

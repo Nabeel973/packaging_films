@@ -183,24 +183,17 @@
                 </button>
             @endif   
 
-            @if((in_array(session('role_id'),[1,4]) &&  in_array($importRequest->status_id,[7,9])))
-              @if($importRequest->draft_required == 1 && $importRequest->status_id == 7) 
-                <button type="submit"  name="action" value="next" class="btn btn-success btn-lg mx-2" id="apply_for_bank"> 
-                  <i class="fas fa-check"></i> Move To Draft Review
-
-                </button>
-              @else
+            @if((in_array(session('role_id'),[1,4]) &&  in_array($importRequest->status_id,[7])))
                 <button type="button" class="btn btn-success btn-lg mx-2" id="apply_for_transit">
                   <i class="fas fa-check"></i>  Apply For Transmit
-                </button>
-              @endif    
+                </button> 
             @endif    
 
-            @if((session('role_id') == 5 && $importRequest->status_id == 8))
+            {{-- @if((session('role_id') == 5 && $importRequest->status_id == 8))
                 <button type="submit" class="btn btn-success btn-lg mx-2"  name="action" value="transmit">
                   <i class="fas fa-check"></i> Ready for Transmit
                 </button>
-            @endif  
+            @endif   --}}
 
           </div>
         </form>
