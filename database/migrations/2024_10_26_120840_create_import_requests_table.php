@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('item_name');
             $table->integer('quantity');
             $table->integer('request_type_id')->index();
-            $table->double('amount')->default(0);
+            $table->double('amount')->nullable()->default(0);
             $table->integer('currency_id')->nullable()->index();
             $table->integer('company_id')->index();
             $table->text('reason_code')->nullable();
